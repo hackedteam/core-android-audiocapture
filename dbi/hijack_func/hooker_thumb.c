@@ -16,11 +16,15 @@ static int fd_in = 0;
 static int fd_out = 0;
 
 /* signaling */
+struct cblk_t *cblkTracks = NULL;
+
 static int dumpOut = 0;
 
 #define MAX_CBLK 24
 static unsigned long cblk_array[MAX_CBLK];
 static unsigned long playbackLastBufferStartAddress_array[MAX_CBLK];
+
+
 
 void* (*no_proto_ptr)(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w );
 void* (*pause_h_ptr)(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w);
@@ -191,8 +195,8 @@ void* recordThread_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, 
 void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
 
   void* result;
-  unsigned long* cblk_ptr;
-  unsigned long cblk;
+  unsigned int* cblk_ptr;
+  unsigned int cblk;
   unsigned long framesAvail;
   unsigned long framesReq;
   unsigned long bufferSize;
@@ -200,12 +204,9 @@ void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e,
   unsigned long thisStart;
   unsigned long bufferEndAddress;
   int res;
-  int ii, cblkIndex;
+  /* int ii, cblkIndex; */
   unsigned long lr_var;
-
-  
-  /* asm("mov %[lr], lr": [lr] "=r" (lr_var) ); */
-  /* log("\t\t\t\t\tlr: %x\n", lr_var); */
+  struct cblk_t *cblk_tmp= NULL;
 
 
   if( fd_out == 0) {
@@ -221,21 +222,37 @@ void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e,
   log("\t\t\t\tresult: %d\n", (int) result);
   hook_postcall(&playbackTrack_getNextBuffer_hook);
 
-  cblk_ptr = (unsigned long*) (a + 0x1c) ;
+  cblk_ptr = (unsigned int*) (a + 0x1c) ;
   cblk = *cblk_ptr;
   log("\t\t\tcblk %p\n", cblk);
-
-  for( ii = 0; ii < MAX_CBLK; ii++) {
-    if( cblk_array[ii] == cblk ) {
-      cblkIndex = ii;
-      break;
-    }
-    else if( cblk_array[ii] == 0 ) {
-      cblk_array[ii] = cblk;
-      cblkIndex = ii;
-      break;
-    }
+  
+  
+  // add the cblk to the tracks list, if
+  // we don't find it, it might be because
+  // the injection took place after the track
+  // was created
+  log("start hash find\n");
+  HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
+  
+  if( cblk_tmp == NULL ) {
+    cblk_tmp =  malloc( sizeof(struct cblk_t) );
+    log("cblk_tmp %x size %d\n", cblk_tmp, sizeof(cblk_tmp));
+    cblk_tmp->cblk_index = cblk;
+    cblk_tmp->playbackLastBufferStartAddress = 0;
+    cblk_tmp->streamType = 0xffff; // fake value
+    
+    HASH_ADD_INT(cblkTracks, cblk_index, cblk_tmp);
+    cblk_tmp = NULL;
+    
+    HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
+    if( cblk_tmp == NULL )
+      log("uthash shit happened\n");
+    log("\t\tadded cblk from within getNextBuffer\n");
   }
+  // from here onwards cblk_tmp has meaningful values
+  log("end hash stuff\n");
+
+
 
   bufferStart = (cblk + 0x40); // fix with offset within structure
   
@@ -248,31 +265,34 @@ void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e,
   thisStart = *(unsigned long*) b;
   log("\t\t\tthisStart: %p\n", thisStart);
 
-  if( result  == 0 ) {
-    if( playbackLastBufferStartAddress_array[cblkIndex] != 0 ) {
 
-      // wrap
-      if( thisStart < playbackLastBufferStartAddress_array[cblkIndex] ) {
+
+  /* decide whether we dump or just update the offset */
+  if( result  == 0 ) {
+    if( cblk_tmp->playbackLastBufferStartAddress != 0 ) {
+
+      // circular buffer wrap
+      if( thisStart < cblk_tmp->playbackLastBufferStartAddress ) {
       
 	// dump from playbackLastBufferStartAddress to the end of the buffer)
-	log("\t\t\twrap dump: %p -> %p\n", playbackLastBufferStartAddress_array[cblkIndex] , bufferStart + bufferSize);
-	res = write(fd_out, playbackLastBufferStartAddress_array[cblkIndex] , (bufferStart + bufferSize) - playbackLastBufferStartAddress_array[cblkIndex]  );
+	log("\t\t\twrap dump: %p -> %p\n", cblk_tmp->playbackLastBufferStartAddress , bufferStart + bufferSize);
+	res = write(fd_out, cblk_tmp->playbackLastBufferStartAddress , (bufferStart + bufferSize) - cblk_tmp->playbackLastBufferStartAddress  );
 	log("\t\t\t\twrote: %d\n", res);
 
       }
       else {
       
 	// dump from playbackLastBufferStartAddress to thisStart)
-	log("\t\t\tdump from: %p -> %p\n", playbackLastBufferStartAddress_array[cblkIndex], thisStart);
-	res = write(fd_out, playbackLastBufferStartAddress_array[cblkIndex] , (thisStart) - playbackLastBufferStartAddress_array[cblkIndex]  );
+	log("\t\t\tdump from: %p -> %p\n", cblk_tmp->playbackLastBufferStartAddress, thisStart);
+	res = write(fd_out, cblk_tmp->playbackLastBufferStartAddress , (thisStart) - cblk_tmp->playbackLastBufferStartAddress  );
 	log("\t\t\t\twrote: %d\n", res);
       }
     
-      playbackLastBufferStartAddress_array[cblkIndex] = thisStart;
+      cblk_tmp->playbackLastBufferStartAddress = thisStart;
     } else 
-      playbackLastBufferStartAddress_array[cblkIndex] = thisStart;
+      cblk_tmp->playbackLastBufferStartAddress = thisStart;
   } else {
-    playbackLastBufferStartAddress_array[cblkIndex] = 0;
+    cblk_tmp->playbackLastBufferStartAddress = 0;
   }
  
   

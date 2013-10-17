@@ -1,15 +1,16 @@
 #include "../uthash.h"
 
+#define ROUNDUP(x, y) ((((x)+((y)-1))/(y))*(y))
+
 struct hook_t *hook_hash1;
 struct hook_t *postcall_hash;
-
-#define ROUNDUP(x, y) ((((x)+((y)-1))/(y))*(y))
 
 
 struct cblk_t {
 
-  unsigned long playbackLastBufferStartAddress_array;
-  unsigned long streamType;
+  unsigned int cblk_index;
+  unsigned int playbackLastBufferStartAddress;
+  int streamType;
 
   UT_hash_handle hh;
 

@@ -559,7 +559,7 @@ int hook_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 		  dump_buffer[i] = hook->jumpt[i];
 
 		  if( DEBUG)
-		    log("%0.2x \n", ((unsigned char*)orig)[i])
+		    log("%0.2x", ((unsigned char*)orig)[i])
 
 		     }
 		  //fprintf(patch_bytes_dump, dump_buffer);
