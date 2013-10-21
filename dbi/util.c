@@ -401,7 +401,7 @@ int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
 	struct mm mm[250];
 	unsigned long libcaddr;
 	int nmm;
-	char libc[256];
+	char libc[512];
 	symtab_t s;
 	int load_memmap_return;
 

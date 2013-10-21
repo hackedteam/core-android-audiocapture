@@ -718,8 +718,8 @@ void my_init()
     /* HOOK_coverage_10 */
 
     /* dumpers */
-    HOOK_coverage_11
-    HOOK_coverage_12
+    HOOK_coverage_11  // record
+    HOOK_coverage_12  // play
 
     /* HOOK_coverage_13 */
     /* HOOK_coverage_14 */

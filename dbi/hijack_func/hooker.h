@@ -1,16 +1,51 @@
+#include <sys/types.h>
+#include <sys/time.h>
+//#include <unistd.h>
+#include <time.h>
 #include "../uthash.h"
 
 #define ROUNDUP(x, y) ((((x)+((y)-1))/(y))*(y))
+#define DBG 1
 
 struct hook_t *hook_hash1;
 struct hook_t *postcall_hash;
 
+/* From audio.h Audio stream types */
+typedef enum {
+    AUDIO_STREAM_DEFAULT          = -1,
+    AUDIO_STREAM_VOICE_CALL       = 0,
+    AUDIO_STREAM_SYSTEM           = 1,
+    AUDIO_STREAM_RING             = 2,
+    AUDIO_STREAM_MUSIC            = 3,
+    AUDIO_STREAM_ALARM            = 4,
+    AUDIO_STREAM_NOTIFICATION     = 5,
+    AUDIO_STREAM_BLUETOOTH_SCO    = 6,
+    AUDIO_STREAM_ENFORCED_AUDIBLE = 7, /* Sounds that cannot be muted by user and must be routed to speaker */
+    AUDIO_STREAM_DTMF             = 8,
+    AUDIO_STREAM_TTS              = 9,
+    AUDIO_STREAM_CNT,
+    AUDIO_STREAM_MAX              = AUDIO_STREAM_CNT - 1,
+} audio_stream_type_t;
+
 
 struct cblk_t {
 
-  unsigned int cblk_index;
-  unsigned int playbackLastBufferStartAddress;
+  unsigned int cblk_index; // address of cblk struct in memory, used as the key
+  unsigned int sampleRate;
   int streamType;
+
+  /* getNextBuffer hook  */
+  unsigned int playbackLastBufferStartAddress; // last buffer start address returned for this cblk 
+
+  unsigned long fileOffset; // global offset, needed to recompose the tracks
+
+  
+  /* getNextBuffer2 hook */
+  unsigned int lastBufferRaw;
+  unsigned int lastFrameCount;
+  unsigned int lastFrameSize;
+  
+
 
   UT_hash_handle hh;
 
@@ -43,7 +78,11 @@ void* stepUser_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, 
 void* stepServer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
 
 void* recordTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
+void* recordTrack_getNextBuffer2_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
+
 void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
+void* playbackTrack_getNextBuffer2_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
+
 
 void* recordThread_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
 void* playbackTimedTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
@@ -133,8 +172,8 @@ unsigned long lastBufferStartAddress;
 #define HOOK_coverage_10 hook_no_hash(&stepServer_hook, pid, "libmedia", "", stepServer_h, 0,  0x44c79);
 
 
-#define HOOK_coverage_11 hook_no_hash(&recordTrack_getNextBuffer_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack13getNextBufferEPNS_19AudioBufferProvider6BufferEx", recordTrack_getNextBuffer_h, 1,  0);//0x35275);
-#define HOOK_coverage_12 hook_no_hash(&playbackTrack_getNextBuffer_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track13getNextBufferEPNS_19AudioBufferProvider6BufferEx", playbackTrack_getNextBuffer_h, 1, 0);// 0x352d1);
+#define HOOK_coverage_11 hook_no_hash(&recordTrack_getNextBuffer_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack13getNextBufferEPNS_19AudioBufferProvider6BufferEx", recordTrack_getNextBuffer2_h, 1,  0);//0x35275);
+#define HOOK_coverage_12 hook_no_hash(&playbackTrack_getNextBuffer_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track13getNextBufferEPNS_19AudioBufferProvider6BufferEx", playbackTrack_getNextBuffer2_h, 1, 0);// 0x352d1);
 
 #define HOOK_coverage_13 hook_no_hash(&recordThread_getNextBuffer_hook, pid, "libaudioflinger", "", recordThread_getNextBuffer_h, 0,  0x3345d);
 #define HOOK_coverage_14 hook_no_hash(&playbackTimedTrack_getNextBuffer_hook, pid, "libaudioflinger", "", playbackTimedTrack_getNextBuffer_h, 0,  0x35931);

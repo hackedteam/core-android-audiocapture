@@ -34,6 +34,8 @@ if __name__ == '__main__':
     position = 0
 
     print '[*] Reading dump: {}'.format(sys.argv[1])
+
+
     while position < len(dump):
         
         # header format - each field is 4 bytes le :
@@ -64,14 +66,31 @@ if __name__ == '__main__':
             print '\tFound track cblk {}\t\tstreamType: {}\tsampleRate {}'.format( hex(cblkId), streamType, sampleRate)
             tracks[cblkId].seconds.append(seconds)
             tracks[cblkId].useconds.append(useconds)
-            tracks[cblkId].audioRaw.append(audioRaw)
+
+            if( len(audioRaw) != 8 ):
+                tracks[cblkId].audioRaw.append(audioRaw)
+            else:
+                print '\tShouldn\'t take place'
+
         else:
-            assert tracks[cblkId].streamType == streamType, '[E] streamType changed'
-            assert tracks[cblkId].sampleRate == sampleRate, '[E] sampleRate changed'
+            if tracks[cblkId].streamType != streamType:
+                print '[D] streamType changed {} -> {}'.format( streamType, tracks[cblkId].streamType )
+
+            if tracks[cblkId].sampleRate != sampleRate:
+                print '[D] sampleRate changed {} -> {}'.format( sampleRate, tracks[cblkId].sampleRate )
+
 
             tracks[cblkId].seconds.append(seconds)
             tracks[cblkId].useconds.append(useconds)
-            tracks[cblkId].audioRaw.append(audioRaw)
+
+            if( len(audioRaw) != 8 ):
+                tracks[cblkId].audioRaw.append(audioRaw)
+            else:
+                #print '8 bytes block'
+                pass
+                
+                        
+
             
         
     if len(tracks.keys()) is not 0:
@@ -91,23 +110,32 @@ if __name__ == '__main__':
             
             header = [struct.pack('>I',x) for x in header ]
             
+            # size of file = fsize - 8
+            header[1] = struct.pack('<I',len(''.join(header)) + len(audioRaw) )
+
             # samples per sec
-            header[6] =  struct.pack('<I', tracks[t].sampleRate)
+            # sample rate test: size of block * 21.5
+            audioRawBlockLen = len(tracks[t].audioRaw[0])
+
+            for r in tracks[t].audioRaw:
+                if audioRawBlockLen != len(r):
+                    print '\texpected: {} found: {}\t position {}'.format(audioRawBlockLen, len(r), tracks[t].audioRaw.index(r))
+                    
+    
+            header[6] =  struct.pack('<I', audioRawBlockLen * 21.5)
             
             # bytes per sec
-            header[7] =  struct.pack('<I', tracks[t].sampleRate*2)
+            header[7] =  struct.pack('<I', audioRawBlockLen * 21.5 * 2)
 
-            # size
+            # size of data
             header[10] = struct.pack('<I', len(audioRaw))
 
+            
             fh.write( ''.join(header) )
 
 
-            # write raw audio
-            #size = len(audioRaw) 
 
-            #fmt = [ 'I' for i in range(0, size ) ]
-            #fmt = '<' + ''.join(fmt)
+            
             fh.write( audioRaw )
 
             fh.close()

