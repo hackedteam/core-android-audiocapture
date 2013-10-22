@@ -26,16 +26,17 @@ if __name__ == '__main__':
 
     tracks = {}
     
-    if len(sys.argv) != 2:
-        print 'usage: {} dumpFile'.format(sys.argv[0])
+    if len(sys.argv) != 3 or ( sys.argv[2] != 'in' and sys.argv[2] != 'out'):
+        print 'usage: {} dumpFile in/out'.format(sys.argv[0])
         exit(-1)
 
     dump = open(sys.argv[1], 'rb').read()
+    typeOfTrack = sys.argv[2]
     position = 0
 
     print '[*] Reading dump: {}'.format(sys.argv[1])
-
-
+    
+    suff = 0
     while position < len(dump):
         
         # header format - each field is 4 bytes le :
@@ -83,15 +84,17 @@ if __name__ == '__main__':
             tracks[cblkId].seconds.append(seconds)
             tracks[cblkId].useconds.append(useconds)
 
-            if( len(audioRaw) != 8 ):
+
+            if( len(audioRaw) > 128  ):
                 tracks[cblkId].audioRaw.append(audioRaw)
             else:
-                #print '8 bytes block'
-                pass
+                print 'wrong size {}'.format(len(audioRaw))
+                #filename = 'dump_{}.bin'.format(suff)
+                #print filename
+                #open(filename, 'wb').write(audioRaw)
+                suff +=1
                 
-                        
-
-            
+                
         
     if len(tracks.keys()) is not 0:
         print '[*] Dumping tracks'
@@ -121,9 +124,13 @@ if __name__ == '__main__':
                 if audioRawBlockLen != len(r):
                     print '\texpected: {} found: {}\t position {}'.format(audioRawBlockLen, len(r), tracks[t].audioRaw.index(r))
                     
-    
-            header[6] =  struct.pack('<I', audioRawBlockLen * 21.5)
-            
+            # wechat
+            if typeOfTrack == 'out':
+                sampleRate = audioRawBlockLen * 21.5
+
+            header[6] =  struct.pack('<I', sampleRate)
+            print '\tsample rate: {}'.format(sampleRate)
+
             # bytes per sec
             header[7] =  struct.pack('<I', audioRawBlockLen * 21.5 * 2)
 
@@ -132,8 +139,6 @@ if __name__ == '__main__':
 
             
             fh.write( ''.join(header) )
-
-
 
             
             fh.write( audioRaw )

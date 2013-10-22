@@ -234,12 +234,13 @@ void* playbackTrack_getNextBuffer2_h(void* a, void* b, void* c, void* d, void* e
   h_ptr = (void *) playbackTrack_getNextBuffer_hook.orig;
   hook_precall(&playbackTrack_getNextBuffer_hook);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
+  hook_postcall(&playbackTrack_getNextBuffer_hook);
    
 #ifdef DBG
   log("\t\t\t\tresult: %d\n", (int) result);
 #endif
 
-  hook_postcall(&playbackTrack_getNextBuffer_hook);
+  
 
   /* fetch the necessary fields */
   cblk_ptr = (unsigned int*) (a + 0x1c) ;
@@ -268,6 +269,7 @@ void* playbackTrack_getNextBuffer2_h(void* a, void* b, void* c, void* d, void* e
 
   /* [1] first field (ptr) within AudioBufferProvider */
   bufferRaw = *(unsigned int*) (b);
+
   
   // add the cblk to the tracks list, if
   // we don't find it, it might be because
@@ -277,6 +279,7 @@ void* playbackTrack_getNextBuffer2_h(void* a, void* b, void* c, void* d, void* e
   HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
   
   if( cblk_tmp == NULL ) {
+
     cblk_tmp =  malloc( sizeof(struct cblk_t) );
 #ifdef DBG
     log("cblk_tmp %x size %d\n", cblk_tmp, sizeof(cblk_tmp));
@@ -335,7 +338,7 @@ void* playbackTrack_getNextBuffer2_h(void* a, void* b, void* c, void* d, void* e
       positionTmp = lseek(fd_out, 0, SEEK_CUR);
 
 #ifdef DBG
-	log("\t\tfake header written: %x\n", positionTmp);
+      log("\t\tfake header written: %x\n", positionTmp);
 #endif
 	
       // if something is written fix the header
@@ -381,6 +384,7 @@ void* playbackTrack_getNextBuffer2_h(void* a, void* b, void* c, void* d, void* e
   log("\t\t\t------- end playback2 -------------\n");
 #endif
 
+  
   return result;
 
 
