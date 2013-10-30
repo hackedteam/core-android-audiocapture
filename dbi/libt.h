@@ -15,6 +15,7 @@
         fprintf(f, __VA_ARGS__);\
         fflush(f); fclose(f); }
 
+
 struct hook_t {
   unsigned int jump[3];		// ARM jump code
   unsigned int store[3];	// ARM stolen bytes

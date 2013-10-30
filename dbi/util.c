@@ -33,6 +33,8 @@
 
 #include "util.h"
 
+static unsigned long next = 1;
+
 typedef struct symtab *symtab_t;
 struct symlist {
 	Elf32_Sym *sym;       /* symbols */
@@ -43,6 +45,19 @@ struct symtab {
 	struct symlist *st;    /* "static" symbols */
 	struct symlist *dyn;   /* dynamic symbols */
 };
+
+
+
+/* /\* RAND_MAX assumed to be 32767 *\/ */
+/* int myrand(void) { */
+/*   next = next * 1103515245 + 12345; */
+/*   return((unsigned)(next/65536) % 32768); */
+/* } */
+
+/* void mysrand(unsigned seed) { */
+/*   next = seed; */
+/* } */
+
 
 static void* xmalloc(size_t size)
 {
@@ -366,17 +381,24 @@ static int lookup2(struct symlist *sl, unsigned char type,
 	Elf32_Sym *p;
 	int len;
 	int i;
+	int res;
 
-	len = strlen(name);
+	len = strlen(name) + 1;
 	for (i = 0, p = sl->sym; i < sl->num; i++, p++) {
-		//printf("name: %s %x\n", sl->str+p->st_name, p->st_value);
-		if (!strncmp(sl->str+p->st_name, name, len)
-		    && ELF32_ST_TYPE(p->st_info) == type) {
-			//if (p->st_value != 0) {
-			*val = p->st_value;
-			return 0;
-			//}
-		}
+
+	  //log("name: %s %x\n", sl->str+p->st_name, p->st_value);
+	  //log("strncmp: %s vs %s for %d\n", sl->str+p->st_name, name, len);
+
+	  res = strncmp(sl->str+p->st_name, name, len);
+	  //log("\tres: %d\n", res);
+	    
+	  if ( !res && ELF32_ST_TYPE(p->st_info) == type ) {
+
+	    //if (p->st_value != 0) {
+	    *val = p->st_value;
+	    return 0;
+	    //}
+	  }
 	}
 	return -1;
 }
@@ -384,16 +406,23 @@ static int lookup2(struct symlist *sl, unsigned char type,
 static int lookup_sym(symtab_t s, unsigned char type,
 	   char *name, unsigned long *val)
 {
-	if (s->dyn && !lookup2(s->dyn, type, name, val))
-		return 0;
-	if (s->st && !lookup2(s->st, type, name, val))
-		return 0;
-	return -1;
+  if (s->dyn && !lookup2(s->dyn, type, name, val)) {
+    //log("lookup_sym: 0\n");
+    return 0;
+  }
+  if (s->st && !lookup2(s->st, type, name, val)) {
+    //log("lookup_sym: 1\n");
+    return 0;
+  }
+  //log("lookup_sym: fail\n");
+  return -1;
 }
 
 static int lookup_func_sym(symtab_t s, char *name, unsigned long *val)
 {
-	return lookup_sym(s, STT_FUNC, name, val);
+  int res = lookup_sym(s, STT_FUNC, name, val);
+  log("lookup_func_sym: %d\n", res);
+  return res;
 }
 
 int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
@@ -421,11 +450,15 @@ int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
 		//printf("cannot read symbol table\n");
 		return -3;
 	}
+	log("pid %d, name %s, libn %s\n", pid, name, libn);
 	if (0 > lookup_func_sym(s, name, addr)) {
-		//printf("cannot find %s\n", name);
-		return -4;
+	  log("fail\n")
+	  log("find_name: cannot find %s\n", name);
+	  return -4;
 	}
+	log("not fail %p %d\n", addr, *addr);
 	*addr += libcaddr;
+	log("returning 0\n");
 	return 0;
 }
 
