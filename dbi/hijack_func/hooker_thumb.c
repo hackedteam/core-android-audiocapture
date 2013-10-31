@@ -696,8 +696,8 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 	log("\t\trolled forward: %x\n", lseek(cblk_tmp->fd, 0, SEEK_CUR));
 
 
-	/* dump when fd is at position >= 5242880 */
-	if( lseek(cblk_tmp->fd, 0, SEEK_CUR) >= 5242880 ) {
+	/* dump when fd is at position >= 1048576 - 1Mb */
+	if(lseek(cblk_tmp->fd, 0, SEEK_CUR) >= 1048576) {
 
 	  log("should take a dump\n");
 	  

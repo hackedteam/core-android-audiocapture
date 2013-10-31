@@ -1,5 +1,8 @@
-LD=~/tools/arm-2008q3/bin/arm-none-linux-gnueabi-ld
-CC=~/tools/arm-2008q3/bin/arm-none-linux-gnueabi-gcc
+# LD=~/tools/arm-2008q3/bin/arm-none-linux-gnueabi-ld
+# CC=~/tools/arm-2008q3/bin/arm-none-linux-gnueabi-gcc
+
+CC=/Users/alberto/Documents/Devel/Android/android-ndk//toolchains/arm-linux-androideabi-4.6/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-gcc
+LD=/Users/alberto/Documents/Devel/Android/android-ndk//toolchains/arm-linux-androideabi-4.6/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-ld
 
 all:
 	(cd hijack_func; ./build.sh)
