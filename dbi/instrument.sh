@@ -1,8 +1,8 @@
 #!/system/bin/sh
 rm log
 touch log
-mkdir /data/local/tmp 2> /dev/null
-chown media /data/local/tmp
+mkdir /data/local/tmp/dump 2> /dev/null
+chown media /data/local/tmp/dump
 sleep 2
 ps | grep mediaserver
 pidof mediaserver

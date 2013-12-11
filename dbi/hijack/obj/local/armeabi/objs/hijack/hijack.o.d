@@ -1,4 +1,5 @@
-obj/local/armeabi/objs/hijack/hijack.o: jni/hijack.c \
+/home/unknown/stuff/core-android-audiocapture/dbi/hijack/obj/local/armeabi/objs/hijack/hijack.o: \
+ /home/unknown/stuff/core-android-audiocapture/dbi/hijack/jni/hijack.c \
  /home/unknown/android/android-ndk-r8e/platforms/android-3/arch-arm/usr/include/stdio.h \
  /home/unknown/android/android-ndk-r8e/platforms/android-3/arch-arm/usr/include/sys/cdefs.h \
  /home/unknown/android/android-ndk-r8e/platforms/android-3/arch-arm/usr/include/sys/cdefs_elf.h \

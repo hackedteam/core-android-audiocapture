@@ -255,7 +255,7 @@ static symtab_t load_symtab(char *filename)
 
 int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 {
-	char raw[80000]; // increase this if needed for larger "maps"
+	char raw[800000]; // increase this if needed for larger "maps"
 	char name[MAX_NAME_LEN];
 	char *p;
 	unsigned long start, end;
@@ -263,6 +263,8 @@ int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 	int nmm = 0;
 	int fd, rv;
 	int i;
+
+	log("as we enter\n");
 
 	sprintf(raw, "/proc/%d/maps", pid);
 	fd = open(raw, O_RDONLY);
@@ -291,13 +293,19 @@ int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 	}
 	close(fd);
 
+	log("parsing maps\n");
+
 	p = strtok(raw, "\n");
 	m = mm;
 	while (p) {
+	  log("%s\n", p);
 		/* parse current map line */
 		rv = sscanf(p, "%08lx-%08lx %*s %*s %*s %*s %s\n",
 			    &start, &end, name);
 
+		log("%d\n", rv);
+		log("%s\n", name);
+		
 		p = strtok(NULL, "\n");
 
 		if (rv == 2) {
@@ -308,6 +316,7 @@ int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 			continue;
 		}
 
+		log("for\n");
 		/* search backward for other mapping with same name */
 		for (i = nmm-1; i >= 0; i--) {
 			m = &mm[i];
@@ -315,6 +324,7 @@ int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 				break;
 		}
 
+		log("if\n");
 		if (i >= 0) {
 			if (start < m->start)
 				m->start = start;
@@ -326,11 +336,12 @@ int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 			m->start = start;
 			m->end = end;
 			strcpy(m->name, name);
-			//log("Load memmap: %s\n", name)
+			log("Load memmap: %s\n", name)
 		}
 	}
 
 	*nmmp = nmm;
+	log("returning\n");
 	return 0;
 }
 
@@ -442,8 +453,8 @@ int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
 		return load_memmap_return;
 	}
 	if (0 > find_libname(libn, libc, sizeof(libc), &libcaddr, mm, nmm)) {
-		log("cannot find libc\n");
-		return -2;
+	  log("cannot find %s\n", libn);
+	  return -2;
 	}
 	s = load_symtab(libc);
 	if (!s) {

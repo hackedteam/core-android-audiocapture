@@ -786,8 +786,22 @@ int main(int argc, char *argv[])
 	regs.ARM_pc = mprotectaddr; // execute mprotect()
 	
 	// detach and continue
-	ptrace(PTRACE_SETREGS, pid, 0, &regs);
-	ptrace(PTRACE_DETACH, pid, 0, 0);
+	result = ptrace(PTRACE_SETREGS, pid, 0, &regs);
+	
+	if (debug) {
+	  printf("first ptrace %d\n", result);
+	  if( result == -1 )
+	    printf("\t\t%s\n", strerror(*(int*)__errno()) );
+	}
+
+	result = ptrace(PTRACE_DETACH, pid, 0, 0);
+	
+	if (debug) {
+	  printf("second ptrace %d\n", result);
+	  if( result == -1 )
+	    printf("\t\t%s\n", strerror(*(int*)__errno()) );
+	}
+
 
 	if (debug)
 		printf("library injection completed!\n");

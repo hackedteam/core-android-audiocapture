@@ -694,33 +694,73 @@ void my_init()
   log("[*] Starting hooking\n")
     //start_coms();
     
-  int find_name_result;
+  int v = 0;
   unsigned long int addr = 0;
 
+  FILE *fp;
+  char *command =  "getprop ro.build.version.release";
+  char version[10] = "";
+  
   int pid = getpid();
   pid_global = getpid();
 
 
   log("[*] Pid:%d\n", pid);
 
+  /* determine whether it's running 4.0 compatible or 4.1/4.2 */
+  fp = popen(command, "r");
+  if( fgets(version, sizeof(version), fp) != NULL &&  version[0] == '4' ) {
 
-  /* dumpers */
-  HOOK_coverage_11  // record
-  HOOK_coverage_12  // play
+    log("[*] version %s\n", version);
 
-  /* signaling */
-  // playback
-  HOOK_coverage_2  // new
-  HOOK_coverage_17 // start
-  HOOK_coverage_19 // stop
-  HOOK_coverage_20 // pause
+    if( version[2] == '0' ) {
+   
+      log("[*] 4.0\n");
 
-  // record 
-  HOOK_coverage_16
-  HOOK_coverage_18
- 
- 
-  log("[*] Hooking finished\n")
+      /* 4.0 */
+      /* dumpers */
+      HOOK_coverage_40_11;  // record
+      HOOK_coverage_40_12;  // play
+
+      /* signaling */
+      // playback
+      HOOK_coverage_40_2;  // new
+      HOOK_coverage_40_17; // start
+      HOOK_coverage_19;    // stop
+      HOOK_coverage_20;    // pause
+
+      // record 
+      HOOK_coverage_40_16; // start
+      HOOK_coverage_18;    // stop
+
+    } 
+    else {
+
+      log("[*] 4.1/4.2\n");
+
+      /* 4.1/4.2 */
+    
+      /* dumpers */
+      HOOK_coverage_11;  // record
+      HOOK_coverage_12;  // play
+
+      /* signaling */
+      // playback
+      HOOK_coverage_2;  // new
+      HOOK_coverage_17; // start
+      HOOK_coverage_19; // stop
+      HOOK_coverage_20; // pause
+
+      // record 
+      HOOK_coverage_16; // start
+      HOOK_coverage_18; // stop
+    
+    }
+	
+    log("[*] Hooking finished\n");
+
+  }
+  pclose(fp);
 }
  
 

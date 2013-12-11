@@ -111,31 +111,34 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
     log("rename %d\n", rename(cblk_tmp->filename, filename) );
 #endif
 
-    if( filename != NULL) {
-      free(filename);
-      filename = NULL;
-    }
+    // temporary fix
+    cblk_tmp->stopDump = 1;
 
-    close(cblk_tmp->fd);
+/*     if( filename != NULL) { */
+/*       free(filename); */
+/*       filename = NULL; */
+/*     } */
 
-    /* free some stuff */
-    if( cblk_tmp->trackId != NULL ) {
-      free(cblk_tmp->trackId);
-      cblk_tmp->trackId = NULL;
-    }
+/*     close(cblk_tmp->fd); */
 
-    if( cblk_tmp->filename != NULL ) {
-      free(cblk_tmp->filename);
-      cblk_tmp->filename = NULL;
-    }
+/*     /\* free some stuff *\/ */
+/*     if( cblk_tmp->trackId != NULL ) { */
+/*       free(cblk_tmp->trackId); */
+/*       cblk_tmp->trackId = NULL; */
+/*     } */
 
-    HASH_DEL(cblkTracks, cblk_tmp);
-    free(cblk_tmp);
+/*     if( cblk_tmp->filename != NULL ) { */
+/*       free(cblk_tmp->filename); */
+/*       cblk_tmp->filename = NULL; */
+/*     } */
+
+/*     HASH_DEL(cblkTracks, cblk_tmp); */
+/*     free(cblk_tmp); */
     
 
-#ifdef DBG
-    log("freed all the crap\n");
-#endif
+/* #ifdef DBG */
+/*     log("freed all the crap\n"); */
+/* #endif */
   }
 
   log("\t\t\t------- exit recordTrackStop -------------\n");
@@ -262,7 +265,7 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
     cblk_tmp->sampleRate = sampleRate;
     
-    HASH_ADD_INT(cblkTracks, cblk_index, cblk_tmp);
+    HASH_ADD_INT(cblkTracks, cblk_index, cblk_tmp); // new track
     cblk_tmp = NULL;
     
     HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
@@ -336,7 +339,7 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
   hook_precall(&playbackTrackStop_hook);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   hook_postcall(&playbackTrackStop_hook);
-  //  log("\t\t\t\tresult: %d\n", (int) result);
+  log("\t\t\t\tresult: %d\n", (int) result);
 
   HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
 
@@ -697,7 +700,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 
 
 	/* dump when fd is at position >= 1048576 - 1Mb */
-	if(lseek(cblk_tmp->fd, 0, SEEK_CUR) >= 1048576) {
+	if(lseek(cblk_tmp->fd, 0, SEEK_CUR) >= FILESIZE) {
 
 	  log("should take a dump\n");
 	  
@@ -893,8 +896,11 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
     
     cblk_tmp->streamType = -2; // dummy value, we can't tell from within getNextBuffer the exact streamType
     cblk_tmp->sampleRate = sampleRate;
+
+    // temporary fix for 2 stop call in a row
+    cblk_tmp->stopDump = 0;
     
-    HASH_ADD_INT(cblkTracks, cblk_index, cblk_tmp);
+    HASH_ADD_INT(cblkTracks, cblk_index, cblk_tmp); // record
     cblk_tmp = NULL;
     
     HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
@@ -917,7 +923,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
     log("\t\tstreamType: %d\n", cblk_tmp->streamType);
 #endif
 
-    if( result == 0 && framesCount != 0 ) {
+    if( result == 0 && framesCount != 0 && cblk_tmp->stopDump == 0 ) { // stopDump: temporary fix
 
       // header
       headerStart = lseek(cblk_tmp->fd, 0, SEEK_CUR);
@@ -970,7 +976,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 	
 
 	/* dump when fd is at position >= 5242880 */
-	if( lseek(cblk_tmp->fd, 0, SEEK_CUR) >= 5242880 ) {
+	if( lseek(cblk_tmp->fd, 0, SEEK_CUR) >= FILESIZE ) {
 
 	  log("should take a dump\n");
 	  

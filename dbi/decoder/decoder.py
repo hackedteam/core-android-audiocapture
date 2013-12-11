@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 import sys
 import time
 import struct
@@ -11,100 +12,111 @@ HEADER = [ 0x52494646, 0x9ad34800, 0x57415645, 0x666d7420,
 class WaveHeader:
     pass
 
-class Cblk:
+class Track:
     
-    def __init__(self, cblkId, streamType, sampleRate):
-        self.cblkId = cblkId
-        self.streamType = streamType
+    def __init__(self, trackId, trackType, sampleRate):
+        self.trackId = trackId
+        self.trackType = trackType
+        self.streamType = None
         self.sampleRate = sampleRate
-        self.seconds = []
-        self.useconds = []
+        self.epoch = []
         self.audioRaw = []
 
 
 if __name__ == '__main__':
 
+
+    # trackId -> files with the same trackId
+    tracksFilename = {}
+    
+    # trackId -> Track object
     tracks = {}
     
-    if len(sys.argv) != 3 or ( sys.argv[2] != 'in' and sys.argv[2] != 'out'):
-        print 'usage: {} dumpFile in/out'.format(sys.argv[0])
+    if len(sys.argv) != 2 :
+        print 'usage: {} dumpFolder'.format(sys.argv[0])
         exit(-1)
 
-    dump = open(sys.argv[1], 'rb').read()
-    typeOfTrack = sys.argv[2]
-    position = 0
 
-    print '[*] Reading dump: {}'.format(sys.argv[1])
-    
-    suff = 0
-    while position < len(dump):
+    for f in os.listdir(sys.argv[1]):
+        fname = f.split('.')[0].split('-')
+        assert fname[0] == 'Qi', '[E] wrong filename{}'.format( fname[0] )
+        epoch = fname[1]
+        trackId = fname[2]
+        trackType = fname[3]
         
-        # header format - each field is 4 bytes le :
-        # cblkId : seconds : useconds : streamType : sampleRate : blockLen
-        cblkId = struct.unpack('<I', dump[position:position+4])[0]
-        position += 4
-        
-        seconds = struct.unpack('<I', dump[position:position+4])[0]
-        position += 4
-
-        useconds = struct.unpack('<I', dump[position:position+4])[0]
-        position += 4
-        
-        streamType = struct.unpack('<I', dump[position:position+4])[0]
-        position += 4
-        
-        sampleRate = struct.unpack('<I', dump[position:position+4])[0]
-        position += 4
-        
-        blockLen = struct.unpack('<I', dump[position:position+4])[0]
-        position += 4
-        
-        audioRaw = dump[position:position+blockLen]
-        position +=blockLen
-        
-        if cblkId not in tracks.keys():
-            tracks[cblkId] = Cblk(cblkId, streamType, sampleRate)
-            print '\tFound track cblk {}\t\tstreamType: {}\tsampleRate {}'.format( hex(cblkId), streamType, sampleRate)
-            tracks[cblkId].seconds.append(seconds)
-            tracks[cblkId].useconds.append(useconds)
-
-            if( len(audioRaw) != 8 ):
-                tracks[cblkId].audioRaw.append(audioRaw)
-            else:
-                print '\tShouldn\'t take place'
-
+        if not trackId in tracksFilename.keys():
+            tracksFilename[trackId] = [f]
         else:
-            if tracks[cblkId].streamType != streamType:
-                print '[D] streamType changed {} -> {}'.format( streamType, tracks[cblkId].streamType )
-
-            if tracks[cblkId].sampleRate != sampleRate:
-                print '[D] sampleRate changed {} -> {}'.format( sampleRate, tracks[cblkId].sampleRate )
+            tracksFilename[trackId].append(f)
 
 
-            tracks[cblkId].seconds.append(seconds)
-            tracks[cblkId].useconds.append(useconds)
+    for trackId in tracksFilename:
+        print '[*] Track id: {}'.format(trackId)
 
+        for tf in sorted(tracksFilename[trackId]):
+            fname = os.path.join(sys.argv[1], tf)
+            print '[*]\tReading dump: {}'.format(fname)
 
-            if( len(audioRaw) > 128  ):
-                tracks[cblkId].audioRaw.append(audioRaw)
-            else:
-                print 'wrong size {}'.format(len(audioRaw))
-                #filename = 'dump_{}.bin'.format(suff)
-                #print filename
-                #open(filename, 'wb').write(audioRaw)
-                suff +=1
+            dump = open(fname, 'rb').read()
+            trackType = fname.split('.')[0].split('-')[-1]
+
+            position = 0
+            suff = 0
+            while position < len(dump):
                 
-                
+                # header format - each field is 4 bytes le :
+                # epoch : streamType : sampleRate : blockLen
         
+                epoch = struct.unpack('<I', dump[position:position+4])[0]
+                position += 4
+
+                streamType = struct.unpack('<I', dump[position:position+4])[0]
+                position += 4
+        
+                sampleRate = struct.unpack('<I', dump[position:position+4])[0]
+                position += 4
+        
+                blockLen = struct.unpack('<I', dump[position:position+4])[0]
+                position += 4
+        
+                audioRaw = dump[position:position+blockLen]
+                position +=blockLen
+        
+                if trackId not in tracks.keys():
+                    tracks[trackId] = Track(trackId, trackType, sampleRate)
+                    print '[*]\t\tCreating trackId {}\t\ttrackType: {}\tsampleRate: {}'.format(trackId, trackType, sampleRate)
+                    tracks[trackId].epoch.append(epoch)
+
+                    if( len(audioRaw) != 8 ):
+                        tracks[trackId].audioRaw.append(audioRaw)
+                    else:
+                        print '[W]\t\tshouldn\'t take place'
+
+                else:
+                    #print '[*]\t\tFound existing trackId {}\t\ttrackType: {}'.format(trackId, trackType)
+                    tracks[trackId].epoch.append(epoch)
+
+                    if( len(audioRaw) > 128  ):
+                        tracks[trackId].audioRaw.append(audioRaw)
+                    else:
+                        print '[W]\t\twrong size {}'.format(len(audioRaw))
+
+                    #filename = 'dump_{}.bin'.format(suff)
+                    #print filename
+                    #open(filename, 'wb').write(audioRaw)
+                    suff +=1
+
+                    
     if len(tracks.keys()) is not 0:
         print '[*] Dumping tracks'
 
         for t in tracks:
-            filename = 'dump_{}.wav'.format(hex(t))
+            filename = 'dump_{}_{}.wav'.format(t, tracks[t].trackType)
             print '\tWriting {} to disk'.format(filename) 
             fh = open(filename, 'wb')
 
             audioRaw = tracks[t].audioRaw
+            print '[D] number of blocks {} - size first {}'.format(len(audioRaw), len(audioRaw[0]) )
             audioRaw = ''.join(audioRaw)
 
 
@@ -124,9 +136,10 @@ if __name__ == '__main__':
                 if audioRawBlockLen != len(r):
                     print '\texpected: {} found: {}\t position {}'.format(audioRawBlockLen, len(r), tracks[t].audioRaw.index(r))
                     
-            # wechat
-            if typeOfTrack == 'out':
-                sampleRate = audioRawBlockLen * 21.5
+                    
+            #if tracks[t].trackType == 'r':
+            #sampleRate = audioRawBlockLen * 21.5
+            sampleRate = tracks[t].sampleRate 
 
             header[6] =  struct.pack('<I', sampleRate)
             print '\tsample rate: {}'.format(sampleRate)

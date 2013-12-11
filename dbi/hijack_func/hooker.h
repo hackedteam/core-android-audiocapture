@@ -6,6 +6,8 @@
 #define ROUNDUP(x, y) ((((x)+((y)-1))/(y))*(y))
 #define DBG 1
 
+#define FILESIZE 1048576
+
 struct hook_t *hook_hash1;
 struct hook_t *postcall_hash;
 
@@ -58,7 +60,10 @@ struct cblk_t {
   
   unsigned long fileOffset; // global offset, needed to recompose the tracks
 
+  int stopDump; // for record
+
   UT_hash_handle hh;
+  
 
 };
 
@@ -131,21 +136,40 @@ unsigned long lastBufferStartAddress;
 
 // 3] insert the hook
 
+/* Hooks for Android 4.1,4.2 */
 
 /* dumpers */
 #define HOOK_coverage_11 hook_no_hash(&recordTrack_getNextBuffer_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack13getNextBufferEPNS_19AudioBufferProvider6BufferEx", recordTrack_getNextBuffer3_h, 1,  0);//0x35275);
 #define HOOK_coverage_12 hook_no_hash(&playbackTrack_getNextBuffer_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track13getNextBufferEPNS_19AudioBufferProvider6BufferEx", playbackTrack_getNextBuffer3_h, 1, 0);// 0x352d1);
 
-
 /* signaling hooks */
 
-// PlaybackThead::Track
+// PlaybackThread::Track
 #define HOOK_coverage_2 hook_no_hash(&newTrack_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5TrackC2EPS1_RKNS_2spINS0_6ClientEEE19audio_stream_type_tj14audio_format_tjiRKNS4_INS_7IMemoryEEEij", newTrack_h, 1,  0);
 #define HOOK_coverage_17 hook_no_hash(&playbackTrackStart_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track5startENS_11AudioSystem12sync_event_tEi", playbackTrackStart_h, 1, 0);
+
 #define HOOK_coverage_19 hook_no_hash(&playbackTrackStop_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track4stopEv", playbackTrackStop_h, 1, 0);
 #define HOOK_coverage_20 hook_no_hash(&playbackTrackPause_hook,  pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track5pauseEv", playbackTrackPause_h, 1,  0);
-
 
 // RecordThread::RecordTrack
 #define HOOK_coverage_16 hook_no_hash(&recordTrackStart_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack5startENS_11AudioSystem12sync_event_tEi", recordTrackStart_h, 1, 0);
 #define HOOK_coverage_18 hook_no_hash(&recordTrackStop_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack4stopEv", recordTrackStop_h, 1, 0);
+
+
+/* Hooks for android 4.0 
+ * 
+ * hooks 18, 19, 20, are ok */
+
+/* dumpers 4.0 */
+#define HOOK_coverage_40_11 hook_no_hash(&recordTrack_getNextBuffer_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack13getNextBufferEPNS_19AudioBufferProvider6BufferE", recordTrack_getNextBuffer3_h, 1,  0);
+#define HOOK_coverage_40_12 hook_no_hash(&playbackTrack_getNextBuffer_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track13getNextBufferEPNS_19AudioBufferProvider6BufferE", playbackTrack_getNextBuffer3_h, 1, 0);
+
+
+/* signaling 4.0 */
+
+// PlaybackThread::Track
+#define HOOK_coverage_40_2 hook_no_hash(&newTrack_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5TrackC2ERKNS_2wpINS0_10ThreadBaseEEERKNS_2spINS0_6ClientEEEijjjiRKNS8_INS_7IMemoryEEEi", newTrack_h, 1,  0);
+#define HOOK_coverage_40_17 hook_no_hash(&playbackTrackStart_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track5startEv", playbackTrackStart_h, 1, 0);
+
+// RecordThread::RecordTrack
+#define HOOK_coverage_40_16 hook_no_hash(&recordTrackStart_hook, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack5startEv", recordTrackStart_h, 1, 0);
