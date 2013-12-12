@@ -36,7 +36,6 @@ struct cblk_t {
   unsigned int sampleRate;
   int streamType;
   
-  unsigned int finished;
 
   
   // Qi-<epoch time>-r.tmp per audio remoto

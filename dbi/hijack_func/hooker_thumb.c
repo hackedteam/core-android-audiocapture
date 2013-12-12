@@ -30,17 +30,23 @@ void* recordTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f, v
   void* result;
   int res;
   
-
+#ifdef DBG
   log("\t\t\t------- enter recordTrackStart -------------\n");
+#endif
 
   h_ptr = (void *) recordTrackStart_hook.orig;
   hook_precall(&recordTrackStart_hook);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
+
+#ifdef DBG
   log("\t\t\t\tresult: %d\n", (int) result);
+#endif
   
   hook_postcall(&recordTrackStart_hook);
 
+#ifdef DBG
   log("\t\t\t------- exit recordTrackStart -------------\n");
+#endif
 
   return result;
 
@@ -57,14 +63,18 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
   unsigned int uintTmp;
   time_t now;
 
+#ifdef DBG
   log("\t\t\t------- enter recordTrackStop -------------\n");
- 
+#endif 
+
   h_ptr = (void *) recordTrackStop_hook.orig;
   hook_precall(&recordTrackStop_hook);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   hook_postcall(&recordTrackStop_hook);
 
+#ifdef DBG
   log("\t\t\t\tresult: %d\n", (int) result);
+#endif
 
   cblk = *(unsigned long*) (a + 0x1c);
 
@@ -82,9 +92,11 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
 
   if( cblk_tmp != NULL  ) {
 
-    // temporary fix
+    // TODO: temporary fix
     if( cblk_tmp->stopDump == 1) {
+#ifdef DBG
       log("\trecordTrackStop already called\n");
+#endif
       return;
     }
     cblk_tmp->stopDump = 1;
@@ -114,6 +126,7 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
     *(filename+strlen(filename)-3) = 't';
 
     res = rename(cblk_tmp->filename, filename);
+
 #ifdef DBG  
     log("fname %s\n", filename);
     log("rename %d\n", res );
@@ -148,7 +161,9 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
 #endif
   }
 
+#ifdef DBG
   log("\t\t\t------- exit recordTrackStop -------------\n");
+#endif
 
   return result;
 }
@@ -182,8 +197,10 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
   int written;
   int streamType = (int) d;
 
+#ifdef DBG
   log("enter new track\n");
   log("\tpbthread: %x\n\tclient: %x\n\tstreamType: %x\n\tsampleRate: %d\n\tformat: %x\n\tchannelMask: %x\n\tframeCount: %x\n\tsharedBuffer: %x\n\tsessionId: %x\n\ttid: %x\n\tflags: %x\n", b, c,d, e, f, g, h, i, l, m, n);
+#endif
     
   h_ptr = (void *) newTrack_hook.orig;
   hook_precall(&newTrack_hook);
@@ -191,8 +208,10 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
   hook_postcall(&newTrack_hook);
   
   cblk = *(unsigned long*) (a + 0x1c);
+
+#ifdef DBG
   log("\tnew track cblk: %p\n", cblk);
-  
+#endif
 
   // ----------------------------------
 
@@ -236,13 +255,16 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
     cblk_tmp->cblk_index = cblk;
     cblk_tmp->streamType = streamType;
-    cblk_tmp->finished = 0;
+
 
     snprintf(randString, 11, "%lu", mrand48());
     snprintf(timestamp,  11, "%d", time(NULL));
 
     cblk_tmp->trackId = strdup(randString);
+
+#ifdef DBG
     log("trackId: %s\n", cblk_tmp->trackId);
+#endif
 
     //         Qi-<timestamp>-<id univoco per chiamata>-<canale>.[tmp|boh]
     // length:  2-strlen(timestamp)-strlen(randString)-1.3.1 + 3 chars for '-'
@@ -254,7 +276,10 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
       cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
       snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-r.bin", dumpPath, timestamp, randString );
+      
+#ifdef DBG
       log("filename: %s\n", cblk_tmp->filename);
+#endif
         
 
       cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
@@ -288,7 +313,9 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
   }
   
+#ifdef DBG
   log("\t\t\t----------- exit new track %p %p ------------------\n", result, a)
+#endif
 
   return result;
 }
@@ -301,21 +328,27 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
   int res;
   unsigned long cblk;
 
+#ifdef DBG
   log("\t\t\t------- enter playbackTrackStart -------------\n");
- 
   log("enter start track %x\n", a);
   log("\tevent: %x\n\ttriggerSession: %x\n\n", b, c);
+#endif
 
   cblk = *(unsigned long*) (a + 0x1c);
+
+#ifdef DBG
   log("\tnew track cblk: %x\n", cblk);
+#endif
 
   h_ptr = (void *) playbackTrackStart_hook.orig;
   hook_precall(&playbackTrackStart_hook);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   hook_postcall(&playbackTrackStart_hook);
   
+#ifdef DBG
   log("\t\t\t\tresult: %d\n", (int) result);
   log("\t\t\t------- exit playbackTrackStart -------------\n");
+#endif
 
   return result;
 }
@@ -345,7 +378,10 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
   hook_precall(&playbackTrackStop_hook);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   hook_postcall(&playbackTrackStop_hook);
+
+#ifdef DBG
   log("\t\t\t\tresult: %d\n", (int) result);
+#endif
 
   HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
 
@@ -403,7 +439,9 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
 #endif
   }
 
+#ifdef DBG
   log("\t\t\t------- exit playbackTrackStop -------------\n");
+#endif
 
   return result;
 }
@@ -415,19 +453,25 @@ void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f,
   int res;
   unsigned long cblk;
 
+#ifdef DBG
   log("\t\t\t------- enter playbackTrackPause -------------\n");
+#endif
  
   cblk = *(unsigned long*) (a + 0x1c);
+
+#ifdef DBG
   log("\tnew track cblk: %x\n", cblk);
+#endif
 
   h_ptr = (void *) playbackTrackStart_hook.orig;
   hook_precall(&playbackTrackStart_hook);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   hook_postcall(&playbackTrackStart_hook);
-  
-  log("\t\t\t\tresult: %d\n", (int) result);
 
+#ifdef DBG  
+  log("\t\t\t\tresult: %d\n", (int) result);
   log("\t\t\t------- exit playbackTrackPause -------------\n");
+#endif
 
   return result;
 }
@@ -550,6 +594,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   /* fetch the necessary fields */
   cblk_ptr = (unsigned int*) (a + 0x1c) ;
   cblk = *cblk_ptr;
+
 #ifdef DBG
   log("\t\t\tcblk %p\n", cblk);
 #endif
@@ -685,7 +730,9 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 	// go back to start of header
 	lseek(cblk_tmp->fd, headerStart, SEEK_SET);
 
+#ifdef DBG
 	log("\t\trolled back: %x\n", lseek(cblk_tmp->fd, 0, SEEK_CUR));
+#endif
 
 	// write the header
 	now = time(NULL);
@@ -702,13 +749,17 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 	
 	// reposition the fd
 	lseek(cblk_tmp->fd, positionTmp, SEEK_SET);
-	log("\t\trolled forward: %x\n", lseek(cblk_tmp->fd, 0, SEEK_CUR));
 
+#ifdef DBG
+	log("\t\trolled forward: %x\n", lseek(cblk_tmp->fd, 0, SEEK_CUR));
+#endif
 
 	/* dump when fd is at position >= 1048576 - 1Mb */
 	if(lseek(cblk_tmp->fd, 0, SEEK_CUR) >= FILESIZE) {
-
+	  
+#ifdef DBG
 	  log("should take a dump\n");
+#endif
 	  
 	  /* rename file *.bin to *.tmp */
 	  filename = strdup(cblk_tmp->filename); // check return value
@@ -716,13 +767,13 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 	  *(filename+strlen(filename)-2) = 'm';
 	  *(filename+strlen(filename)-3) = 't';
 	  
+#ifdef DBG
 	  log("fname %s\n", filename);
 	  log("rename %d\n", rename(cblk_tmp->filename, filename) );
+#endif 
 
 	  if( filename != NULL)  {
-	    log("freeing filename\n");
 	    free(filename);
-	    log("after filename free\n");
 	  }
 	  
 	  close(cblk_tmp->fd);
@@ -734,10 +785,16 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 
 	  cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
 	  snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-r.bin", dumpPath, timestamp, cblk_tmp->trackId );
+
+#ifdef DBG
 	  log("new filename: %s\n", cblk_tmp->filename);
+#endif
         
 	  cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
+
+#ifdef DBG
 	  log("%s fd: %d\n", cblk_tmp->filename, cblk_tmp->fd);
+#endif
 
 	}
 
@@ -759,7 +816,6 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 #ifdef DBG
   log("\t\t\t------- end playback3 -------------\n");
 #endif
-
   
   return result;
 
@@ -867,13 +923,16 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 #endif
 
     cblk_tmp->cblk_index = cblk;
-    cblk_tmp->finished = 0;
+
     
     snprintf(randString, 11, "%lu", mrand48());
     snprintf(timestamp,  11, "%d", time(NULL));
 
     cblk_tmp->trackId = strdup(randString);
+
+#ifdef DBG
     log("trackId: %s\n", cblk_tmp->trackId);
+#endif
 
     //         Qi-<timestamp>-<id univoco per chiamata>-<canale>.[tmp|boh]
     // length:  2-strlen(timestamp)-strlen(randString)-1.3.1 + 3 chars for '-'
@@ -883,11 +942,17 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 
     cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
     snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-l.bin",dumpPath, timestamp, randString );
+
+#ifdef DBG
     log("filename: %s\n", cblk_tmp->filename);
+#endif
         
 
     cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
+
+#ifdef DBG
     log("%s fd: %d\n", cblk_tmp->filename, cblk_tmp->fd);
+#endif
 
 
     cblk_tmp->startOfCircularBuffer = *(unsigned int*) (cblk + 0x18);
@@ -930,7 +995,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
     log("\t\tstreamType: %d\n", cblk_tmp->streamType);
 #endif
     
-    //temporary
+    //TODO: temporary
     if( cblk_tmp->stopDump == 1)
       log("RECEVING MORE DATA FOR TRACK %p\n", cblk);
 
