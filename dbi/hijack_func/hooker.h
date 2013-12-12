@@ -35,6 +35,8 @@ struct cblk_t {
   unsigned int cblk_index; // address of cblk struct in memory, used as the key
   unsigned int sampleRate;
   int streamType;
+  
+  unsigned int finished;
 
   
   // Qi-<epoch time>-r.tmp per audio remoto

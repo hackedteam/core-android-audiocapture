@@ -264,7 +264,7 @@ int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 	int fd, rv;
 	int i;
 
-	log("as we enter\n");
+	//log("as we enter\n");
 
 	sprintf(raw, "/proc/%d/maps", pid);
 	fd = open(raw, O_RDONLY);
@@ -287,24 +287,24 @@ int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 			break;
 		p += rv;
 		if (p-raw >= sizeof(raw)) {
-			log("Too many memory mapping\n");
+		  //log("Too many memory mapping\n");
 			return -13;
 		}
 	}
 	close(fd);
 
-	log("parsing maps\n");
+	//log("parsing maps\n");
 
 	p = strtok(raw, "\n");
 	m = mm;
 	while (p) {
-	  log("%s\n", p);
+	  //log("%s\n", p);
 		/* parse current map line */
 		rv = sscanf(p, "%08lx-%08lx %*s %*s %*s %*s %s\n",
 			    &start, &end, name);
 
-		log("%d\n", rv);
-		log("%s\n", name);
+		//log("%d\n", rv);
+		//log("%s\n", name);
 		
 		p = strtok(NULL, "\n");
 
@@ -316,7 +316,7 @@ int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 			continue;
 		}
 
-		log("for\n");
+		//log("for\n");
 		/* search backward for other mapping with same name */
 		for (i = nmm-1; i >= 0; i--) {
 			m = &mm[i];
@@ -324,7 +324,7 @@ int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 				break;
 		}
 
-		log("if\n");
+		//log("if\n");
 		if (i >= 0) {
 			if (start < m->start)
 				m->start = start;
@@ -336,12 +336,12 @@ int load_memmap(pid_t pid, struct mm *mm, int *nmmp)
 			m->start = start;
 			m->end = end;
 			strcpy(m->name, name);
-			log("Load memmap: %s\n", name)
+			//log("Load memmap: %s\n", name)
 		}
 	}
 
 	*nmmp = nmm;
-	log("returning\n");
+	//log("returning\n");
 	return 0;
 }
 

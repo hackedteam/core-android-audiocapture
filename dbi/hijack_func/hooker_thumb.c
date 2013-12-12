@@ -69,7 +69,7 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
   cblk = *(unsigned long*) (a + 0x1c);
 
 #ifdef DBG
-  log("\tnew track cblk: %x\n", cblk);
+  log("\tstop track cblk_id: %x\n", cblk);
 #endif
 
   h_ptr = (void *) recordTrackStop_hook.orig;
@@ -81,6 +81,13 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
   HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
 
   if( cblk_tmp != NULL  ) {
+
+    // temporary fix
+    if( cblk_tmp->stopDump == 1) {
+      log("\trecordTrackStop already called\n");
+      return;
+    }
+    cblk_tmp->stopDump = 1;
 
     /* write fake final header */
     now = time(NULL);
@@ -97,7 +104,7 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
 
     /* rename file to .tmp and free the cblk structure  */
 #ifdef DBG
-    log("Stop: should take a dump\n");
+    log("Stop: should take a dump: %s\n", cblk_tmp->filename);
 #endif	  
 
     /* rename file *.bin to *.tmp */
@@ -106,39 +113,39 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
     *(filename+strlen(filename)-2) = 'm';
     *(filename+strlen(filename)-3) = 't';
 
+    res = rename(cblk_tmp->filename, filename);
 #ifdef DBG  
     log("fname %s\n", filename);
-    log("rename %d\n", rename(cblk_tmp->filename, filename) );
+    log("rename %d\n", res );
 #endif
 
-    // temporary fix
-    cblk_tmp->stopDump = 1;
 
-/*     if( filename != NULL) { */
-/*       free(filename); */
-/*       filename = NULL; */
-/*     } */
+    // 12/10 
+    if( filename != NULL) {
+      free(filename);
+      filename = NULL;
+    }
 
-/*     close(cblk_tmp->fd); */
+    close(cblk_tmp->fd);
 
-/*     /\* free some stuff *\/ */
-/*     if( cblk_tmp->trackId != NULL ) { */
-/*       free(cblk_tmp->trackId); */
-/*       cblk_tmp->trackId = NULL; */
-/*     } */
+    /* free some stuff */
+    if( cblk_tmp->trackId != NULL ) {
+      free(cblk_tmp->trackId);
+      cblk_tmp->trackId = NULL;
+    }
 
-/*     if( cblk_tmp->filename != NULL ) { */
-/*       free(cblk_tmp->filename); */
-/*       cblk_tmp->filename = NULL; */
-/*     } */
+    if( cblk_tmp->filename != NULL ) {
+      free(cblk_tmp->filename);
+      cblk_tmp->filename = NULL;
+    }
 
-/*     HASH_DEL(cblkTracks, cblk_tmp); */
-/*     free(cblk_tmp); */
+    HASH_DEL(cblkTracks, cblk_tmp);
+    free(cblk_tmp);
     
 
-/* #ifdef DBG */
-/*     log("freed all the crap\n"); */
-/* #endif */
+#ifdef DBG
+    log("freed all the crap\n");
+#endif
   }
 
   log("\t\t\t------- exit recordTrackStop -------------\n");
@@ -229,6 +236,7 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
     cblk_tmp->cblk_index = cblk;
     cblk_tmp->streamType = streamType;
+    cblk_tmp->finished = 0;
 
     snprintf(randString, 11, "%lu", mrand48());
     snprintf(timestamp,  11, "%d", time(NULL));
@@ -253,10 +261,8 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
     }
 
-
     cblk_tmp->startOfCircularBuffer = *(unsigned int*) (cblk + 0x18);
     cblk_tmp->frameCount = *(unsigned int*) (cblk + 0x1c);
-
 
     cblk_tmp->lastBufferRaw  = bufferRaw;
     cblk_tmp->lastFrameCount = framesCount;
@@ -861,6 +867,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 #endif
 
     cblk_tmp->cblk_index = cblk;
+    cblk_tmp->finished = 0;
     
     snprintf(randString, 11, "%lu", mrand48());
     snprintf(timestamp,  11, "%d", time(NULL));
@@ -922,6 +929,10 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 #ifdef DBG
     log("\t\tstreamType: %d\n", cblk_tmp->streamType);
 #endif
+    
+    //temporary
+    if( cblk_tmp->stopDump == 1)
+      log("RECEVING MORE DATA FOR TRACK %p\n", cblk);
 
     if( result == 0 && framesCount != 0 && cblk_tmp->stopDump == 0 ) { // stopDump: temporary fix
 
