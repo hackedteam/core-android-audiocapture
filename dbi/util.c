@@ -64,7 +64,7 @@ static void* xmalloc(size_t size)
 	void *p;
 	p = malloc(size);
 	if (!p) {
-		printf("Out of memory\n");
+		printf("xmalloc: Out of memory\n");
 		exit(1);
 	}
 	return p;

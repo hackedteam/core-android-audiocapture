@@ -579,6 +579,9 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   /*   cblk_tmp->fd = open("/data/local/tmp/log_out" , O_RDWR , S_IRUSR | S_IRGRP | S_IROTH); */
   /* } */
 
+  // tmp
+  framesCount = * (unsigned int*) (b + 4);
+  log("> pb args %x %x %x - desiredFrames: %x\n", a, b, c, framesCount);
 
   /* call the original function */
   h_ptr = (void *) playbackTrack_getNextBuffer_hook.orig;
@@ -860,7 +863,12 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 #ifdef DBG
   log("\t\t\t------- record3 -------------\n");
 #endif
-  
+
+  // tmp
+  framesCount = * (unsigned int*) (b + 4);
+  log("> rt args %x %x %x - desiredFrames: %x \n", a, b, c, framesCount);
+
+
 
   /* call the original function */
   h_ptr = (void *) recordTrack_getNextBuffer_hook.orig;

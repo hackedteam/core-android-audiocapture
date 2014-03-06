@@ -31,6 +31,12 @@
 #include <errno.h>       
 #include <sys/mman.h>
 
+#define log(...) \
+        {FILE *f = fopen("/data/local/tmp/log", "a+");\
+        fprintf(f, __VA_ARGS__);\
+        fflush(f); fclose(f); }
+
+
 #define DEBUG 1
 int debug = 0;
 unsigned int stack_start;
@@ -61,7 +67,7 @@ xmalloc(size_t size)
 	void *p;
 	p = malloc(size);
 	if (!p) {
-		printf("Out of memory\n");
+		printf("hijack,xmalloc: Out of memory\n");
 		exit(1);
 	}
 	return p;
@@ -543,15 +549,17 @@ unsigned int sc[] = {
 0xe59fe010, //        ldr     lr, [pc, #20]   ; 40 <.text+0x40>
 0xe59ff010, //        ldr     pc, [pc, #20]   ; 44 <.text+0x44>
 0xe1a00000, //        nop                     r0
-0xe1a00000, //        nop                     r1 
-0xe1a00000, //        nop                     r2 
-0xe1a00000, //        nop                     r3 
-0xe1a00000, //        nop                     lr 
+0xe1a00000, //        nop                     r1
+0xe1a00000, //        nop                     r2
+0xe1a00000, //        nop                     r3
+0xe1a00000, //        nop                     lr
 0xe1a00000, //        nop                     pc
 0xe1a00000, //        nop                     sp
 0xe1a00000, //        nop                     addr of libname
 0xe1a00000, //        nop                     dlopenaddr
 };
+
+
 
 struct pt_regs2 {
          long uregs[18];
@@ -593,8 +601,16 @@ int main(int argc, char *argv[])
 	int libLength = 0;
 	char *needle =  ".................____________.......................";
 	void *startOfNeedle = NULL;
-	int result = 0;
- 
+	int result;
+	
+
+	// dbg for rwx protection:
+	/* printf("---\n"); */
+	/* result = mprotect(0xbefdf000, 0x20000, PROT_READ|PROT_WRITE|PROT_EXEC); */
+	/* printf("mprotect %d\n", result); */
+	/* printf("\t\t%s\n", strerror(*(int*)__errno()) ); */
+	  
+
 	/* 1 - parse cmdline */
  	while ((opt = getopt(argc, argv, "p:l:f:d")) != -1) {
 	  switch (opt) {
@@ -637,6 +653,7 @@ int main(int argc, char *argv[])
 	if (debug)
 		printf("mprotect: 0x%x\n", mprotectaddr);
 
+
 	/* 2 - patch */
 
 #ifdef DEBUG
@@ -662,6 +679,7 @@ int main(int argc, char *argv[])
 #endif
 	  exit(1);
 	}
+
 
 #ifdef DEBUG									
 	printf("[*] searching %s from %p to %p\n", needle, mmapAddr, mmapAddr + libLength);
@@ -696,6 +714,7 @@ int main(int argc, char *argv[])
 	close(libFd);
 
 
+
 	/* 3 - inject */
 	void *ldl = dlopen("libdl.so", RTLD_LAZY);
 	if (ldl) {
@@ -714,21 +733,31 @@ int main(int argc, char *argv[])
 	if (debug)
 		printf("dlopen: 0x%x\n", dlopenaddr);
 
+
+
 	// Attach 
 	if (0 > ptrace(PTRACE_ATTACH, pid, 0, 0)) {
 		printf("cannot attach to %d, error!\n", pid);
 		exit(1);
 	}
+
 	waitpid(pid, NULL, 0);
 	
+
+	
+
 	sprintf(buf, "/proc/%d/mem", pid);
 	fd = open(buf, O_WRONLY);
 	if (0 > fd) {
 		printf("cannot open %s, error!\n", buf);
 		exit(1);
 	}
-	ptrace(PTRACE_GETREGS, pid, 0, &regs);
+	result = ptrace(PTRACE_GETREGS, pid, 0, &regs);
+	if( debug ) 
+	  printf("ptrace getregs %d\n", result);
 	
+
+
 	sc[11] = regs.ARM_r0;
 	sc[12] = regs.ARM_r1;
 	sc[13] = regs.ARM_r2;
@@ -757,12 +786,13 @@ int main(int argc, char *argv[])
 	if (debug)
 		printf("stack: 0x%x-0x%x leng = %d\n", stack_start, stack_end, stack_end-stack_start);
 	
+
 	// write library name to stack
 	if (0 > write_mem(pid, (unsigned long*)arg, n, libaddr)) {
 		printf("cannot write library name (%s) to stack, error!\n", arg);
 		exit(1);
 	}
-	
+
 	// write code to stack
 	codeaddr = regs.ARM_sp - sizeof(sc);
 	if (0 > write_mem(pid, (unsigned long*)&sc, sizeof(sc)/sizeof(long), codeaddr)) {
@@ -772,6 +802,8 @@ int main(int argc, char *argv[])
 	
 	if (debug)
 		printf("executing injection code at 0x%x\n", codeaddr);
+
+		
 
 	// calc stack pointer
 	regs.ARM_sp = regs.ARM_sp - n*4 - sizeof(sc);
@@ -784,10 +816,18 @@ int main(int argc, char *argv[])
 	regs.ARM_r2 = PROT_READ|PROT_WRITE|PROT_EXEC; // protections
 	regs.ARM_lr = codeaddr; // points to loading and fixing code
 	regs.ARM_pc = mprotectaddr; // execute mprotect()
+
 	
 	// detach and continue
+
 	result = ptrace(PTRACE_SETREGS, pid, 0, &regs);
+
+	/* printf("%d\n", result); */
+	/* return 0; */
+
 	
+	
+
 	if (debug) {
 	  printf("first ptrace %d\n", result);
 	  if( result == -1 )

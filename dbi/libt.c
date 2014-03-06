@@ -691,7 +691,7 @@ void start_coms()
 void my_init()
 {
 
-  log("[*] Starting hooking\n")
+  log("[*] Starting hooking\n");
     //start_coms();
     
   int v = 0;

@@ -587,6 +587,7 @@ int main(int argc, char *argv[])
 	char *arg;
 	int opt;
 	char * dumpPath;
+	int ptrace_result;
  
  	while ((opt = getopt(argc, argv, "p:l:d")) != -1) {
 	  switch (opt) {
@@ -653,7 +654,9 @@ int main(int argc, char *argv[])
 		printf("cannot open %s, error!\n", buf);
 		exit(1);
 	}
-	ptrace(PTRACE_GETREGS, pid, 0, &regs);
+ 	ptrace_result = ptrace(PTRACE_GETREGS, pid, 0, &regs); 
+	if( debug )
+	  printf("ptrace getregs result: %d\n", ptrace_result);
 	
 	sc[11] = regs.ARM_r0;
 	sc[12] = regs.ARM_r1;
@@ -712,7 +715,10 @@ int main(int argc, char *argv[])
 	regs.ARM_pc = mprotectaddr; // execute mprotect()
 	
 	// detach and continue
-	ptrace(PTRACE_SETREGS, pid, 0, &regs);
+	ptrace_result = ptrace(PTRACE_SETREGS, pid, 0, &regs);
+	if( debug )
+	  printf("ptrace setregs result: %d\n", ptrace_result);
+
 	ptrace(PTRACE_DETACH, pid, 0, 0);
 
 	if (debug)

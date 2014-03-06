@@ -1,6 +1,7 @@
 #!/system/bin/sh
 rm log
 touch log
+chown media log
 mkdir /data/local/tmp/dump 2> /dev/null
 chown media /data/local/tmp/dump
 sleep 2
