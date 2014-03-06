@@ -1,0 +1,6492 @@
+[*] Starting hooking
+[*] Pid:6482
+[*] Hooking _ZN7android12AudioFlinger14PlaybackThread5TrackC2EPS1_RKNS_2spINS0_6ClientEEE19audio_stream_type_tj14audio_format_tjiRKNS4_INS_7IMemoryEEEij = 4008f301  hook = 41ae5e55  target:THUMB
+[*] Saving stolen bytes
+	2d e9 f0 4f 89 b0 0d 46 1f 46 17 99 04 46 15 9b 4f f0 00 0b 
+[*] Patching target address
+	ac467d4608352d6820b4654600bd555eae410000
+hooking finished
+[*] Hooking _ZN7android18AudioPolicyService11startOutputEi19audio_stream_type_ti = 40095a3f  hook = 41ae60b1  target:THUMB
+[*] Saving stolen bytes
+	f7 b5 1d 46 43 6a 04 46 0f 46 16 46 13 b3 00 f1 14 01 01 a8 
+[*] Patching target address
+	ac467d4608352d6820b4654600bdb160ae410000
+hooking finished
+[*] Hooking _ZN7android18AudioPolicyService10stopOutputEi19audio_stream_type_ti = 40095875  hook = 41ae62a5  target:THUMB
+[*] Saving stolen bytes
+	f7 b5 1d 46 43 6a 04 46 0f 46 16 46 cb b1 00 f1 14 01 01 a8 
+[*] Patching target address
+	ac467d4608352d6820b4654600bda562ae410000
+hooking finished
+[*] Hooking _ZN7android12AudioFlinger12RecordThread11RecordTrack13getNextBufferEPNS_19AudioBufferProvider6BufferEx = 40088275  hook = 41ae27c5  target:THUMB
+[*] Saving stolen bytes
+	f8 b5 06 46 90 f8 38 30 0c 46 c7 69 4d 68 2b b1 ff f7 cc ff 
+[*] Patching target address
+	ac467d4608352d6820b4654600bdc527ae410000
+hooking finished
+[*] Hooking _ZN7android12AudioFlinger14PlaybackThread5Track13getNextBufferEPNS_19AudioBufferProvider6BufferEx = 400882d1  hook = 41ade03d  target:THUMB
+[*] Saving stolen bytes
+	f8 b5 06 46 90 f8 38 30 0c 46 c7 69 4d 68 2b b1 ff f7 9e ff 
+[*] Patching target address
+	ac467d4608352d6820b4654600bd3de0ad410000
+hooking finished
+[*] Hooking _ZN7android12AudioFlinger12RecordThread11RecordTrack5startENS_11AudioSystem12sync_event_tEi = 40090c5d  hook = 41add799  target:THUMB
+[*] Saving stolen bytes
+	73 b5 04 46 0e 46 00 f1 0c 01 01 a8 15 46 fb f7 ee f8 01 98 
+[*] Patching target address
+	ac467d4608352d6820b4654600bd99d7ad410000
+hooking finished
+[*] Hooking _ZN7android12AudioFlinger14PlaybackThread5Track5startENS_11AudioSystem12sync_event_tEi = 4008e0a3  hook = 41adda89  target:THUMB
+[*] Saving stolen bytes
+	7f b5 00 f1 0c 01 04 46 01 a8 fd f7 cd fe 01 99 6f f0 15 06 
+[*] Patching target address
+	ac467d4608352d6820b4654600bd89daad410000
+hooking finished
+[*] Hooking _ZN7android12AudioFlinger12RecordThread11RecordTrack4stopEv = 4008c377  hook = 41add911  target:THUMB
+[*] Saving stolen bytes
+	13 b5 00 f1 0c 01 04 46 01 a8 ff f7 63 fd 01 98 50 b1 21 46 
+[*] Patching target address
+	ac467d4608352d6820b4654600bd11d9ad410000
+hooking finished
+[*] Hooking _ZN7android12AudioFlinger14PlaybackThread5Track4stopEv = 4008dc47  hook = 41addc01  target:THUMB
+[*] Saving stolen bytes
+	f0 b5 85 b0 00 f1 0c 01 04 46 68 46 fe f7 fa f8 00 99 00 29 
+[*] Patching target address
+	ac467d4608352d6820b4654600bd01dcad410000
+hooking finished
+[*] Hooking finished
+enter new track
+	pbthread: 42897008
+	client: 42d5697c
+	streamType: 5
+	sampleRate: 44100
+	format: 4014dcbc
+	channelMask: 3
+	frameCount: 1000
+	sharedBuffer: 42d56ac4
+	sessionId: 4018b167
+	tid: 423c9920
+	flags: 0
+	cblk: 0x4014d544
+precall
+call 0x4008f301
+postcall 423c9920
+exit new track 0x423c9920 0x423c9920
+			------- enter playbackTrackStart -------------
+		call 0x4008e0a3
+enter start track
+	event: 2
+	triggerSession: 5
+
+precall
+call 0x40095a3f
+postcall 0
+exit start track 0x0 0x41c23a00
+				result: 0
+			------- exit playbackTrackStart -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+cblk_tmp 423c9ae0 size 4
+		added cblk from within getNextBuffer
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 1018
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 2030
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 3048
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 4060
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 5078
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 6090
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 70a8
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 80c0
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 90d8
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: a0f0
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: b108
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: c120
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: d138
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: e150
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: f168
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 10180
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 11198
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 121b0
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 131c8
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 141e0
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 151f8
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 16210
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 17228
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 18240
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 19258
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 1a270
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 1b288
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 1c2a0
+			header fixed: 434b9000:52663081:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 1d2b8
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 1e2d0
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 1f2e8
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 20300
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 21318
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 22330
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 23348
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 24360
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 25378
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 26390
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 273a8
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 283c0
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 293d8
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 2a3f0
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 2b408
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 2c420
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 2d438
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 2e450
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 2f468
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 30480
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 31498
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 324b0
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 334c8
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 344e0
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 354f8
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 36510
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 37528
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 38540
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 39558
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 3a570
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 3b588
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 3c5a0
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 3d5b8
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 3e5d0
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 3f5e8
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 40600
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 41618
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 42630
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 43648
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 44660
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 45678
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 46690
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 476a8
+			header fixed: 434b9000:52663082:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 486c0
+			header fixed: 434b9000:52663083:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 496d8
+			header fixed: 434b9000:52663083:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 4a6f0
+			header fixed: 434b9000:52663083:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 4b708
+			header fixed: 434b9000:52663083:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 4c720
+			header fixed: 434b9000:52663083:ffff:1000
+			------- end playback2 -------------
+			------- enter playbackTrackStop -------------
+		call 0x4008dc47
+enter stop track
+precall
+call 0x40095875
+postcall
+exit stop track 
+				result: 1124883808
+			------- exit playbackTrackStop -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434b9040 -> 0x434ba040
+				wrote: 4096 - expected: 4096
+		fake header written: 4d738
+			header fixed: 434b9000:52663083:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434ba040 -> 0x434bb040
+				wrote: 4096 - expected: 4096
+		fake header written: 4e750
+			header fixed: 434b9000:52663083:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bb040 -> 0x434bc040
+				wrote: 4096 - expected: 4096
+		fake header written: 4f768
+			header fixed: 434b9000:52663083:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x434b9000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x434bc040 -> 0x434bd040
+				wrote: 4096 - expected: 4096
+		fake header written: 50780
+			header fixed: 434b9000:52663083:ffff:1000
+			------- end playback2 -------------
+enter new track
+	pbthread: 42897008
+	client: bea7c624
+	streamType: 3
+	sampleRate: 22050
+	format: 4014dcbc
+	channelMask: 3
+	frameCount: 800
+	sharedBuffer: bea7c76c
+	sessionId: 4018b167
+	tid: 41c219a0
+	flags: 0
+	cblk: 0x41b00a18
+precall
+call 0x4008f301
+postcall 41c219a0
+exit new track 0x41c219a0 0x41c219a0
+			------- enter playbackTrackStart -------------
+		call 0x4008e0a3
+enter start track
+	event: 2
+	triggerSession: 3
+
+precall
+call 0x40095a3f
+postcall 0
+exit start track 0x0 0x41c23a00
+				result: 0
+			------- exit playbackTrackStart -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+cblk_tmp 41deeaa0 size 4
+		added cblk from within getNextBuffer
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 50f98
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 517b0
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 51fc8
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 527e0
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 52ff8
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 53810
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 54028
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 54840
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 55058
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 55870
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 56088
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 568a0
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 570b8
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 578d0
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 580e8
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 58900
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 59118
+			header fixed: 43b39000:52663089:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 59930
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 5a148
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 5a960
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 5b178
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 5b990
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 5c1a8
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 5c9c0
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 5d1d8
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 5d9f0
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 5e208
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 5ea20
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 5f238
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 5fa50
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 60268
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 60a80
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 61298
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 61ab0
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 622c8
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 62ae0
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 632f8
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 63b10
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 64328
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 64b40
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 65358
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 65b70
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 66388
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 66ba0
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 673b8
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 67bd0
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 683e8
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 68c00
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 69418
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 69c30
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 6a448
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 6ac60
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 6b478
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 6bc90
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 6c4a8
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 6ccc0
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 6d4d8
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 6dcf0
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 6e508
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 6ed20
+			header fixed: 43b39000:5266308a:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 6f538
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 6fd50
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 70568
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 70d80
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 71598
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 71db0
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 725c8
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 72de0
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 735f8
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 73e10
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 74628
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 74e40
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 75658
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 75e70
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 76688
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 76ea0
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 776b8
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 77ed0
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 786e8
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 78f00
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 79718
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 79f30
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 7a748
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 7af60
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 7b778
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 7bf90
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 7c7a8
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 7cfc0
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 7d7d8
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 7dff0
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 7e808
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 7f020
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 7f838
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 80050
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 80868
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 81080
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 81898
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 820b0
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 828c8
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 830e0
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 838f8
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 84110
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 84928
+			header fixed: 43b39000:5266308b:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 85140
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 85958
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 86170
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 86988
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 871a0
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 879b8
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 881d0
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 889e8
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 89200
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 89a18
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 8a230
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 8aa48
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 8b260
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 8ba78
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 8c290
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 8caa8
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 8d2c0
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 8dad8
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 8e2f0
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 8eb08
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 8f320
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 8fb38
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 90350
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 90b68
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 91380
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 91b98
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 923b0
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 92bc8
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 933e0
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 93bf8
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 94410
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 94c28
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 95440
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 95c58
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 96470
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 96c88
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 974a0
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 97cb8
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 984d0
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 98ce8
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 99500
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 99d18
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 9a530
+			header fixed: 43b39000:5266308c:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 9ad48
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 9b560
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 9bd78
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 9c590
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 9cda8
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 9d5c0
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 9ddd8
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: 9e5f0
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: 9ee08
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: 9f620
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: 9fe38
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: a0650
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: a0e68
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: a1680
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: a1e98
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: a26b0
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: a2ec8
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: a36e0
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: a3ef8
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: a4710
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: a4f28
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: a5740
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: a5f58
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: a6770
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: a6f88
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: a77a0
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: a7fb8
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: a87d0
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: a8fe8
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: a9800
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: aa018
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: aa830
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: ab048
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: ab860
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: ac078
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: ac890
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: ad0a8
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: ad8c0
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: ae0d8
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: ae8f0
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: af108
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: af920
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: b0138
+			header fixed: 43b39000:5266308d:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: b0950
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: b1168
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: b1980
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: b2198
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: b29b0
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: b31c8
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: b39e0
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: b41f8
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: b4a10
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: b5228
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: b5a40
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: b6258
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39840 -> 0x43b3a040
+				wrote: 2048 - expected: 2048
+		fake header written: b6a70
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- enter playbackTrackStop -------------
+		call 0x4008dc47
+enter stop track
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a040 -> 0x43b3a840
+				wrote: 2048 - expected: 2048
+		fake header written: b7288
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+precall
+call 0x40095875
+postcall
+exit stop track 
+				result: 1124883808
+			------- exit playbackTrackStop -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b3a840 -> 0x43b3b040
+				wrote: 2048 - expected: 2048
+		fake header written: b7aa0
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x43b39000
+			frameSize 4
+			sampleRate 5622
+			framesCount 200
+			buffer spans: 0x43b39040 -> 0x43b39840
+				wrote: 2048 - expected: 2048
+		fake header written: b82b8
+			header fixed: 43b39000:5266308e:ffff:800
+			------- end playback2 -------------
+enter new track
+	pbthread: 42897008
+	client: bea7c89c
+	streamType: 1
+	sampleRate: 44100
+	format: 4014dcbc
+	channelMask: 1
+	frameCount: 1000
+	sharedBuffer: bea7c940
+	sessionId: 4018b167
+	tid: 41c89008
+	flags: 0
+	cblk: 0x5622
+precall
+call 0x4008f301
+postcall 41c89008
+exit new track 0x41c89008 0x41c89008
+			------- enter playbackTrackStart -------------
+		call 0x4008e0a3
+enter start track
+	event: 2
+	triggerSession: 1
+
+precall
+call 0x40095a3f
+postcall 0
+exit start track 0x0 0x41c23a00
+				result: 0
+			------- exit playbackTrackStart -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+cblk_tmp 4209ec60 size 4
+		added cblk from within getNextBuffer
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc6040 -> 0x42fc6840
+				wrote: 2048 - expected: 2048
+		fake header written: b8ad0
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc6840 -> 0x42fc7040
+				wrote: 2048 - expected: 2048
+		fake header written: b92e8
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc7040 -> 0x42fc7840
+				wrote: 2048 - expected: 2048
+		fake header written: b9b00
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc7840 -> 0x42fc8040
+				wrote: 2048 - expected: 2048
+		fake header written: ba318
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc6040 -> 0x42fc6840
+				wrote: 2048 - expected: 2048
+		fake header written: bab30
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc6840 -> 0x42fc7040
+				wrote: 2048 - expected: 2048
+		fake header written: bb348
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc7040 -> 0x42fc7840
+				wrote: 2048 - expected: 2048
+		fake header written: bbb60
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc7840 -> 0x42fc8040
+				wrote: 2048 - expected: 2048
+		fake header written: bc378
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc6040 -> 0x42fc6840
+				wrote: 2048 - expected: 2048
+		fake header written: bcb90
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc6840 -> 0x42fc7040
+				wrote: 2048 - expected: 2048
+		fake header written: bd3a8
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc7040 -> 0x42fc7840
+				wrote: 2048 - expected: 2048
+		fake header written: bdbc0
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc7840 -> 0x42fc8040
+				wrote: 2048 - expected: 2048
+		fake header written: be3d8
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc6040 -> 0x42fc6840
+				wrote: 2048 - expected: 2048
+		fake header written: bebf0
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc6840 -> 0x42fc7040
+				wrote: 2048 - expected: 2048
+		fake header written: bf408
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x42fc7040 -> 0x42fc7840
+				wrote: 2048 - expected: 2048
+		fake header written: bfc20
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 1a8
+			buffer spans: 0x42fc7840 -> 0x42fc8040
+				wrote: 2048 - expected: 2048
+		fake header written: c0438
+			header fixed: 42fc6000:5266308f:ffff:800
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: -61
+			cblk 0x42fc6000
+			frameSize 2
+			sampleRate ac44
+			framesCount 0
+			------- end playback2 -------------
+			------- enter playbackTrackStop -------------
+		call 0x4008dc47
+enter stop track
+precall
+call 0x40095875
+postcall
+exit stop track 
+				result: -1096300232
+			------- exit playbackTrackStop -------------
+			------- enter recordTrackStart -------------
+		call 0x40090c5d
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+cblk_tmp 41e06a00 size 4
+		added cblk from within getNextBuffer
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 418
+		rolled back: 0
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 418
+			------- end record2 -------------
+				result: 0
+			------- exit recordTrackStart -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 418
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 830
+		rolled back: 418
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 830
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 830
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: c48
+		rolled back: 830
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: c48
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: c48
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 1060
+		rolled back: c48
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 1060
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1060
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1478
+		rolled back: 1060
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 1478
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1478
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1890
+		rolled back: 1478
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 1890
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1890
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1ca8
+		rolled back: 1890
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 1ca8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1ca8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 20c0
+		rolled back: 1ca8
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 20c0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 20c0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 24d8
+		rolled back: 20c0
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 24d8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 24d8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 28f0
+		rolled back: 24d8
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 28f0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 28f0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2d08
+		rolled back: 28f0
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 2d08
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2d08
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 3120
+		rolled back: 2d08
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 3120
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 3120
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 3538
+		rolled back: 3120
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 3538
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 3538
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 3950
+		rolled back: 3538
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 3950
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 3950
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 3d68
+		rolled back: 3950
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 3d68
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 3d68
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 4180
+		rolled back: 3d68
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 4180
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 4180
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 4598
+		rolled back: 4180
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 4598
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 4598
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 49b0
+		rolled back: 4598
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 49b0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 49b0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 4dc8
+		rolled back: 49b0
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 4dc8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 4dc8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 51e0
+		rolled back: 4dc8
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 51e0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 51e0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 55f8
+		rolled back: 51e0
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 55f8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 55f8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 5a10
+		rolled back: 55f8
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 5a10
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 5a10
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 5e28
+		rolled back: 5a10
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 5e28
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 5e28
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 6240
+		rolled back: 5e28
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 6240
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 6240
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 6658
+		rolled back: 6240
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 6658
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 6658
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 6a70
+		rolled back: 6658
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 6a70
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 6a70
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 6e88
+		rolled back: 6a70
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 6e88
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 6e88
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 72a0
+		rolled back: 6e88
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 72a0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 72a0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 76b8
+		rolled back: 72a0
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 76b8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 76b8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 7ad0
+		rolled back: 76b8
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 7ad0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 7ad0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 7ee8
+		rolled back: 7ad0
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 7ee8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 7ee8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 8300
+		rolled back: 7ee8
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 8300
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 8300
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 8718
+		rolled back: 8300
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 8718
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 8718
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 8b30
+		rolled back: 8718
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 8b30
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 8b30
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 8f48
+		rolled back: 8b30
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 8f48
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 8f48
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 9360
+		rolled back: 8f48
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 9360
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 9360
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 9778
+		rolled back: 9360
+			header fixed: 43333c60:52663090:ffff:400
+		rolled forward: 9778
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 9778
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 9b90
+		rolled back: 9778
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 9b90
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 9b90
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 9fa8
+		rolled back: 9b90
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 9fa8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 9fa8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: a3c0
+		rolled back: 9fa8
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: a3c0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: a3c0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: a7d8
+		rolled back: a3c0
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: a7d8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: a7d8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: abf0
+		rolled back: a7d8
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: abf0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: abf0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: b008
+		rolled back: abf0
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: b008
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: b008
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: b420
+		rolled back: b008
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: b420
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: b420
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: b838
+		rolled back: b420
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: b838
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: b838
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: bc50
+		rolled back: b838
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: bc50
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: bc50
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: c068
+		rolled back: bc50
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: c068
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: c068
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: c480
+		rolled back: c068
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: c480
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: c480
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: c898
+		rolled back: c480
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: c898
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: c898
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: ccb0
+		rolled back: c898
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: ccb0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: ccb0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: d0c8
+		rolled back: ccb0
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: d0c8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: d0c8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: d4e0
+		rolled back: d0c8
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: d4e0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: d4e0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: d8f8
+		rolled back: d4e0
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: d8f8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: d8f8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: dd10
+		rolled back: d8f8
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: dd10
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: dd10
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: e128
+		rolled back: dd10
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: e128
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: e128
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: e540
+		rolled back: e128
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: e540
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: e540
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: e958
+		rolled back: e540
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: e958
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: e958
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: ed70
+		rolled back: e958
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: ed70
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: ed70
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: f188
+		rolled back: ed70
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: f188
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: f188
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: f5a0
+		rolled back: f188
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: f5a0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: f5a0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: f9b8
+		rolled back: f5a0
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: f9b8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: f9b8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: fdd0
+		rolled back: f9b8
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: fdd0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: fdd0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 101e8
+		rolled back: fdd0
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 101e8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 101e8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 10600
+		rolled back: 101e8
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 10600
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 10600
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 10a18
+		rolled back: 10600
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 10a18
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 10a18
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 10e30
+		rolled back: 10a18
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 10e30
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 10e30
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 11248
+		rolled back: 10e30
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 11248
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 11248
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 11660
+		rolled back: 11248
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 11660
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 11660
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 11a78
+		rolled back: 11660
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 11a78
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 11a78
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 11e90
+		rolled back: 11a78
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 11e90
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 11e90
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 122a8
+		rolled back: 11e90
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 122a8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 122a8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 126c0
+		rolled back: 122a8
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 126c0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 126c0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 12ad8
+		rolled back: 126c0
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 12ad8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 12ad8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 12ef0
+		rolled back: 12ad8
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 12ef0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 12ef0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 13308
+		rolled back: 12ef0
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 13308
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 13308
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 13720
+		rolled back: 13308
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 13720
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 13720
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 13b38
+		rolled back: 13720
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 13b38
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 13b38
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 13f50
+		rolled back: 13b38
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 13f50
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 13f50
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 14368
+		rolled back: 13f50
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 14368
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 14368
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 14780
+		rolled back: 14368
+			header fixed: 43333c60:52663091:ffff:400
+		rolled forward: 14780
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 14780
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 14b98
+		rolled back: 14780
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 14b98
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 14b98
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 14fb0
+		rolled back: 14b98
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 14fb0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 14fb0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 153c8
+		rolled back: 14fb0
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 153c8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 153c8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 157e0
+		rolled back: 153c8
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 157e0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 157e0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 15bf8
+		rolled back: 157e0
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 15bf8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 15bf8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 16010
+		rolled back: 15bf8
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 16010
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 16010
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 16428
+		rolled back: 16010
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 16428
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 16428
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 16840
+		rolled back: 16428
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 16840
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 16840
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 16c58
+		rolled back: 16840
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 16c58
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 16c58
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 17070
+		rolled back: 16c58
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 17070
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 17070
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 17488
+		rolled back: 17070
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 17488
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 17488
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 178a0
+		rolled back: 17488
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 178a0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 178a0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 17cb8
+		rolled back: 178a0
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 17cb8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 17cb8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 180d0
+		rolled back: 17cb8
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 180d0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 180d0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 184e8
+		rolled back: 180d0
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 184e8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 184e8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 18900
+		rolled back: 184e8
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 18900
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 18900
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 18d18
+		rolled back: 18900
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 18d18
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 18d18
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 19130
+		rolled back: 18d18
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 19130
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 19130
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 19548
+		rolled back: 19130
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 19548
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 19548
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 19960
+		rolled back: 19548
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 19960
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 19960
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 19d78
+		rolled back: 19960
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 19d78
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 19d78
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1a190
+		rolled back: 19d78
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1a190
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1a190
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1a5a8
+		rolled back: 1a190
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1a5a8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1a5a8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 1a9c0
+		rolled back: 1a5a8
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1a9c0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1a9c0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1add8
+		rolled back: 1a9c0
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1add8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1add8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1b1f0
+		rolled back: 1add8
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1b1f0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1b1f0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1b608
+		rolled back: 1b1f0
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1b608
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1b608
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 1ba20
+		rolled back: 1b608
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1ba20
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1ba20
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1be38
+		rolled back: 1ba20
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1be38
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1be38
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1c250
+		rolled back: 1be38
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1c250
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1c250
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1c668
+		rolled back: 1c250
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1c668
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1c668
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 1ca80
+		rolled back: 1c668
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1ca80
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1ca80
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1ce98
+		rolled back: 1ca80
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1ce98
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1ce98
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1d2b0
+		rolled back: 1ce98
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1d2b0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1d2b0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1d6c8
+		rolled back: 1d2b0
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1d6c8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1d6c8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 1dae0
+		rolled back: 1d6c8
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1dae0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1dae0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1def8
+		rolled back: 1dae0
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1def8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1def8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1e310
+		rolled back: 1def8
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1e310
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1e310
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1e728
+		rolled back: 1e310
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1e728
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1e728
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 1eb40
+		rolled back: 1e728
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1eb40
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1eb40
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1ef58
+		rolled back: 1eb40
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1ef58
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1ef58
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1f370
+		rolled back: 1ef58
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1f370
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1f370
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1f788
+		rolled back: 1f370
+			header fixed: 43333c60:52663092:ffff:400
+		rolled forward: 1f788
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1f788
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 1fba0
+		rolled back: 1f788
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 1fba0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1fba0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 1ffb8
+		rolled back: 1fba0
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 1ffb8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 1ffb8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 203d0
+		rolled back: 1ffb8
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 203d0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 203d0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 207e8
+		rolled back: 203d0
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 207e8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 207e8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 20c00
+		rolled back: 207e8
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 20c00
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 20c00
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 21018
+		rolled back: 20c00
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 21018
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 21018
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 21430
+		rolled back: 21018
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 21430
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 21430
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 21848
+		rolled back: 21430
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 21848
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 21848
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 21c60
+		rolled back: 21848
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 21c60
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 21c60
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 22078
+		rolled back: 21c60
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 22078
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 22078
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 22490
+		rolled back: 22078
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 22490
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 22490
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 228a8
+		rolled back: 22490
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 228a8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 228a8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 22cc0
+		rolled back: 228a8
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 22cc0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 22cc0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 230d8
+		rolled back: 22cc0
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 230d8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 230d8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 234f0
+		rolled back: 230d8
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 234f0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 234f0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 23908
+		rolled back: 234f0
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 23908
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 23908
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 23d20
+		rolled back: 23908
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 23d20
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 23d20
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 24138
+		rolled back: 23d20
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 24138
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 24138
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 24550
+		rolled back: 24138
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 24550
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 24550
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 24968
+		rolled back: 24550
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 24968
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 24968
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 24d80
+		rolled back: 24968
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 24d80
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 24d80
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 25198
+		rolled back: 24d80
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 25198
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 25198
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 255b0
+		rolled back: 25198
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 255b0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 255b0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 259c8
+		rolled back: 255b0
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 259c8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 259c8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 25de0
+		rolled back: 259c8
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 25de0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 25de0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 261f8
+		rolled back: 25de0
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 261f8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 261f8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 26610
+		rolled back: 261f8
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 26610
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 26610
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 26a28
+		rolled back: 26610
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 26a28
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 26a28
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 26e40
+		rolled back: 26a28
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 26e40
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 26e40
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 27258
+		rolled back: 26e40
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 27258
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 27258
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 27670
+		rolled back: 27258
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 27670
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 27670
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 27a88
+		rolled back: 27670
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 27a88
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 27a88
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 27ea0
+		rolled back: 27a88
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 27ea0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 27ea0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 282b8
+		rolled back: 27ea0
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 282b8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 282b8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 286d0
+		rolled back: 282b8
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 286d0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 286d0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 28ae8
+		rolled back: 286d0
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 28ae8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 28ae8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 28f00
+		rolled back: 28ae8
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 28f00
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 28f00
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 29318
+		rolled back: 28f00
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 29318
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 29318
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 29730
+		rolled back: 29318
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 29730
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 29730
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 29b48
+		rolled back: 29730
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 29b48
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 29b48
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 29f60
+		rolled back: 29b48
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 29f60
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 29f60
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2a378
+		rolled back: 29f60
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 2a378
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2a378
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2a790
+		rolled back: 2a378
+			header fixed: 43333c60:52663093:ffff:400
+		rolled forward: 2a790
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2a790
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2aba8
+		rolled back: 2a790
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2aba8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2aba8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 2afc0
+		rolled back: 2aba8
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2afc0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2afc0
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2b3d8
+		rolled back: 2afc0
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2b3d8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2b3d8
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2b7f0
+		rolled back: 2b3d8
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2b7f0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2b7f0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2bc08
+		rolled back: 2b7f0
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2bc08
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2bc08
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 2c020
+		rolled back: 2bc08
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2c020
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2c020
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2c438
+		rolled back: 2c020
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2c438
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2c438
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2c850
+		rolled back: 2c438
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2c850
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2c850
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2cc68
+		rolled back: 2c850
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2cc68
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2cc68
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 2d080
+		rolled back: 2cc68
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2d080
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2d080
+			buffer spans: 0x43333ca0 -> 0x433340a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2d498
+		rolled back: 2d080
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2d498
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2d498
+			buffer spans: 0x433340a0 -> 0x433344a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2d8b0
+		rolled back: 2d498
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2d8b0
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2d8b0
+			buffer spans: 0x433344a0 -> 0x433348a0
+				wrote: 1024 - expected: 1024
+		fake header written: 2dcc8
+		rolled back: 2d8b0
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2dcc8
+			------- end record2 -------------
+			------ record2 --------------
+				result: 0
+			cblk 0x43333c60
+			frameSize 2
+			sampleRate 5622
+			framesCount 200
+		headerStart: 2dcc8
+			buffer spans: 0x433348a0 -> 0x43334ca0
+				wrote: 1024 - expected: 1024
+		fake header written: 2e0e0
+		rolled back: 2dcc8
+			header fixed: 43333c60:52663094:ffff:400
+		rolled forward: 2e0e0
+			------- end record2 -------------
+			------- enter recordTrackStop -------------
+		call 0x4008c377
+				result: 1129970668
+			------- exit recordTrackStop -------------
+			------- enter recordTrackStop -------------
+		call 0x4008c377
+				result: 1134267412
+			------- exit recordTrackStop -------------
+enter new track
+	pbthread: 42897008
+	client: bea7c89c
+	streamType: 1
+	sampleRate: 32000
+	format: 4014dcbc
+	channelMask: 1
+	frameCount: 1000
+	sharedBuffer: bea7c940
+	sessionId: 42897008
+	tid: 4225bf08
+	flags: 1
+	cblk: 0x0
+precall
+call 0x4008f301
+postcall 4225bf08
+exit new track 0x4225bf08 0x4225bf08
+			------- enter playbackTrackStart -------------
+		call 0x4008e0a3
+enter start track
+	event: 2
+	triggerSession: 1
+
+precall
+call 0x40095a3f
+postcall 0
+exit start track 0x0 0x41c23a00
+				result: 0
+			------- exit playbackTrackStart -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+cblk_tmp 4216df48 size 4
+		added cblk from within getNextBuffer
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc8080 -> 0x42fc864e
+				wrote: 1486 - expected: 1486
+		fake header written: c0a1e
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc864e -> 0x42fc8c1c
+				wrote: 1486 - expected: 1486
+		fake header written: c1004
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc8c1c -> 0x42fc91ea
+				wrote: 1486 - expected: 1486
+		fake header written: c15ea
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc91ea -> 0x42fc97b8
+				wrote: 1486 - expected: 1486
+		fake header written: c1bd0
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 17d
+			buffer spans: 0x42fc97b8 -> 0x42fc9d86
+				wrote: 1486 - expected: 1486
+		fake header written: c21b6
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc9d86 -> 0x42fca080
+				wrote: 762 - expected: 762
+		fake header written: c24c8
+			header fixed: 42fc8040:52663094:ffff:2fa
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc8080 -> 0x42fc864e
+				wrote: 1486 - expected: 1486
+		fake header written: c2aae
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc864e -> 0x42fc8c1c
+				wrote: 1486 - expected: 1486
+		fake header written: c3094
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc8c1c -> 0x42fc91ea
+				wrote: 1486 - expected: 1486
+		fake header written: c367a
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc91ea -> 0x42fc97b8
+				wrote: 1486 - expected: 1486
+		fake header written: c3c60
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 17d
+			buffer spans: 0x42fc97b8 -> 0x42fc9d86
+				wrote: 1486 - expected: 1486
+		fake header written: c4246
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc9d86 -> 0x42fca080
+				wrote: 762 - expected: 762
+		fake header written: c4558
+			header fixed: 42fc8040:52663094:ffff:2fa
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc8080 -> 0x42fc864e
+				wrote: 1486 - expected: 1486
+		fake header written: c4b3e
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc864e -> 0x42fc8c1c
+				wrote: 1486 - expected: 1486
+		fake header written: c5124
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc8c1c -> 0x42fc91ea
+				wrote: 1486 - expected: 1486
+		fake header written: c570a
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc91ea -> 0x42fc97b8
+				wrote: 1486 - expected: 1486
+		fake header written: c5cf0
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 17d
+			buffer spans: 0x42fc97b8 -> 0x42fc9d86
+				wrote: 1486 - expected: 1486
+		fake header written: c62d6
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 2e7
+			buffer spans: 0x42fc9d86 -> 0x42fca080
+				wrote: 762 - expected: 762
+		fake header written: c65e8
+			header fixed: 42fc8040:52663094:ffff:2fa
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x42fc8040
+			frameSize 2
+			sampleRate 7d00
+			framesCount 19d
+			buffer spans: 0x42fc8080 -> 0x42fc864e
+				wrote: 1486 - expected: 1486
+		fake header written: c6bce
+			header fixed: 42fc8040:52663094:ffff:5ce
+			------- end playback2 -------------
+			------- enter playbackTrackStop -------------
+		call 0x4008dc47
+enter stop track
+precall
+call 0x40095875
+postcall
+exit stop track 
+				result: -1096300232
+			------- exit playbackTrackStop -------------
+enter new track
+	pbthread: 42897008
+	client: bea7c624
+	streamType: 5
+	sampleRate: 44100
+	format: 4014dcbc
+	channelMask: 3
+	frameCount: 1000
+	sharedBuffer: bea7c76c
+	sessionId: 4018b167
+	tid: 422eee30
+	flags: 1
+	cblk: 0x0
+precall
+call 0x4008f301
+postcall 422eee30
+exit new track 0x422eee30 0x422eee30
+			------- enter playbackTrackStart -------------
+		call 0x4008e0a3
+enter start track
+	event: 2
+	triggerSession: 5
+
+precall
+call 0x40095a3f
+postcall 0
+exit start track 0x0 0x41c23a00
+				result: 0
+			------- exit playbackTrackStart -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+cblk_tmp 4209e140 size 4
+		added cblk from within getNextBuffer
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44765040 -> 0x44766040
+				wrote: 4096 - expected: 4096
+		fake header written: c7be6
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44766040 -> 0x44767040
+				wrote: 4096 - expected: 4096
+		fake header written: c8bfe
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44767040 -> 0x44768040
+				wrote: 4096 - expected: 4096
+		fake header written: c9c16
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44768040 -> 0x44769040
+				wrote: 4096 - expected: 4096
+		fake header written: cac2e
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44765040 -> 0x44766040
+				wrote: 4096 - expected: 4096
+		fake header written: cbc46
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44766040 -> 0x44767040
+				wrote: 4096 - expected: 4096
+		fake header written: ccc5e
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44767040 -> 0x44768040
+				wrote: 4096 - expected: 4096
+		fake header written: cdc76
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44768040 -> 0x44769040
+				wrote: 4096 - expected: 4096
+		fake header written: cec8e
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- enter playbackTrackStop -------------
+		call 0x4008dc47
+enter stop track
+precall
+call 0x40095875
+postcall
+exit stop track 
+				result: 1125932384
+			------- exit playbackTrackStop -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44765040 -> 0x44766040
+				wrote: 4096 - expected: 4096
+		fake header written: cfca6
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44766040 -> 0x44767040
+				wrote: 4096 - expected: 4096
+		fake header written: d0cbe
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44767040 -> 0x44768040
+				wrote: 4096 - expected: 4096
+		fake header written: d1cd6
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------
+			------- playback2 -------------
+				result: 0
+			cblk 0x44765000
+			frameSize 4
+			sampleRate ac44
+			framesCount 400
+			buffer spans: 0x44768040 -> 0x44769040
+				wrote: 4096 - expected: 4096
+		fake header written: d2cee
+			header fixed: 44765000:52663096:ffff:1000
+			------- end playback2 -------------

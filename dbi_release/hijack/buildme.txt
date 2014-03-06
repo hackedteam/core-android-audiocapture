@@ -1,0 +1,1 @@
+~/android/android-ndk-r8e/ndk-build && adb push ../libs/armeabi/hijack  /data/local/tmp && adb shell chmod 777 /data/local/tmp/hijack
