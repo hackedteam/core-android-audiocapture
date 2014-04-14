@@ -33,7 +33,7 @@
 #include "hijacks.h"
 
 
-//#define DEBUG 
+#define DEBUG 
 
 struct mm {
 	char name[256];

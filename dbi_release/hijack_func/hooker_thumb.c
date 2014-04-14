@@ -23,7 +23,7 @@ char *dumpPath =  ".................____________.......................";
 
 /* start signaling hooks */
 
-//#define DEBUG
+#define DEBUG
 
 void* recordTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w)  {
 
@@ -1147,4 +1147,3 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
   return result;
 
 }
-

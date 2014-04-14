@@ -6,7 +6,7 @@
 #define ROUNDUP(x, y) ((((x)+((y)-1))/(y))*(y))
 #define DBG 1
 
-#define FILESIZE 1048576 / 5
+#define FILESIZE 1048576 // ~5 seconds
 
 struct hook_t *help_hash1;
 struct hook_t *postcall_hash;
