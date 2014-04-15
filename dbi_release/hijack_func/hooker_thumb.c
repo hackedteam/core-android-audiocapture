@@ -23,7 +23,7 @@ char *dumpPath =  ".................____________.......................";
 
 /* start signaling hooks */
 
-#define DEBUG
+//#define DEBUG
 
 void* recordTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w)  {
 
@@ -153,12 +153,16 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
       cblk_tmp->filename = NULL;
     }
 
+    /* for playback tracks we keep the structure,
+       for record we can free since the new track
+       is created from within the dumper
+     */
     HASH_DEL(cblkTracks, cblk_tmp);
     free(cblk_tmp);
     
 
 #ifdef DEBUG
-    log("freed all the crap\n");
+    log("freed all the stuff\n");
 #endif
   }
 
@@ -256,7 +260,7 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
     cblk_tmp->cblk_index = cblk;
     cblk_tmp->streamType = streamType;
-
+    cblk_tmp->lastStatus = STATUS_NEW;
 
     snprintf(randString, 11, "%lu", mrand48());
     snprintf(timestamp,  11, "%d", time(NULL));
@@ -267,7 +271,7 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
     log("trackId: %s\n", cblk_tmp->trackId);
 #endif
 
-    //         Qi-<timestamp>-<id univoco per chiamata>-<canale>.[tmp|boh]
+    // Qi-<timestamp>-<id univoco per chiamata>-<canale>.[tmp|boh]
     // length:  2-strlen(timestamp)-strlen(randString)-1.3.1 + 3 chars for '-'
     // filenameLength including null
 
@@ -304,7 +308,7 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
     
     if( cblk_tmp == NULL ) {
 #ifdef DEBUG
-      log("uthash shit happened\n");
+      log("uthash issue\n");
 #endif
       return result;
     }
@@ -313,6 +317,11 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 #endif
 
   }
+#ifdef DEBUG
+  else {
+    log("cblk not found %x\n", cblk);
+  }
+#endif
   
 #ifdef DEBUG
   log("\t\t\t----------- exit new track %p %p ------------------\n", result, a)
@@ -329,6 +338,14 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
   int res;
   unsigned long cblk;
 
+  struct cblk_t *cblk_tmp= NULL;
+  
+  char randString[11]; // rand %d 10 + null;
+  char timestamp[11];  // epoch %ld 10 + null;
+  int filenameLength = 0;
+  char *filename;
+
+
 #ifdef DEBUG
   log("\t\t\t------- enter playbackTrackStart -------------\n");
   log("enter start track %x\n", a);
@@ -340,6 +357,54 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
 #ifdef DEBUG
   log("\tnew track cblk: %x\n", cblk);
 #endif
+
+  HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
+
+  if( cblk_tmp != NULL ) {
+#ifdef DEBUG
+    log("\tcblk found %x last known status %d\n", cblk, cblk_tmp->lastStatus);
+#endif
+    
+    /* if status is STATUS_STOP, create the fields freed by stop event */
+    if( cblk_tmp->lastStatus == STATUS_STOP ) {
+      
+      /* use old trackId and filename */
+
+      // a] generate trackId
+      //snprintf(randString, 11, "%lu", mrand48());
+      //snprintf(timestamp,  11, "%d", time(NULL));
+
+      //cblk_tmp->trackId = strdup(randString);
+      
+#ifdef DEBUG
+      log("reusing trackId: %s\n", cblk_tmp->trackId);
+#endif
+
+      // b] generate filename and open fd
+      //filenameLength = strlen(dumpPath) + 1 + 2 + strlen(timestamp) + strlen(randString) + 1 + 4 + 1 + 3;
+
+      //cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
+      //snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-r.bin", dumpPath, timestamp, randString );
+      
+#ifdef DEBUG
+      log("reusing filename: %s\n", cblk_tmp->filename);
+#endif
+        
+      cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
+
+
+      // shouldn't need startOfCircularBuffer and frameCount
+
+    }
+    
+
+  }
+  else {
+#ifdef DEBUG
+    log("\tcblk not found %x\n", cblk);
+#endif
+
+  }
 
   h_ptr = (void *) playbackTrackStart_helper.orig;
   helper_precall(&playbackTrackStart_helper);
@@ -372,7 +437,7 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
   cblk = *(unsigned long*) (a + 0x1c);
 
 #ifdef DEBUG
-  log("\tnew track cblk: %x\n", cblk);
+  log("\ttrack cblk: %x\n", cblk);
 #endif
 
   h_ptr = (void *) playbackTrackStop_helper.orig;
@@ -424,21 +489,36 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
 
     if( filename != NULL)
       free(filename);
+   
 
     close(cblk_tmp->fd);
 
     /* free some stuff */
-    if( cblk_tmp->trackId != NULL )
-      free(cblk_tmp->trackId);
+    //if( cblk_tmp->trackId != NULL ) {
+    //  free(cblk_tmp->trackId);
+    //  cblk_tmp->trackId = NULL;
+    //}
 
-    if( cblk_tmp->filename != NULL )
-      free(cblk_tmp->filename);
+    //if( cblk_tmp->filename != NULL ) {
+    //  free(cblk_tmp->filename);
+    //  cblk_tmp->filename = NULL;
+    //}
 
-    HASH_DEL(cblkTracks, cblk_tmp);
-    free(cblk_tmp);
+    /* 14/04/14
+       patch for weird skype events
+       1] newTrack
+       2] start track
+       3] stop track
+       4] start track again
+       
+    */
+    
+    cblk_tmp->lastStatus = STATUS_STOP;
+    //HASH_DEL(cblkTracks, cblk_tmp);
+    //free(cblk_tmp);
 
 #ifdef DEBUG
-    log("freed all the crap\n");
+    log("freed all the stuff %x\n", cblk);
 #endif
   }
 
@@ -448,6 +528,8 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
 
   return result;
 }
+
+
 
 void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
 
@@ -641,68 +723,6 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   //log("start hash find\n");
   HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
   
-  
-/*     cblk_tmp =  malloc( sizeof(struct cblk_t) ); */
-
-/* #ifdef DEBUG */
-/*     log("cblk_tmp %x size %d\n", cblk_tmp, sizeof(cblk_tmp)); */
-/* #endif */
-
-/*     cblk_tmp->cblk_index = cblk; */
-/*     cblk_tmp->streamType = -3; // dummy value, we can't tell from within getNextBuffer the exact streamType */
-    
-/*     snprintf(randString, 11, "%lu", mrand48()); */
-/*     snprintf(timestamp,  11, "%d", time(NULL)); */
-
-/*     cblk_tmp->trackId = strdup(randString); */
-/*     log("trackId: %s\n", cblk_tmp->trackId); */
-
-/*     //         Qi-<timestamp>-<id univoco per chiamata>-<canale>.[tmp|boh] */
-/*     // length:  2-strlen(timestamp)-strlen(randString)-1.3.1 + 3 chars for '-' */
-/*     // filenameLength including null */
-
-/*     filenameLength = 21 + 2 + strlen(timestamp) + strlen(randString) + 1 + 4 + 1 + 3; */
-
-/*     cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  ); */
-/*     snprintf(cblk_tmp->filename, filenameLength, "/data/local/tmp/dump/Qi-%s-%s-r.bin",timestamp, randString ); */
-/*     log("filename: %s\n", cblk_tmp->filename); */
-        
-
-/*     cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH); */
-/*     log("%s fd: %d\n", cblk_tmp->filename, cblk_tmp->fd); */
-
-
-/*     cblk_tmp->startOfCircularBuffer = *(unsigned int*) (cblk + 0x18); */
-/*     cblk_tmp->frameCount = *(unsigned int*) (cblk + 0x1c); */
-
-/* #ifdef DEBUG */
-/*     log("cblk start of circular buffer: %x\nframe count: %x\nframe size %d\nbuffer end: %x\n", cblk_tmp->startOfCircularBuffer, cblk_tmp->frameCount, frameSize, cblk_tmp->startOfCircularBuffer + (cblk_tmp->frameCount * frameSize)); */
-/* #endif */
-
-/*     cblk_tmp->lastBufferRaw  = bufferRaw; */
-/*     cblk_tmp->lastFrameCount = framesCount; */
-/*     cblk_tmp->lastFrameSize  = frameSize; */
-    
-/*     cblk_tmp->sampleRate = sampleRate; */
-    
-/*     HASH_ADD_INT(cblkTracks, cblk_index, cblk_tmp); */
-/*     cblk_tmp = NULL; */
-    
-/*     HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp); */
-    
-/*     if( cblk_tmp == NULL ) { */
-/* #ifdef DEBUG */
-/*       log("uthash shit happened\n"); */
-/* #endif */
-/*       return result; */
-/*     } */
-/* #ifdef DEBUG */
-/*     log("\t\tadded cblk from within getNextBuffer\n"); */
-/* #endif */
-
-/*   } */
-
-/*   else { */
 
   if( cblk_tmp != NULL ) {    
 
@@ -822,6 +842,11 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
     cblk_tmp->lastFrameSize  = frameSize;
 
   }
+#ifdef DEBUG
+  else {
+    log("\t\tcblk not found %x\n", cblk);
+  }
+#endif
 
 #ifdef DEBUG
   log("\t\t\t------- end playback3 -------------\n");
@@ -942,6 +967,12 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 
     cblk_tmp->cblk_index = cblk;
 
+    /* 
+       record does not have a corresponding newTrack event
+       for such reason possible status are start or stop only
+     */
+    cblk_tmp->lastStatus = STATUS_START;
+    
     
     snprintf(randString, 11, "%lu", mrand48());
     snprintf(timestamp,  11, "%d", time(NULL));

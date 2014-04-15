@@ -33,7 +33,7 @@
 #include "hijacks.h"
 
 
-#define DEBUG 
+//#define DEBUG 
 
 struct mm {
 	char name[256];
@@ -771,11 +771,18 @@ void my_init()
     
   int v = 0;
   unsigned long int addr = 0;
+  unsigned int hook_counter = 0;
 
   FILE *fp;
   char *command =  "getprop ro.build.version.release";
   char version[10] = "";
   
+  char *hook_log_filename = malloc( sizeof(char) * 8) ; // 8_8.cnf
+  char *full_path_log_filename;
+  int full_path_log_filename_length;
+  int fd = -1;
+
+
   int pid = getpid();
   pid_global = getpid();
 
@@ -804,19 +811,20 @@ void my_init()
 
       /* 4.0 */
       /* dumpers */
-      HOOK_coverage_40_11;  // record
-      HOOK_coverage_40_12;  // play
+      hook_counter += HOOK_coverage_40_11;  // record
+      hook_counter += HOOK_coverage_40_12;  // play
 
       /* signaling */
+
       // playback
-      HOOK_coverage_40_2;  // new
-      HOOK_coverage_40_17; // start
-      HOOK_coverage_19;    // stop
-      HOOK_coverage_20;    // pause
+      hook_counter += HOOK_coverage_40_2;  // new
+      hook_counter += HOOK_coverage_40_17; // start
+      hook_counter += HOOK_coverage_19;    // stop
+      hook_counter += HOOK_coverage_20;    // pause
 
       // record 
-      HOOK_coverage_40_16; // start
-      HOOK_coverage_18;    // stop
+      hook_counter += HOOK_coverage_40_16; // start
+      hook_counter += HOOK_coverage_18;    // stop
 
     } 
     else {
@@ -828,26 +836,51 @@ void my_init()
       /* 4.1/4.2 */
     
       /* dumpers */
-      HOOK_coverage_11;  // record
-      HOOK_coverage_12;  // play
+      hook_counter += HOOK_coverage_11;  // record
+      hook_counter += HOOK_coverage_12;  // play
 
       /* signaling */
+
       // playback
-      HOOK_coverage_2;  // new
-      HOOK_coverage_17; // start
-      HOOK_coverage_19; // stop
-      HOOK_coverage_20; // pause
+      hook_counter += HOOK_coverage_2;  // new
+      hook_counter += HOOK_coverage_17; // start
+      hook_counter += HOOK_coverage_19; // stop
+      hook_counter += HOOK_coverage_20; // pause
 
       // record 
-      HOOK_coverage_16; // start
-      HOOK_coverage_18; // stop
+      hook_counter += HOOK_coverage_16; // start
+      hook_counter += HOOK_coverage_18; // stop
     
     }
 	
 #ifdef DEBUG 
     log("[*] Hooking finished\n");
+    log("[*] hooked %d/8 functions\n", hook_counter);
+    log("[*] dumpPath %s\n", dumpPath);
+#endif
+    
+    // if hook_counter is bigger something happened, do not write cnf file
+    if( hook_counter <= 8 ) {
+      snprintf(hook_log_filename, 8, "%d_8.cnf", hook_counter);
+      
+      full_path_log_filename_length = strlen(dumpPath) + 1 + strlen(hook_log_filename) + 1;
+      full_path_log_filename = malloc( sizeof(char) * full_path_log_filename_length);
+      
+      snprintf(full_path_log_filename, full_path_log_filename_length, "%s/%s", dumpPath, hook_log_filename);
+ 
+      fd = open(full_path_log_filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
+
+#ifdef DEBUG
+      log("[*] wrote log file %s fd %d\n", full_path_log_filename, fd);
 #endif
 
+      close(fd);
+      free(hook_log_filename);
+      free(full_path_log_filename);
+
+
+    }
+ 
   } 
 #ifdef DEBUG 
   else {

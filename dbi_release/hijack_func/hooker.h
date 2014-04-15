@@ -11,6 +11,7 @@
 struct hook_t *help_hash1;
 struct hook_t *postcall_hash;
 
+extern char *dumpPath;
 
 /* From audio.h Audio stream types */
 typedef enum {
@@ -29,6 +30,11 @@ typedef enum {
     AUDIO_STREAM_MAX              = AUDIO_STREAM_CNT - 1,
 } audio_stream_type_t;
 
+typedef enum {
+  STATUS_NEW   = 0,
+  STATUS_STOP  = 1,
+  STATUS_START = 2,
+} cblk_status; 
 
 struct cblk_t {
 
@@ -62,7 +68,9 @@ struct cblk_t {
   unsigned long fileOffset; // global offset, needed to recompose the tracks
 
   int stopDump; // for record
-
+  
+  cblk_status lastStatus;
+  
   UT_hash_handle hh;
   
 
@@ -174,3 +182,4 @@ unsigned long lastBufferStartAddress;
 
 // RecordThread::RecordTrack
 #define HOOK_coverage_40_16 help_no_hash(&recordTrackStart_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack5startEv", recordTrackStart_h, 1, 0);
+
