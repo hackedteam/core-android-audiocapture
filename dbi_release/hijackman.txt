@@ -1,0 +1,249 @@
+Risorse :
+- Collin Mulliner <collin[at]mulliner.org>  http://www.mulliner.org/android/ nel git
+- dbi_release/references/
+############################################################ Introduzione
+
+############################################ Terminologia
+
+lowlevel RCS: 
+  Insieme delle funzioni inserite nel mediaserver per effettuare il logging delle chiamate
+RCSAndroid:
+  Backdoor scritta in Java per Android
+ModuloMic/cal
+  Parte della RCSAndroid che si interfacciano alla "lowlevel RCS" per ricevere le tracca raw audio
+  da processare e inviare come evidence
+  
+############################################ Concetti di base e hijacking
+
+L'hijacking dell'audio usando l'hooking del mediaserver
+consta di tre parti:
+1) exploit di mprotect derivato dal lavoro di Mulliner nel suo "dbi",
+carica via ptrace lo shared object contenente le funzioni usate per 
+l'hooking, rende lo stack eseguibile e poi ci carica l'indirizzo della 
+funzone my_init della shared
+Inject shared library into a running process using ptrace().
+
+ Steps:
+  ptrace process
+  write code on stack
+  make stack executable by calling mprotect
+  code executes on stack and calls dlopen
+  dlopen load library into process and calls _init(or my_init) of library
+  code restores back old register and PC state and process continues
+  
+2) la shared library cerca le funzioni da hookare cercando la firma C++
+della funzione targhet ad offset prestabiliti dalla memoria del mediaserver, ne sovrascrive i primi 20 byte (vedi libt.c).
+Tale operazione viene efferruata usando le funzioni help() e help_no_hash() a tal proposito vengono definite delle macro del tipo:
+#define HOOK_coverage_19 help_no_hash(&playbackTrackStop_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track4stopEv", playbackTrackStop_h, 1, 0);
+in hooker.h contenuto nella directory hijack_func
+
+3) da questo momento in poi il mediaserver quando vorra' eseguire una di quelle hookate andra' a esegure l'indirizzo di memoria dove 
+queste si trovavano precedentemente ma verranno al loro posto chiamate quelle sostituite.
+Il lavoro delle funzioni sostituite sara' quello di eseguire a seconda della necessita' prima la funzione originale e poi quella 
+usata per gli scopi di RCS o viceversa. 
+Vedi ad esempio : recordTrackStop_h in hooker_thumb.c
+
+############################################################# Flusso di registrazione e IPC
+
+############################################ Flusso di logging audio
+Una volta inserito il codice wrapper nel mediaserver e' possibile catturare ogni evento "audio" del telefono:
+/* From audio.h Audio stream types */
+typedef enum {
+    AUDIO_STREAM_DEFAULT          = -1,
+    AUDIO_STREAM_VOICE_CALL       =  0,
+    AUDIO_STREAM_SYSTEM           =  1,
+    AUDIO_STREAM_RING             =  2,
+    AUDIO_STREAM_MUSIC            =  3,
+    AUDIO_STREAM_ALARM            =  4,
+    AUDIO_STREAM_NOTIFICATION     =  5,
+    AUDIO_STREAM_BLUETOOTH_SCO    =  6,
+    AUDIO_STREAM_ENFORCED_AUDIBLE =  7, /* Sounds that cannot be muted by user and must be routed to speaker */
+    AUDIO_STREAM_DTMF             =  8,
+    AUDIO_STREAM_TTS              =  9,
+    AUDIO_STREAM_CNT,
+    AUDIO_STREAM_MAX              = AUDIO_STREAM_CNT - 1,
+} audio_stream_type_t;
+
+Attualmente siamo interessati solo a AUDIO_STREAM_VOICE_CALL.
+
+I flussi audio vengono suddivisi in 2:
+1) L quelli LOCALI = L catturati "record" dal microfono 
+2) R quelli REMOTI = R ricevuti e riprodotti "play" dal chiamato o chiamante.
+
+Ci sono due hashtable :
+quella per il record L 		struct cblk_t *cblkRecordTracks = NULL;
+quella per il playback R 	struct cblk_t *cblkTracks = NULL; 
+
+La sequenza di eventi ideale di un flusso consta di eventi SIGNALING e DUMPER:
+SIGNALING: new, start, stop , pause
+DUMPERS:   record, play, nextBuffer
+
+In particolare si avra'
+1x-->new track
+1x-->play/record start
+nx-->getnewBuffer
+1x-->stop
+
+################################## Analisi eventi di stream REMOTE
+
+La sequenza viene rispettata nel caso di playback ovvero del REMOTE. A livello di IPC RCS si ha
+1) new track -->newTrack_h
+scatena la creazione di un file con la seguente neming convantion: Qi-<timestamp>-<id univoco per chiamata>-<canale>.bin
+nel caso di remote , il canale sara' r, l'id univoco della chiamata viene creato nella funzione newTrack_h.
+NOTA: ma non sarebbe meglio usare il triggerSession parametro c della playbackTrackStart_h ??
+
+Inoltre viene inserita in un hashtable una struttura di tipo " struct cblk_t" (hijack_func/hooker.h) usata dalla parte RCS lowlevel per tener traccia delle tracce.
+Le informazioni per riempire questa struttura vengono recuperate rispetto a un'offset del primo parametro (this) 
+passato alla chiamata new_track del media server (cblk = *(unsigned long*) (a + 0x1c);) dove "a" e' appunto il (this)
+NOTA: invece di usare gli offset per recuperare i campi da cblk, ad esempio (frameSize = *(unsigned char*) (cblk + 0x34 );) non sarebbe piu' comodo e leggibile 
+castare la struttura!!
+La struttura da cui si ricavano le info cblk viene allocata e gestita da (AudioFlinger/AudioBufferProvider) (da confermare), all'interno della stessa esiste un puntatore a un buffer circolare 
+che viene salvato in cblk_tmp->startOfCircularBuffer = *(unsigned int*) (cblk + 0x18); 
+altra struttura interessante e' cblk_tmp->lastBufferRaw = *(unsigned int*) (b);
+
+-----> NOTA BENE
+La hash delle tracce usa come chiave l'indirizzo della clbk , nel momento in cui questa struttura viene riusata (per motivi di ottimizzazione) si ha un matching all'interno della hashtable.
+<-----
+
+
+2) playstart -->playbackTrackStart_h
+Viene ricercata nalla hashtable la struct cblk_t della cblk che ha generato la chiamata a playbackStart, ci si aspetta in questo caso che sia lo stesso della chiamata newTrack_h, nel caso in cui non venga 
+trovata nulla viene fatto.
+Nella playbackTrackStart_h viene solo controllato se il campo ((struct cblk_t)->lastStatus) == STATUS_STOP, in questo caso viene aperto il file sul fs, cio' 
+significa che il buffer cblk non e' stato rimosso , ma e' stato riusato per la chiamata dopo, oppure e' stato effettuato una pause e successivamente una start (da confermare)
+
+3) playNextBuffer -> playbackTrack_getNextBuffer3_h
+A questo punto avviene la scrittura del dato contenuto in bufferRaw all'interno del file Qi-<timestamp>-<id univoco per chiamata>-<canale>.bin, tale file e' organizzato come 
+di seguito :
+--------------------------
+      Header
+--------------------------
+
+      Blocco dati
+
+--------------------------
+      H
+      B
+      H
+      B
+      ..
+      ..
+--------------------------
+
+Header contiene le informazioni sul blocco che segue, che sono:
+      write(cblk_tmp->fd, &uintTmp, 4); // 1] epoch start
+      write(cblk_tmp->fd, &uintTmp, 4); // 2] epoch end
+      write(cblk_tmp->fd, &uintTmp, 4); // 3] streamType
+      write(cblk_tmp->fd, &uintTmp, 4); // 4] sampleRate
+      write(cblk_tmp->fd, &uintTmp, 4); // 5] size of block
+
+Il file viene chiuso nel momento in cui la sua dimensione supera 1MB (~1048576) e viene subito creato un altro file per ricevere
+il buffer successivo (e se non c'e' che si fa?). Dopo la chiusura il file viene rinominato (Qi-<timestamp>-<id univoco per chiamata>-<canale>.tmp )in modo da AVVISARE RCSAndroid che e' pronta 
+una nuova chunk dello stream di registrazione 
+
+4) stop -> playbackTrackStop_h
+A questo punto e' possibile chiudere lo stream audio e rinominarlo Qi-<timestamp>-<id univoco per chiamata>-<canale>.tmp , prima bisogna aggiungere pero' un ultimo header fake.
+(quale serebbe il motivo ???? )
+A volte la newtrack non viene chiamata , ne consegue che se viene usata la stessa struttura cblk per la traccia
+successiva , nella hashtable useremo la stessa struttura cblk_t, per capire tale situazione viene usato il campo ((struct cblk_t)->lastStatus) che puo' avere tre stati :
+typedef enum {
+  STATUS_NEW   = 0,
+  STATUS_STOP  = 1,
+  STATUS_START = 2,
+} cblk_status; 
+In chiusura viene settato a STATUS_STOP
+
+
+################################## Analisi eventi di stream LOCAL
+1x-->new track
+1x-->play/record start
+nx-->getnewBuffer
+1x-->stop
+
+Sembra che la parte di local non segua lo schema mostrato per la REMOTE, in particolar la recordTrackStart non viene chiamata puntualmente.
+Per questo motivo non si fa affidamento sulla recordTrack_getNextBuffer3_h per la creazione del file e della struttura cblk_t , ma il lavoro viene demandato all'interno della nextBuffer.
+
+1) new track --> null
+vista l'inaffidabilita' non viene hookkata.
+
+2) tart --> recordTrackStart_h
+Usata solo per il logging quando abilitato (DEBUG)
+
+3)getNextBuffer --> recordTrack_getNextBuffer3_h
+la next buffer deve discriminare 2 casi , la traccia e' gia' inserita all'interno dell'hashtable oppure no.
+Nel caso in cui la traccia sia gia' inserita il lavoro effettuato e' del tutto identico a quello fatto nella getNextBuffer della play.
+Nel caso in cui la traccia non sia presente, si procede con l'inserimento e la creazione della struttura all'interno della hashtable e alla creazione del 
+file su fs. e si esce , nessun buffer viene aggiunto
+
+NOTA NOTA NOTA::: cosa accade se anche la local=record non passa per la STOP, ma riutilizza lo stesso buffer?
+
+
+############################################################# Complazione
+prerequisiti : NDK e arm crosschain rispettivamente 
+http://developer.android.com/tools/sdk/ndk/index.html
+
+rcs-dev  SHARE/Tools/arm-2008q3-72-arm-none-linux-gnueabi-i686-pc-linux-gnu.tar.bz2
+la compilazione tramite make nella directory dbi_release compila 
+le hijack_func e libt
+
+export CC=/home/zad/bin/arm-2008q3/bin/arm-none-linux-gnueabi-gcc
+export LD=/home/zad/bin/arm-2008q3/bin/arm-none-linux-gnueabi-ld
+
+cd dbi_release & make 
+
+Per ricompilare l'hjacker e' necessario compilarlo a mano.
+cd in hijack/
+
+con  Android NDK
+	cd hijack/ 
+	ndk-build
+	cd -
+	risultato in libs/armeabi/hijack
+
+############################################ Debug
+Per attivare il debug definire CFLAGS con le define necessarie, ad esempio per un fulldebug:
+export CFLAGS="-DDEBUG -DDEBUG_UTIL -DDEBUG_HOOKFNC -DDEBUG_LIBT"
+DEBUG --> necessario per tutti gli altri debug --> libt.h
+DEBUG_UTIL --> util.c
+DEBUG_HOOKFNC --> hooker_thumb.c
+DEBUG_LIBT --> libt.c
+
+Una volta attivato il debug il file contenente i log e' /data/local/tmp/log
+
+############################################################# Output di complazione
+going to use CC=/home/zad/bin/arm-2008q3/bin/arm-none-linux-gnueabi-gcc and LD=/home/zad/bin/arm-2008q3/bin/arm-none-linux-gnueabi-ld
+(cd hijack_func;  ./build.sh)
+
+compiling libt.c (gcc)
+compiling util.c (gcc)
+/home/zad/bin/arm-2008q3/bin/arm-none-linux-gnueabi-ld -s -shared -Llibs -lc -soname,libt.so -o libt.so libt.o util.o hijack_func/*.o
+
+
+
+
+############################################################preparazione del targhet
+copia dei file compilati in :
+
+adb push hijack/libs/armeabi/hijack /data/local/tmp/
+adb push libt_debug.so /data/local/tmp/
+
+
+
+have a look in ./hijack/buildme.txt
+
+per hookare a mano:
+adb shell touch /data/local/tmp/log
+adb shell
+su
+cd /data/local/tmp/
+chmod 666 ./log
+$ ps | grep media
+media     1668  1     812    344   ffffffff 00000000 S /system/bin/logwrapper
+media     1685  1668  98496  13328 ffffffff 00000000 S /system/bin/mediaserver
+$ su
+# ./hijack -l /data/local/tmp/libt_debug.so -f /data/local/tmp/audio -d -p 1685
+21960
+-p <pid del mediaserver> 
+-l <percorso assoluto della libreria con gli hook>
+-f <percorso assoluto della directory dove inserire audio>
+-d abilita il debug
