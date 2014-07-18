@@ -1,17 +1,20 @@
 #!/bin/sh
-
+if [ -z "$CC" ]
+then
+  CC=/tools/arm-2008q3/bin/arm-none-linux-gnueabi-gcc
+fi
 list=`ls *.c`
 
 rm -f *.o
 for i in $list;
 do
-~/tools/arm-2008q3/bin/arm-none-linux-gnueabi-gcc -g -I.. -c $i
+  $CC $CFLAGS -g -I.. -c $i
 done
 
 list=`ls *_thumb.c`
 for i in $list;
 do
-~/tools/arm-2008q3/bin/arm-none-linux-gnueabi-gcc -g -I..  -c $i -mthumb
+  $CC $CFLAGS -g -I..  -c $i -mthumb
 done
 
 list=`ls *.h`

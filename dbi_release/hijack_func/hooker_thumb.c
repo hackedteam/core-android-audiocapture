@@ -23,7 +23,7 @@ char *dumpPath =  ".................____________.......................";
 
 /* start signaling hooks */
 
-//#define DEBUG
+
 
 void* recordTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w)  {
 
@@ -31,7 +31,7 @@ void* recordTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f, v
   void* result;
   int res;
   
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- enter recordTrackStart -------------\n");
 #endif
 
@@ -39,13 +39,13 @@ void* recordTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f, v
   helper_precall(&recordTrackStart_helper);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t\tresult: %d\n", (int) result);
 #endif
   
   helper_postcall(&recordTrackStart_helper);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- exit recordTrackStart -------------\n");
 #endif
 
@@ -64,7 +64,7 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
   unsigned int uintTmp;
   time_t now;
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- enter recordTrackStop -------------\n");
 #endif 
 
@@ -73,13 +73,13 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&recordTrackStop_helper);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t\tresult: %d\n", (int) result);
 #endif
 
   cblk = *(unsigned long*) (a + 0x1c);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\tstop track cblk_id: %x\n", cblk);
 #endif
 
@@ -95,7 +95,7 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
 
     // TODO: temporary fix
     if( cblk_tmp->stopDump == 1) {
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("\trecordTrackStop already called\n");
 #endif
       return;
@@ -116,7 +116,7 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
     write(cblk_tmp->fd, &uintTmp, 4); // 5] size of block - 0 for last block
 
     /* rename file to .tmp and free the cblk structure  */
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("Stop: should take a dump: %s\n", cblk_tmp->filename);
 #endif	  
 
@@ -128,7 +128,7 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
 
     res = rename(cblk_tmp->filename, filename);
 
-#ifdef DEBUG  
+#ifdef DEBUG_HOOKFNC  
     log("fname %s\n", filename);
     log("rename %d\n", res );
 #endif
@@ -161,12 +161,12 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
     free(cblk_tmp);
     
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("freed all the stuff\n");
 #endif
   }
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- exit recordTrackStop -------------\n");
 #endif
 
@@ -202,7 +202,7 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
   int written;
   int streamType = (int) d;
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("enter new track\n");
   log("\tpbthread: %x\n\tclient: %x\n\tstreamType: %x\n\tsampleRate: %d\n\tformat: %x\n\tchannelMask: %x\n\tframeCount: %x\n\tsharedBuffer: %x\n\tsessionId: %x\n\ttid: %x\n\tflags: %x\n", b, c,d, e, f, g, h, i, l, m, n);
 #endif
@@ -214,32 +214,32 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
   
   cblk = *(unsigned long*) (a + 0x1c);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\tnew track cblk: %p\n", cblk);
 #endif
 
   // ----------------------------------
 
     /* fetch the necessary fields */
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tcblk flags %x\n", *(signed int*) (cblk + 0x3c));
 #endif
 
   /* [3] */
   frameSize = *(unsigned char*) (cblk + 0x34 );
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tframeSize %x\n", frameSize);
 #endif
 
   // not really useful, info only
   sampleRate = *(unsigned int*) (cblk + 0x30);
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tsampleRate %x\n", sampleRate);
 #endif
 
   /* [2] second field within AudioBufferProvider */
   framesCount = * (unsigned int*) (b + 4);
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tframesCount %x\n", framesCount);
 #endif
 
@@ -267,7 +267,7 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
     cblk_tmp->trackId = strdup(randString);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("trackId: %s\n", cblk_tmp->trackId);
 #endif
 
@@ -282,7 +282,7 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
       cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
       snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-r.bin", dumpPath, timestamp, randString );
       
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("filename: %s\n", cblk_tmp->filename);
 #endif
         
@@ -307,23 +307,23 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
     HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
     
     if( cblk_tmp == NULL ) {
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("uthash issue\n");
 #endif
       return result;
     }
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("\tnew Track added cblk\n");
 #endif
 
   }
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   else {
-    log("cblk not found %x\n", cblk);
+    log("cblk found %x\n", cblk);
   }
 #endif
   
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t----------- exit new track %p %p ------------------\n", result, a)
 #endif
 
@@ -346,22 +346,22 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
   char *filename;
 
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- enter playbackTrackStart -------------\n");
-  log("enter start track %x\n", a);
+  log("\t enter start track %x\n", a);
   log("\tevent: %x\n\ttriggerSession: %x\n\n", b, c);
 #endif
 
   cblk = *(unsigned long*) (a + 0x1c);
 
-#ifdef DEBUG
-  log("\tnew track cblk: %x\n", cblk);
+#ifdef DEBUG_HOOKFNC
+  log("\tplaybackTrackStart track cblk: %x\n", cblk);
 #endif
 
   HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
 
   if( cblk_tmp != NULL ) {
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("\tcblk found %x last known status %d\n", cblk, cblk_tmp->lastStatus);
 #endif
     
@@ -376,7 +376,7 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
 
       //cblk_tmp->trackId = strdup(randString);
       
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("reusing trackId: %s\n", cblk_tmp->trackId);
 #endif
 
@@ -386,7 +386,7 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
       //cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
       //snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-r.bin", dumpPath, timestamp, randString );
       
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("reusing filename: %s\n", cblk_tmp->filename);
 #endif
         
@@ -400,7 +400,7 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
 
   }
   else {
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("\tcblk not found %x\n", cblk);
 #endif
 
@@ -411,7 +411,7 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&playbackTrackStart_helper);
   
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t\tresult: %d\n", (int) result);
   log("\t\t\t------- exit playbackTrackStart -------------\n");
 #endif
@@ -430,13 +430,13 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
   unsigned int uintTmp;
   time_t now;
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- enter playbackTrackStop -------------\n");
 #endif
 
   cblk = *(unsigned long*) (a + 0x1c);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\ttrack cblk: %x\n", cblk);
 #endif
 
@@ -445,7 +445,7 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&playbackTrackStop_helper);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t\tresult: %d\n", (int) result);
 #endif
 
@@ -469,7 +469,7 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
     
 
     /* rename file to .tmp and free the cblk structure  */
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("Stop: should take a dump\n");
 #endif	  
 
@@ -480,7 +480,7 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
     *(filename+strlen(filename)-2) = 'm';
     *(filename+strlen(filename)-3) = 't';
 
-#ifdef DEBUG  
+#ifdef DEBUG_HOOKFNC  
     log("fname %s\n", filename);
     //log("rename %d\n", rename(cblk_tmp->filename, filename) );
 #endif
@@ -517,12 +517,12 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
     //HASH_DEL(cblkTracks, cblk_tmp);
     //free(cblk_tmp);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("freed all the stuff %x\n", cblk);
 #endif
   }
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- exit playbackTrackStop -------------\n");
 #endif
 
@@ -538,13 +538,13 @@ void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f,
   int res;
   unsigned long cblk;
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- enter playbackTrackPause -------------\n");
 #endif
  
   cblk = *(unsigned long*) (a + 0x1c);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\tnew track cblk: %x\n", cblk);
 #endif
 
@@ -553,7 +553,7 @@ void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f,
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&playbackTrackStart_helper);
 
-#ifdef DEBUG  
+#ifdef DEBUG_HOOKFNC  
   log("\t\t\t\tresult: %d\n", (int) result);
   log("\t\t\t------- exit playbackTrackPause -------------\n");
 #endif
@@ -561,63 +561,6 @@ void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f,
   return result;
 }
 
-
-
-/* end signaling hooks */
-
-/* start dumper hooks */
-
-/* void* playbackTimedTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) { */
-
-/*   void* (*playback_h_ptr)(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w); */
-/*   void* result; */
-/*   unsigned long* cblk_ptr; */
-/*   unsigned long cblk; */
-/*   unsigned long framesAvail; */
-/*   unsigned long framesReq; */
-/*   unsigned long bufferSize; */
-/*   unsigned long bufferStart; */
-/*   unsigned long thisStart; */
-/*   unsigned long bufferEndAddress; */
-/*   int res; */
-/*   int ii, cblkIndex; */
-  
-
-/*   log("\t\t\t------- playback timed -------------\n"); */
-/*   playback_h_ptr = (void *) playbackTimedTrack_getNextBuffer_helper.orig; */
-/*   helper_precall(&playbackTimedTrack_getNextBuffer_helper); */
-/*   log("\t\tcall %p\n", playback_h_ptr); */
-/*   result = playback_h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w); */
-/*   log("\t\t\t\tresult: %d\n", (int) result); */
-/*   helper_postcall(&playbackTimedTrack_getNextBuffer_helper); */
-
-
-/*   return result; */
-/* } */
-
-/* void* recordThread_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) { */
-
-/*   void* (*record_h_ptr)(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w); */
-/*   void* result; */
-/*   unsigned long* cblk_ptr; */
-/*   unsigned long cblk; */
-/*   unsigned long framesAvail; */
-/*   unsigned long framesReq; */
-/*   unsigned long bufferSize; */
-/*   unsigned long bufferStart; */
-/*   unsigned long thisStart; */
-/*   unsigned long bufferEndAddress; */
-/*   int res; */
-
-/*   log("\t\t\t------ record thread --------------\n"); */
-/*   record_h_ptr = (void *) recordThread_getNextBuffer_helper.orig; */
-/*   helper_precall(&recordThread_getNextBuffer_helper); */
-/*   result = record_h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w); */
-/*   log("\t\t\t\tresult: %d\n", (int) result); */
-/*   helper_postcall(&recordTrack_getNextBuffer_helper); */
-
-/*   return result; */
-/* } */
 
 
 
@@ -656,7 +599,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   
   int written;
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- playback3 -------------\n");
 #endif
   
@@ -667,7 +610,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   // tmp
   framesCount = * (unsigned int*) (b + 4);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("> pb args %x %x %x - desiredFrames: %x\n", a, b, c, framesCount);
 #endif
 
@@ -677,7 +620,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&playbackTrack_getNextBuffer_helper);
    
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t\tresult: %d\n", (int) result);
 #endif
 
@@ -686,29 +629,29 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   cblk_ptr = (unsigned int*) (a + 0x1c) ;
   cblk = *cblk_ptr;
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tcblk %p\n", cblk);
 #endif
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tcblk flags %x\n", *(signed int*) (cblk + 0x3c));
 #endif
 
   /* [3] */
   frameSize = *(unsigned char*) (cblk + 0x34 );
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tframeSize %x\n", frameSize);
 #endif
 
   // not really useful, info only
   sampleRate = *(unsigned int*) (cblk + 0x30);
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tsampleRate %x\n", sampleRate);
 #endif
 
   /* [2] second field within AudioBufferProvider */
   framesCount = * (unsigned int*) (b + 4);
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tframesCount %x\n", framesCount);
 #endif
 
@@ -727,7 +670,19 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   if( cblk_tmp != NULL ) {    
 
     if( result == 0 && framesCount != 0 && cblk_tmp->streamType == 0 ) {
-
+      /*
+       off_t lseek(int fd, off_t offset, int whence);
+DESCRIPTION
+       The lseek() function repositions the offset of the open file associated with the file descriptor fd to the argument offset according to the directive whence as follows:
+       SEEK_SET
+              The offset is set to offset bytes.
+       SEEK_CUR
+              The offset is set to its current location plus offset bytes.
+       SEEK_END
+              The offset is set to the size of the file plus offset bytes.
+              
+       RETURN Upon successful completion, lseek() returns the resulting offset location as measured in bytes from the beginning of the file
+              */
       // header
       headerStart = lseek(cblk_tmp->fd, 0, SEEK_CUR);
       //log("\t\theaderStart: %x\n", headerStart);
@@ -741,16 +696,16 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
       write(cblk_tmp->fd, &uintTmp, 4); // 4] sampleRate
       write(cblk_tmp->fd, &uintTmp, 4); // 5] size of block
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("\t\t\tbuffer spans: %p -> %p\n", bufferRaw, (bufferRaw + framesCount * frameSize ) );
 #endif
       res = write(cblk_tmp->fd, bufferRaw, framesCount * frameSize  );
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("\t\t\t\twrote: %d - expected: %d\n", res, framesCount * frameSize );
 #endif
       positionTmp = lseek(cblk_tmp->fd, 0, SEEK_CUR);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("\t\tfake header written: %x\n", positionTmp);
 #endif
 	
@@ -759,7 +714,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 	// go back to start of header
 	lseek(cblk_tmp->fd, headerStart, SEEK_SET);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
 	log("\t\trolled back: %x\n", lseek(cblk_tmp->fd, 0, SEEK_CUR));
 #endif
 
@@ -772,21 +727,21 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 	written = write(cblk_tmp->fd, &cblk_tmp->sampleRate , 4); // 4] sampleRate
 	written = write(cblk_tmp->fd, &res , 4); // 5] res
 	  
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
 	log("\t\t\theader fixed %x -> %x:%x:%x:%x\n", cblk_tmp->cblk_index, now, cblk_tmp->streamType, cblk_tmp->sampleRate, res);
 #endif
 	
 	// reposition the fd
 	lseek(cblk_tmp->fd, positionTmp, SEEK_SET);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
 	log("\t\trolled forward: %x\n", lseek(cblk_tmp->fd, 0, SEEK_CUR));
 #endif
 
 	/* dump when fd is at position >= 1048576 - 1Mb */
 	if(lseek(cblk_tmp->fd, 0, SEEK_CUR) >= FILESIZE) {
 	  
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
 	  log("should take a dump\n");
 #endif
 	  
@@ -796,7 +751,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 	  *(filename+strlen(filename)-2) = 'm';
 	  *(filename+strlen(filename)-3) = 't';
 	  
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
 	  log("fname %s\n", filename);
 	  //log("rename %d\n", rename(cblk_tmp->filename, filename) );
 #endif 
@@ -816,13 +771,13 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 	  cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
 	  snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-r.bin", dumpPath, timestamp, cblk_tmp->trackId );
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
 	  log("new filename: %s\n", cblk_tmp->filename);
 #endif
         
 	  cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
 	  log("%s fd: %d\n", cblk_tmp->filename, cblk_tmp->fd);
 #endif
 
@@ -842,13 +797,13 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
     cblk_tmp->lastFrameSize  = frameSize;
 
   }
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   else {
     log("\t\tcblk not found %x\n", cblk);
   }
 #endif
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- end playback3 -------------\n");
 #endif
   
@@ -892,14 +847,14 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
   
   int written;
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- record3 -------------\n");
 #endif
 
   // tmp
   framesCount = * (unsigned int*) (b + 4);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("> rt args %x %x %x - desiredFrames: %x \n", a, b, c, framesCount);
 #endif
 
@@ -911,7 +866,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&recordTrack_getNextBuffer_helper);
    
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t\tresult: %d\n", (int) result);
 #endif
   
@@ -919,29 +874,29 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
   /* fetch the necessary fields */
   cblk_ptr = (unsigned int*) (a + 0x1c) ;
   cblk = *cblk_ptr;
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tcblk %p\n", cblk);
 #endif
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tcblk flags %x\n", *(signed int*) (cblk + 0x3c));
 #endif
 
   /* [3] */
   frameSize = *(unsigned char*) (cblk + 0x34 );
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tframeSize %x\n", frameSize);
 #endif
 
   // not really useful, info only
   sampleRate = *(unsigned int*) (cblk + 0x30);
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tsampleRate %x\n", sampleRate);
 #endif
 
   /* [2] second field within AudioBufferProvider */
   framesCount = * (unsigned int*) (b + 4);
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\tframesCount %x\n", framesCount);
 #endif
 
@@ -957,11 +912,11 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 
   if( cblk_tmp == NULL ) {
 
-    /* old code: insert from getBuffer  if( cblk_tmp != NULL ) { */
+    /* old code: insert from getBuffer  if( cblk_tmp != NULL )  */
 
     cblk_tmp =  malloc( sizeof(struct cblk_t) );
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("cblk_tmp %x size %d\n", cblk_tmp, sizeof(cblk_tmp));
 #endif
 
@@ -979,7 +934,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 
     cblk_tmp->trackId = strdup(randString);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("trackId: %s\n", cblk_tmp->trackId);
 #endif
 
@@ -992,14 +947,14 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
     cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
     snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-l.bin",dumpPath, timestamp, randString );
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("filename: %s\n", cblk_tmp->filename);
 #endif
         
 
     cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("%s fd: %d\n", cblk_tmp->filename, cblk_tmp->fd);
 #endif
 
@@ -1007,7 +962,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
     cblk_tmp->startOfCircularBuffer = *(unsigned int*) (cblk + 0x18);
     cblk_tmp->frameCount = *(unsigned int*) (cblk + 0x1c);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("cblk start of circular buffer: %x\nframe count: %x\nframe size %d\nbuffer end: %x\n", cblk_tmp->startOfCircularBuffer, cblk_tmp->frameCount, frameSize, cblk_tmp->startOfCircularBuffer + (cblk_tmp->frameCount * frameSize));
 #endif
 
@@ -1027,12 +982,12 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
     HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
     
     if( cblk_tmp == NULL ) {
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("uthash shit happened\n");
 #endif
       return result;
     }
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("\t\tgetNextBuffer added cblk\n");
 #endif
     
@@ -1040,11 +995,11 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 
   else {
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     log("\t\tstreamType: %d\n", cblk_tmp->streamType);
 #endif
     
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
     //TODO: temporary
     if( cblk_tmp->stopDump == 1)
       log("RECEVING MORE DATA FOR TRACK %p\n", cblk);
@@ -1064,16 +1019,16 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
       write(cblk_tmp->fd, &uintTmp, 4); // 3] sampleRate
       write(cblk_tmp->fd, &uintTmp, 4); // 4] size of block
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("\t\t\tbuffer spans: %p -> %p\n", bufferRaw, (bufferRaw + framesCount * frameSize ) );
 #endif
       res = write(cblk_tmp->fd, bufferRaw, framesCount * frameSize  );
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("\t\t\t\twrote: %d - expected: %d\n", res, framesCount * frameSize );
 #endif
       positionTmp = lseek(cblk_tmp->fd, 0, SEEK_CUR);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
       log("\t\tfake header written: %x\n", positionTmp);
 #endif
 	
@@ -1082,7 +1037,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 	// go back to start of header
 	lseek(cblk_tmp->fd, headerStart, SEEK_SET);
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
 	log("\t\trolled back: %x\n", lseek(cblk_tmp->fd, 0, SEEK_CUR));
 #endif
 
@@ -1095,7 +1050,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 	written = write(cblk_tmp->fd, &res , 4); // 4] res
 
 	  
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
 	log("\t\t\theader fixed %x -> %x:%x:%x:%x\n", cblk_tmp->cblk_index, now, cblk_tmp->streamType, cblk_tmp->sampleRate, res);
 #endif
 	
@@ -1107,7 +1062,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 	/* dump when fd is at position >= 5242880 */
 	if( lseek(cblk_tmp->fd, 0, SEEK_CUR) >= FILESIZE ) {
 	  
-#ifdef DEBUG 
+#ifdef DEBUG_HOOKFNC 
 	  log("should take a dump\n");
 #endif
 	  
@@ -1118,18 +1073,18 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 	  *(filename+strlen(filename)-3) = 't';
 	  
 	  
-#ifdef DEBUG 
+#ifdef DEBUG_HOOKFNC 
 	  log("fname %s\n", filename);
 	  //log("rename %d\n", rename(cblk_tmp->filename, filename) );
 #endif
 	  rename(cblk_tmp->filename, filename);
 	  
 	  if( filename != NULL)  {
-#ifdef DEBUG 
+#ifdef DEBUG_HOOKFNC 
 	    log("freeing filename\n");
 #endif
 	    free(filename);
-#ifdef DEBUG 
+#ifdef DEBUG_HOOKFNC 
 	    log("after filename free\n");
 #endif
 	  }
@@ -1144,12 +1099,12 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 	  cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
 	  snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-l.bin", dumpPath, timestamp, cblk_tmp->trackId );
 	  
-#ifdef DEBUG 
+#ifdef DEBUG_HOOKFNC 
 	  log("new filename: %s\n", cblk_tmp->filename);
 #endif
         
 	  cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
-#ifdef DEBUG 
+#ifdef DEBUG_HOOKFNC 
 	  log("%s fd: %d\n", cblk_tmp->filename, cblk_tmp->fd);
 #endif
 
@@ -1170,7 +1125,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 
   }
 
-#ifdef DEBUG
+#ifdef DEBUG_HOOKFNC
   log("\t\t\t------- end record3 -------------\n");
 #endif
 

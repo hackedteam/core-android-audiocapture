@@ -44,9 +44,8 @@ struct cblk_t {
   
 
   
-  // Qi-<epoch time>-r.tmp per audio remoto
-  // Qi-<epoch time>-l.tmp per audio locale
   // Qi-<timestamp>-<id univoco per chiamata>-<canale>.[tmp|boh]
+  // canale=l or r
   //  2-10-10-1-3-1(null) 
   char* trackId; 
   char *filename;
@@ -68,7 +67,8 @@ struct cblk_t {
   unsigned long fileOffset; // global offset, needed to recompose the tracks
 
   int stopDump; // for record
-  
+ 
+  // todo: usato per fissare il problema del riutilizzo dei buffer (da verificare)
   cblk_status lastStatus;
   
   UT_hash_handle hh;

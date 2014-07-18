@@ -9,15 +9,16 @@
  */
 #include "uthash.h"
 
-/* #define DEBUG */
-/* #ifdef DEBUG */
+
+ #ifdef DEBUG 
 #define log(...) \
         {FILE *f = fopen("/data/local/tmp/log", "a+");\
+        fprintf(f,"%s: ",__FUNCTION__);\
         fprintf(f, __VA_ARGS__);\
         fflush(f); fclose(f); }
-/* #else */
-/* #define log(...) */
-/* #endif */
+ #else 
+ #define log(...) 
+ #endif 
 
 struct hook_t {
   unsigned int jump[3];		// ARM jump code

@@ -33,7 +33,6 @@
 
 #include "util.h"
 
-//#define DEBUG
 
 static unsigned long next = 1;
 
@@ -66,7 +65,7 @@ static void* xmalloc(size_t size)
 	void *p;
 	p = malloc(size);
 	if (!p) {
-#ifdef DEBUG 
+#ifdef DEBUG_UTIL 
 		printf("xmalloc: Out of memory\n");
 #endif
 		exit(1);
@@ -436,7 +435,7 @@ static int lookup_sym(symtab_t s, unsigned char type,
 static int lookup_func_sym(symtab_t s, char *name, unsigned long *val)
 {
   int res = lookup_sym(s, STT_FUNC, name, val);
-/* #ifdef DEBUG */
+/* #ifdef DEBUG_UTIL */
 /*   log("lookup_func_sym: %d\n", res); */
 /* #endif */
   return res;
@@ -460,7 +459,7 @@ int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
 		return load_memmap_return;
 	}
 	if (0 > find_libname(libn, libc, sizeof(libc), &libcaddr, mm, nmm)) {
-/* #ifdef DEBUG  */
+/* #ifdef DEBUG_UTIL  */
 /* 	  log("cannot find %s\n", libn); */
 /* #endif */
 	  return -2;
@@ -471,13 +470,13 @@ int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
 		return -3;
 	}
 
-/* #ifdef DEBUG  */
+/* #ifdef DEBUG_UTIL  */
 /* 	log("pid %d, name %s, libn %s\n", pid, name, libn); */
 /* #endif */
 
 	if (0 > lookup_func_sym(s, name, addr)) {
 
-/* #ifdef DEBUG  */
+/* #ifdef DEBUG_UTIL  */
 /* 	  log("fail\n"); */
 /* 	  log("find_name: cannot find %s\n", name); */
 /* #endif */
@@ -486,7 +485,7 @@ int find_name(pid_t pid, char *name, char *libn, unsigned long *addr)
 	}
 
 
-/* #ifdef DEBUG */
+/* #ifdef DEBUG_UTIL */
 /* 	log("not fail %p %d\n", addr, *addr); */
 /* #endif */
 	

@@ -33,7 +33,7 @@
 #include "hijacks.h"
 
 
-//#define DEBUG 
+
 
 struct mm {
 	char name[256];
@@ -80,7 +80,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 	struct hook_t *hook = (struct hook_t*) malloc(sizeof(struct hook_t));
 
 	
-#ifdef DEBUG
+#ifdef DEBUG_LIBT
 	log("hooking - hash table 0x%x\n", help_hash1)
 #endif
 
@@ -88,11 +88,11 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 
 	  // 1 - fetch function address and put it into addr
 	  find_name_result = find_name(pid, funcname, libname, &addr);
-#ifdef DEBUG
+#ifdef DEBUG_LIBT
 	  log("find_name_result %d\n", find_name_result);
 #endif
 	  if ( find_name_result < 0) {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	      log("can't find: %s - error code %d\n", funcname, find_name_result)
 #endif
 	    return 0;
@@ -101,7 +101,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 	} else {
 
 
-#ifdef DEBUG
+#ifdef DEBUG_LIBT
 	  log("specified raw address: %x\n", raw_address)
 #endif
 	    funcname = "z";//"raw address";
@@ -121,7 +121,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 	  
 	  if( load_memmap_return < 0 ) {
 
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	    log("failed memmap\n")
 #endif
 	      exit(1);
@@ -129,7 +129,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 	  }
 
 
-#ifdef DEBUG
+#ifdef DEBUG_LIBT
 	  log("[*] searching vaddr for function %s - target relative address 0x%x\n", libname, raw_address)
 #endif
 
@@ -147,33 +147,33 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 	      addr = m->start + raw_address;
 	      
 	      if( !log_baseaddress) {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		log("[*] Base address 0x%x - 0x%x\n", m->start, m->end)
 #endif
 	        log_baseaddress = 1;
 		base_address = m->start;
 	      }
 	      
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	      log("[*]\tFound address: 0x%8x\n", addr);
 #endif
 
  
 	      global_base_address = m->start;
 
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	      log("[D] base address: %p\n", global_base_address);
 #endif
 
 	      mprotect_return = mprotect((void*)m->start, m->end - m->start, PROT_READ|PROT_WRITE|PROT_EXEC);
 
 	      if( mprotect_return == 0 ) {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	    	  log("[*]\t+rwx  memory region ok\n")
 #endif
 	      }
 	      else {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		log("[*]\t mprotect failed\n")
 #endif
 		exit(1);
@@ -187,13 +187,13 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 	}
 	
 	if( addr == 0) {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	  log("[*] Could not find specified library %s\n", libname)
 #endif
 	    exit(1);
 	    }
 	
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	log("[*] Hooking %s = %x  hook = %x  target:", funcname, addr, hookf)
 #endif
 	
@@ -203,7 +203,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 	if (addr % 4 == 0) {
 	
 	  
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	  log("ARM\n")
 #endif
 
@@ -226,7 +226,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 		hook->thumb = 1;
 		
 		
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		  log("THUMB\n")
 #endif
 		  
@@ -300,7 +300,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 
 		// Save stolen bytes
 		
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		log("[*] Saving stolen bytes\n\t")
 #endif
 
@@ -310,14 +310,14 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 			dump_buffer[i] = ((unsigned char*)orig)[i];
 			
 			
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 			log("%0.2x ", hook->storet[i])
 #endif
 			
 		}
 
 		
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		  log("\n")
 #endif
 		  
@@ -331,7 +331,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 
 
 		    // write the patch to mem
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		    log("[*] Patching target address\n\t")
 #endif
 		    
@@ -340,7 +340,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 		    ( (unsigned char*) orig)[i] = hook->jumpt[i];
 		    dump_buffer[i] = hook->jumpt[i];
 
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		      log("%0.2x ", ((unsigned char*)orig)[i])
 #endif
 
@@ -350,7 +350,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 		  //fclose(patch_bytes_dump);
 
 		  
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		  log("\n")
 #endif
 
@@ -372,7 +372,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 	}
 
 	
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	  log("[*]Adding 0x%x to hash table 0x%x\n", hook->orig, hook_hash)
 #endif
 	    
@@ -382,7 +382,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 	my_cacheflush((unsigned int)hook->orig, (unsigned int)hook->orig+20);
 	
 	
-#ifdef DEBUG
+#ifdef DEBUG_LIBT
 	log("hooking finished\n")
 #endif
 	return 1;
@@ -401,11 +401,11 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 
 	  // 1 - fetch function address and put it into addr
 	  find_name_result = find_name(pid, funcname, libname, &addr);
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	  log("find_name_result %d\n", find_name_result);
 #endif
 	  if ( find_name_result < 0) {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	    log("can't find: %s - error code %d\n", funcname, find_name_result)
 #endif
 	    return 0;
@@ -413,7 +413,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 
 	} else {
 	  
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	  log("[*] specified raw address: %x\n", raw_address)
 #endif
   
@@ -433,14 +433,14 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 	  load_memmap_return = load_memmap(pid, mm, &nmm);
 	  
 	  if( load_memmap_return < 0 ) {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	    log("failed memmap\n")
 #endif
 	      exit(1);
 	    
 	  }
 	  
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	  log("[*] searching vaddr for function %s - target relative address 0x%x\n", libname, raw_address)
 #endif
 
@@ -458,19 +458,19 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 	      addr = m->start + raw_address;
 	      
 	      if( !log_baseaddress) {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		log("[*] Base address 0x%x - 0x%x\n", m->start, m->end)
 #endif
 	        log_baseaddress = 1;
 		base_address = m->start;
 	      }
 	      
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	      log("[*]\tFound address: 0x%8x\n", addr);
 #endif
 
 	      global_base_address = m->start;
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	      log("[D] base address: %p\n", global_base_address);
 #endif
 	      
@@ -478,12 +478,12 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 
 	      if( mprotect_return == 0 ) {
 		
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		log("[*]\t+rwx  memory region ok\n")
 #endif
 	      }
 	      else {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		log("[*]\t mprotect failed\n")
 #endif
 		exit(1);
@@ -497,13 +497,13 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 	}
 	
 	if( addr == 0) {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	  log("[*] Could not find specified library %s\n", libname)
 #endif
 	    exit(1);
 	}
 	
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	log("[*] Hooking %s = %x  hook = %x  target:", funcname, addr, hookf)
 #endif
 	
@@ -513,7 +513,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 	if (addr % 4 == 0) {
 	  
 
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	  log("ARM\n")
 #endif
 
@@ -536,7 +536,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 		hook->thumb = 1;
 		
 		
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		  log("THUMB\n")
 #endif
 		  
@@ -587,7 +587,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 		// Save stolen bytes
 		
 		
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		log("[*] Saving stolen bytes\n\t")
 #endif
 
@@ -597,14 +597,14 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 			dump_buffer[i] = ((unsigned char*)orig)[i];
 			
 			
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 			log("%0.2x ", hook->storet[i])
 #endif
 			
 		}
 
 		
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		log("\n")
 #endif
 	
@@ -617,7 +617,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 
 
 		  // write the patch to mem
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		  log("[*] Patching target address\n\t")
 #endif
 		    
@@ -627,7 +627,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 		    dump_buffer[i] = hook->jumpt[i];
 		    
 		  
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		    log("%0.2x", ((unsigned char*)orig)[i]);
 #endif
 		    
@@ -636,7 +636,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 		  //fflush(patch_bytes_dump);
 		  //fclose(patch_bytes_dump);
 		
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 		log("\n")
 #endif
 
@@ -662,7 +662,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 	my_cacheflush((unsigned int)hook->orig, (unsigned int)hook->orig+20);
 	
 	
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	log("hooking finished\n")
 #endif
 	return 1;
@@ -722,7 +722,7 @@ void helper_postcall(struct hook_t *h)
 
 void unhelp(struct hook_t *h)
 {
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
 	log("unhelping %s = %x  hook = %x ", h->name, h->orig, h->patch)
 #endif
 	helper_precall(h);
@@ -764,7 +764,7 @@ void my_init()
 {
 
   
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
   log("[*] Start hooking\n");
 #endif
     //start_coms();
@@ -787,7 +787,7 @@ void my_init()
   pid_global = getpid();
 
   
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
   log("[*] Pid:%d\n", pid);
 #endif
 
@@ -797,7 +797,7 @@ void my_init()
   if( fgets(version, sizeof(version), fp) != NULL &&  version[0] == '4' ) {
 
     
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
     log("[*] version %s\n", version);
 #endif
 
@@ -805,7 +805,7 @@ void my_init()
     if( version[2] == '0' ) {
    
       
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
       log("[*] 4.0\n");
 #endif
 
@@ -829,7 +829,7 @@ void my_init()
     } 
     else {
       
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
       log("[*] 4.1/4.2\n");
 #endif
 
@@ -853,7 +853,7 @@ void my_init()
     
     }
 	
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
     log("[*] Hooking finished\n");
     log("[*] hooked %d/8 functions\n", hook_counter);
     log("[*] dumpPath %s\n", dumpPath);
@@ -870,7 +870,7 @@ void my_init()
  
       fd = open(full_path_log_filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
 
-#ifdef DEBUG
+#ifdef DEBUG_LIBT
       log("[*] wrote log file %s fd %d\n", full_path_log_filename, fd);
 #endif
 
@@ -882,7 +882,7 @@ void my_init()
     }
  
   } 
-#ifdef DEBUG 
+#ifdef DEBUG_LIBT 
   else {
     log("[*] Fail getprop\n");
     
