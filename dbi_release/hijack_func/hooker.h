@@ -148,20 +148,29 @@ unsigned long lastBufferStartAddress;
 /* Hooks for Android 4.1,4.2 */
 
 /* dumpers */
+//android::AudioFlinger::RecordThread::RecordTrack::getNextBuffer(android::AudioBufferProvider::Buffer*, long long)
 #define HOOK_coverage_11 help_no_hash(&recordTrack_getNextBuffer_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack13getNextBufferEPNS_19AudioBufferProvider6BufferEx", recordTrack_getNextBuffer3_h, 1,  0);//0x35275);
+//android::AudioFlinger::PlaybackThread::Track::getNextBuffer(android::AudioBufferProvider::Buffer*, long long)
 #define HOOK_coverage_12 help_no_hash(&playbackTrack_getNextBuffer_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track13getNextBufferEPNS_19AudioBufferProvider6BufferEx", playbackTrack_getNextBuffer3_h, 1, 0);// 0x352d1);
 
 /* signaling hooks */
 
 // PlaybackThread::Track
+// android::AudioFlinger::PlaybackThread::Track::Track(android::AudioFlinger::PlaybackThread*, android::sp<android::AudioFlinger::Client> const&, audio_stream_type_t, unsigned int, audio_format_t, unsigned int, int, android::sp<android::IMemory> const&, int, unsigned int)
 #define HOOK_coverage_2 help_no_hash(&newTrack_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5TrackC2EPS1_RKNS_2spINS0_6ClientEEE19audio_stream_type_tj14audio_format_tjiRKNS4_INS_7IMemoryEEEij", newTrack_h, 1,  0);
+
+// android::AudioFlinger::PlaybackThread::Track::start(android::AudioSystem::sync_event_t, int)
 #define HOOK_coverage_17 help_no_hash(&playbackTrackStart_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track5startENS_11AudioSystem12sync_event_tEi", playbackTrackStart_h, 1, 0);
 
+//android::AudioFlinger::PlaybackThread::Track::stop()
 #define HOOK_coverage_19 help_no_hash(&playbackTrackStop_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track4stopEv", playbackTrackStop_h, 1, 0);
+//android::AudioFlinger::PlaybackThread::Track::pause()
 #define HOOK_coverage_20 help_no_hash(&playbackTrackPause_helper,  pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track5pauseEv", playbackTrackPause_h, 1,  0);
 
 // RecordThread::RecordTrack
+//android::AudioFlinger::RecordThread::RecordTrack::start(android::AudioSystem::sync_event_t, int)
 #define HOOK_coverage_16 help_no_hash(&recordTrackStart_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack5startENS_11AudioSystem12sync_event_tEi", recordTrackStart_h, 1, 0);
+//android::AudioFlinger::RecordThread::RecordTrack::stop()
 #define HOOK_coverage_18 help_no_hash(&recordTrackStop_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack4stopEv", recordTrackStop_h, 1, 0);
 
 
@@ -170,16 +179,21 @@ unsigned long lastBufferStartAddress;
  * hooks 18, 19, 20, are ok */
 
 /* dumpers 4.0 */
+//android::AudioFlinger::RecordThread::RecordTrack::getNextBuffer(android::AudioBufferProvider::Buffer*)
 #define HOOK_coverage_40_11 help_no_hash(&recordTrack_getNextBuffer_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack13getNextBufferEPNS_19AudioBufferProvider6BufferE", recordTrack_getNextBuffer3_h, 1,  0);
+//android::AudioFlinger::PlaybackThread::Track::getNextBuffer(android::AudioBufferProvider::Buffer*)
 #define HOOK_coverage_40_12 help_no_hash(&playbackTrack_getNextBuffer_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track13getNextBufferEPNS_19AudioBufferProvider6BufferE", playbackTrack_getNextBuffer3_h, 1, 0);
 
 
 /* signaling 4.0 */
 
 // PlaybackThread::Track
+//android::AudioFlinger::PlaybackThread::Track::Track(android::wp<android::AudioFlinger::ThreadBase> const&, android::sp<android::AudioFlinger::Client> const&, int, unsigned int, unsigned int, unsigned int, int, android::sp<android::IMemory> const&, int)
 #define HOOK_coverage_40_2 help_no_hash(&newTrack_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5TrackC2ERKNS_2wpINS0_10ThreadBaseEEERKNS_2spINS0_6ClientEEEijjjiRKNS8_INS_7IMemoryEEEi", newTrack_h, 1,  0);
+//android::AudioFlinger::PlaybackThread::Track::start()
 #define HOOK_coverage_40_17 help_no_hash(&playbackTrackStart_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track5startEv", playbackTrackStart_h, 1, 0);
 
 // RecordThread::RecordTrack
+//android::AudioFlinger::RecordThread::RecordTrack::start()
 #define HOOK_coverage_40_16 help_no_hash(&recordTrackStart_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack5startEv", recordTrackStart_h, 1, 0);
 
