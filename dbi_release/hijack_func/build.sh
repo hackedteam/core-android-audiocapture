@@ -3,19 +3,43 @@ if [ -z "$CC" ]
 then
   CC=/tools/arm-2008q3/bin/arm-none-linux-gnueabi-gcc
 fi
-list=`ls *.c`
-
 rm -f *.o
+if `echo $CFLAGS| grep -q DLOGONLY`
+then
+list=`ls *_log.c`
 for i in $list;
 do
-  $CC $CFLAGS -g -I.. -c $i
+  echo $CC $CFLAGS -I.. -c $i
+  $CC $CFLAGS -I.. -c $i
+done
+
+list=`ls *_thumb_log.c`
+for i in $list;
+do
+  echo $CC $CFLAGS -I..  -c $i -mthumb
+  $CC $CFLAGS -I..  -c $i -mthumb
+done
+else
+list=`ls *.c`
+for i in $list;
+do
+if ! `echo $i| grep -q "_log.c"`
+then
+echo $CC $CFLAGS -I.. -c $i
+$CC $CFLAGS -I.. -c $i
+fi
 done
 
 list=`ls *_thumb.c`
 for i in $list;
 do
-  $CC $CFLAGS -g -I..  -c $i -mthumb
+if ! `echo $i| grep -q "_log.c"`
+then
+echo $CC $CFLAGS -I..  -c $i -mthumb
+$CC $CFLAGS -I..  -c $i -mthumb
+fi
 done
+fi
 
 list=`ls *.h`
 
@@ -29,3 +53,5 @@ do
 echo "#include \"hijack_func/$i\"" >>../hijacks.h
 done
 echo "#endif" >>../hijacks.h
+
+echo "done build.sh":

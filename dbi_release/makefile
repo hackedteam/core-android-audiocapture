@@ -20,20 +20,30 @@ else
 	#$(info " DEBUG NOT ENABLED!!!")
 	LIB_OBJ=libt.so
 endif
+else
+	LIB_OBJ=libt.so
 endif
 
 
 all:
-
 	@echo going to use CC=$(CC) and LD=$(LD) LIB_OBJ=$(LIB_OBJ)
 	(cd hijack_func;  ./build.sh)
-	$(CC) $(CFLAGS) -O2 -g -c libt.c -o libt.o -Ilibnfc-nxp/inc -Ilibnfc-nxp/src
-	$(CC) $(CFLAGS) -O2 -g -c util.c -o util.o
+	$(CC) $(CFLAGS) -O2 -c libt.c -o libt.o -Ilibnfc-nxp/inc -Ilibnfc-nxp/src
+	$(CC) $(CFLAGS) -O2 -c util.c -o util.o
 	$(LD) -s -shared -Llibs -lc -soname,$(LIB_OBJ) -o $(LIB_OBJ) libt.o util.o hijack_func/*.o
-
+ifeq ($(BUILD_HIJACK),YES)
+	make build_hijack
+endif
 clean:
 	rm -f hijack_func/*.o
-	rm *.o 
+	rm *.o
 	@if test -e libt_debug.so; then rm libt_debug.so ; fi;
 	@if test -e libt.so;  then rm libt.so ; fi;
 	rm hijacks.h
+
+
+build_hijack:
+	cd hijack/jni
+	NDK_PROJECT_PATH="$(shell pwd)/hijack/" CFLAGS="$(CFLAGS)" ndk-build clean
+	NDK_PROJECT_PATH="$(shell pwd)/hijack/" CFLAGS="$(CFLAGS)" ndk-build
+	cd -
