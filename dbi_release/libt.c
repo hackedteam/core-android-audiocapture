@@ -842,7 +842,12 @@ void my_init()
       /* signaling */
 
       // playback
-      hook_counter += HOOK_coverage_2;  // new
+      v = HOOK_coverage_2;
+      hook_counter +=v;
+      if ( v== 0){
+	log("[*] Trying fallback for Playback new (>4.2?)\n");
+	hook_counter += HOOK_coverage_2_fall;  // new
+      }
       hook_counter += HOOK_coverage_17; // start
       hook_counter += HOOK_coverage_19; // stop
       hook_counter += HOOK_coverage_20; // pause

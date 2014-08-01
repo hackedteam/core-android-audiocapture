@@ -29,7 +29,19 @@ typedef enum {
     AUDIO_STREAM_CNT,
     AUDIO_STREAM_MAX              = AUDIO_STREAM_CNT - 1,
 } audio_stream_type_t;
-
+typedef enum  {
+    IDLE,
+    TERMINATED,
+    FLUSHED,
+    STOPPED,
+// next 2 states are currently used for fast tracks only
+    STOPPING_1,     // waiting for first underrun
+    STOPPING_2,     // waiting for presentation complete
+    RESUMING,
+    ACTIVE,
+    PAUSING,
+    PAUSED
+}track_state;
 typedef enum {
   STATUS_NEW   = 0,
   STATUS_STOP  = 1,
@@ -158,6 +170,8 @@ unsigned long lastBufferStartAddress;
 // PlaybackThread::Track
 // android::AudioFlinger::PlaybackThread::Track::Track(android::AudioFlinger::PlaybackThread*, android::sp<android::AudioFlinger::Client> const&, audio_stream_type_t, unsigned int, audio_format_t, unsigned int, int, android::sp<android::IMemory> const&, int, unsigned int)
 #define HOOK_coverage_2 help_no_hash(&newTrack_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5TrackC2EPS1_RKNS_2spINS0_6ClientEEE19audio_stream_type_tj14audio_format_tjiRKNS4_INS_7IMemoryEEEij", newTrack_h, 1,  0);
+//android::AudioFlinger::PlaybackThread::Track::Track(android::AudioFlinger::PlaybackThread*, android::sp<android::AudioFlinger::Client> const&, audio_stream_type_t, unsigned int, audio_format_t, unsigned int, unsigned int, android::sp<android::IMemory> const&, int, unsigned int)
+#define HOOK_coverage_2_fall help_no_hash(&newTrack_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5TrackC1EPS1_RKNS_2spINS0_6ClientEEE19audio_stream_type_tj14audio_format_tjjRKNS4_INS_7IMemoryEEEij", newTrack_h, 1,  0);
 
 // android::AudioFlinger::PlaybackThread::Track::start(android::AudioSystem::sync_event_t, int)
 #define HOOK_coverage_17 help_no_hash(&playbackTrackStart_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track5startENS_11AudioSystem12sync_event_tEi", playbackTrackStart_h, 1, 0);
@@ -188,6 +202,7 @@ unsigned long lastBufferStartAddress;
 /* signaling 4.0 */
 
 // PlaybackThread::Track
+///device/include/server/AudioFlinger/AudioFlinger.cpp
 //android::AudioFlinger::PlaybackThread::Track::Track(android::wp<android::AudioFlinger::ThreadBase> const&, android::sp<android::AudioFlinger::Client> const&, int, unsigned int, unsigned int, unsigned int, int, android::sp<android::IMemory> const&, int)
 #define HOOK_coverage_40_2 help_no_hash(&newTrack_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5TrackC2ERKNS_2wpINS0_10ThreadBaseEEERKNS_2spINS0_6ClientEEEijjjiRKNS8_INS_7IMemoryEEEi", newTrack_h, 1,  0);
 //android::AudioFlinger::PlaybackThread::Track::start()

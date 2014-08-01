@@ -200,6 +200,10 @@ con  Android NDK
 	cd -
 	risultato in libs/armeabi/hijack
 
+
+############################################ Buildare hijack
+export BUILD_HIJACK="YES"
+
 ############################################ Debug
 Per attivare il debug definire CFLAGS con le define necessarie, ad esempio per un fulldebug:
 export CFLAGS="-DDEBUG -DDEBUG_UTIL -DDEBUG_HOOKFNC -DDEBUG_LIBT"

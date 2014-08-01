@@ -204,14 +204,14 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
 #ifdef DEBUG_HOOKFNC
   log("enter new track\n");
-  log("\tpbthread: %x\n\tclient: %x\n\tstreamType: %x\n\tsampleRate: %d\n\tformat: %x\n\tchannelMask: %x\n\tframeCount: %x\n\tsharedBuffer: %x\n\tsessionId: %x\n\ttid: %x\n\tflags: %x\n", b, c,d, e, f, g, h, i, l, m, n);
+  log("\tpbthread: %x\n\tclient: %x\n\tstreamType: %x\n\tsampleRate: %d\n\tformat: %x\n\tchannelMask: %x\n\tframeCount: %x\n\tsharedBuffer: %x\n\tsessionId: %x\n\ttid: %x\n\tflags: %x\n"
+  , b, c,d, e, f, g, h, i, l, m, n);
 #endif
     
   h_ptr = (void *) newTrack_helper.orig;
   helper_precall(&newTrack_helper);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&newTrack_helper);
-  
   cblk = *(unsigned long*) (a + 0x1c);
 
 #ifdef DEBUG_HOOKFNC
@@ -348,7 +348,7 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
 
 #ifdef DEBUG_HOOKFNC
   log("\t\t\t------- enter playbackTrackStart -------------\n");
-  log("\t enter start track %x\n", a);
+  log("\t enter start track ttid:%x\n", a);
   log("\tevent: %x\n\ttriggerSession: %x\n\n", b, c);
 #endif
 
@@ -437,7 +437,7 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
   cblk = *(unsigned long*) (a + 0x1c);
 
 #ifdef DEBUG_HOOKFNC
-  log("\ttrack cblk: %x\n", cblk);
+  log("\t[b]event:%x [c]ttid track %x cblk: %x\n",b,c, cblk);
 #endif
 
   h_ptr = (void *) playbackTrackStop_helper.orig;
@@ -611,7 +611,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   framesCount = * (unsigned int*) (b + 4);
 
 #ifdef DEBUG_HOOKFNC
-  log("> pb args %x %x %x - desiredFrames: %x\n", a, b, c, framesCount);
+  log("> pb args ttid:%x %x %x - desiredFrames: %x\n", a, b, c, framesCount);
 #endif
 
   /* call the original function */

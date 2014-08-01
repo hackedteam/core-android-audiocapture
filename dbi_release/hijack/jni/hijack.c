@@ -31,7 +31,6 @@
 #include <errno.h>       
 #include <sys/mman.h>
 
-#define DEBUG
 
 #ifdef DEBUG
 
