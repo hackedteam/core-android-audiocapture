@@ -1,0 +1,87 @@
+delete
+
+
+# following aren't a multi-line break command, it's two separate commands: break, and
+# commands
+# (gdb) break 989
+# Breakpoint 23 at 0x7fffe2761dac: file foo.cpp, line 989.
+# (gdb) command
+# Type commands for breakpoint(s) 23, one per line.
+# End with a line saying just "end".
+# >silent
+# >print result
+# >end
+
+
+set $_pg = 0
+set $_rg = 0
+
+b 'android::AudioFlinger::RecordThread::RecordTrack::stop()'
+commands
+silent
+printf "->T::stop pid %d sessionId %d\n\n\n",this->mClient.m_ptr.mPid,this->mSessionId
+set $_rg=0
+#print this
+cont
+end
+
+
+b 'android::AudioFlinger::RecordThread::RecordTrack::start(android::AudioSystem::sync_event_t, int)'
+commands
+silent
+while this->mClient.m_ptr == 0
+n
+end
+printf "->R::start pid %d sessionId %d\n\n\n",this->mClient.m_ptr.mPid,this->mSessionId
+#print this
+cont
+end
+
+b 'android::AudioFlinger::RecordThread::RecordTrack::getNextBuffer(android::AudioBufferProvider::Buffer*, long long)' if $_rg ==0
+commands
+silent
+printf "->nextBuffer pid %d sessionId %d\n\n\n",this->mClient.m_ptr.mPid,this->mSessionId
+set $_rg=1
+#print this
+cont
+end
+
+
+b 'android::AudioFlinger::PlaybackThread::Track::start(android::AudioSystem::sync_event_t, int)'
+commands
+silent
+
+printf "<-start pid %d sessionId %d\n\n\n",this->mClient.m_ptr.mPid,this->mSessionId
+#print this
+cont
+end
+
+
+b 'android::AudioFlinger::PlaybackThread::Track::getNextBuffer(android::AudioBufferProvider::Buffer*, long long)' if $_pg ==0
+commands
+silent
+printf "<-nextBuffer pid %d sessionId %d\n\n\n",this->mClient.m_ptr.mPid,this->mSessionId
+set $_pg=1
+#print this
+cont
+end
+
+b 'android::AudioFlinger::PlaybackThread::Track::stop()'
+commands
+silent
+printf "<-stop pid %d sessionId %d\n\n\n",this->mClient.m_ptr.mPid,this->mSessionId
+set $_pg=0
+#print this
+cont
+end
+
+b 'android::AudioFlinger::PlaybackThread::Track::pause()'
+commands
+silent
+printf "<-pause pid %d sessionId %d\n\n\n",this->mClient.m_ptr.mPid,this->mSessionId
+#print this
+cont
+end
+
+directory  /home/zad/work/devel/core-android-audiocapture/dbi_release/
+directory  /home/zad/work/devel/core-android-audiocapture/dbi_release/hijack_func

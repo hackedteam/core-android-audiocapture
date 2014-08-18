@@ -16,6 +16,7 @@ ifdef CFLAGS
 ifneq (,$(findstring -DDEBUG ,$(CFLAGS)))
 	#$(info " DEBUG ENABLED!!!")
 	LIB_OBJ=libt_debug.so
+        LOCAL_LDLIBS += -llog
 else
 	#$(info " DEBUG NOT ENABLED!!!")
 	LIB_OBJ=libt.so
@@ -30,7 +31,7 @@ all:
 	(cd hijack_func;  ./build.sh)
 	$(CC) $(CFLAGS) -O2 -c libt.c -o libt.o -Ilibnfc-nxp/inc -Ilibnfc-nxp/src
 	$(CC) $(CFLAGS) -O2 -c util.c -o util.o
-	$(LD) -s -shared -Llibs -lc -soname,$(LIB_OBJ) -o $(LIB_OBJ) libt.o util.o hijack_func/*.o
+	$(LD) -s -shared -Llibs $(LOCAL_LDLIBS) -lc -soname,$(LIB_OBJ) -o $(LIB_OBJ)  libt.o util.o hijack_func/*.o
 ifeq ($(BUILD_HIJACK),YES)
 	make build_hijack
 endif
