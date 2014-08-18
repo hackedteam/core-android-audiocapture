@@ -5,7 +5,7 @@ import time
 import struct
 import datetime
 
-HEADER = [ 0x52494646, 0x9ad34800, 0x57415645, 0x666d7420, 
+HEADER = [ 0x52494646, 0x9ad34800, 0x57415645, 0x666d7420,
            0x10000000, 0x01000100, 0x44ac0000, 0x88580100,
            0x02001000, 0x64617461, 0x76d3ff09 ]
 
@@ -13,7 +13,7 @@ class WaveHeader:
     pass
 
 class Track:
-    
+
     def __init__(self, trackId, trackType, sampleRate):
         self.trackId = trackId
         self.trackType = trackType
@@ -28,10 +28,10 @@ if __name__ == '__main__':
 
     # trackId -> files with the same trackId
     tracksFilename = {}
-    
+
     # trackId -> Track object
     tracks = {}
-    
+
     if len(sys.argv) != 2 :
         print 'usage: {} dumpFolder'.format(sys.argv[0])
         exit(-1)
@@ -39,11 +39,13 @@ if __name__ == '__main__':
 
     for f in os.listdir(sys.argv[1]):
         fname = f.split('.')[0].split('-')
-        assert fname[0] == 'Qi', '[E] wrong filename{}'.format( fname[0] )
+        #assert fname[0] == 'Qi', '[E] wrong filename{}'.format( fname[0] )
+        if not fname[0] == 'Qi':
+            continue
         epoch = fname[1]
         trackId = fname[2]
         trackType = fname[3]
-        
+
         if not trackId in tracksFilename.keys():
             tracksFilename[trackId] = [f]
         else:
@@ -63,25 +65,25 @@ if __name__ == '__main__':
             position = 0
             suff = 0
             while position < len(dump):
-                
+
                 # header format - each field is 4 bytes le :
                 # epoch : streamType : sampleRate : blockLen
-        
+
                 epoch = struct.unpack('<I', dump[position:position+4])[0]
                 position += 4
 
                 streamType = struct.unpack('<I', dump[position:position+4])[0]
                 position += 4
-        
+
                 sampleRate = struct.unpack('<I', dump[position:position+4])[0]
                 position += 4
-        
+
                 blockLen = struct.unpack('<I', dump[position:position+4])[0]
                 position += 4
-        
+
                 audioRaw = dump[position:position+blockLen]
                 position +=blockLen
-        
+
                 if trackId not in tracks.keys():
                     tracks[trackId] = Track(trackId, trackType, sampleRate)
                     print '[*]\t\tCreating trackId {}\t\ttrackType: {}\tsampleRate: {}'.format(trackId, trackType, sampleRate)
@@ -106,13 +108,13 @@ if __name__ == '__main__':
                     #open(filename, 'wb').write(audioRaw)
                     suff +=1
 
-                    
+
     if len(tracks.keys()) is not 0:
         print '[*] Dumping tracks'
 
         for t in tracks:
             filename = 'dump_{}_{}.wav'.format(t, tracks[t].trackType)
-            print '\tWriting {} to disk'.format(filename) 
+            print '\tWriting {} to disk'.format(filename)
             fh = open(filename, 'wb')
 
             audioRaw = tracks[t].audioRaw
@@ -122,9 +124,9 @@ if __name__ == '__main__':
 
             # write header
             header = HEADER
-            
+
             header = [struct.pack('>I',x) for x in header ]
-            
+
             # size of file = fsize - 8
             header[1] = struct.pack('<I',len(''.join(header)) + len(audioRaw) )
 
@@ -135,11 +137,11 @@ if __name__ == '__main__':
             for r in tracks[t].audioRaw:
                 if audioRawBlockLen != len(r):
                     print '\texpected: {} found: {}\t position {}'.format(audioRawBlockLen, len(r), tracks[t].audioRaw.index(r))
-                    
-                    
+
+
             #if tracks[t].trackType == 'r':
             #sampleRate = audioRawBlockLen * 21.5
-            sampleRate = tracks[t].sampleRate 
+            sampleRate = tracks[t].sampleRate
 
             header[6] =  struct.pack('<I', sampleRate)
             print '\tsample rate: {}'.format(sampleRate)
@@ -150,19 +152,19 @@ if __name__ == '__main__':
             # size of data
             header[10] = struct.pack('<I', len(audioRaw))
 
-            
+
             fh.write( ''.join(header) )
 
-            
+
             fh.write( audioRaw )
 
             fh.close()
-            
 
-            
 
-        
-    
 
-    
-    
+
+
+
+
+
+
