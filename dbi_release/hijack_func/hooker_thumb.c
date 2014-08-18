@@ -12,6 +12,9 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifdef DEBUG
+extern char tag[];
+#endif
 
 static int ip_register_offset = 0xd;
 static int fd = 0;

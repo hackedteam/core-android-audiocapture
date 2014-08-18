@@ -9,7 +9,7 @@
  */
 #include "uthash.h"
 
-
+#define DEBUG
 
 #ifdef DEBUG
 /*
@@ -27,8 +27,11 @@ typedef enum android_LogPriority {
     ANDROID_LOG_SILENT,     /* only for SetMinPriority(); must be last */
 } android_LogPriority;
 
-#define log(...) { __android_log_print(ANDROID_LOG_DEBUG, __FUNCTION__ , __VA_ARGS__);}
-
+//memset(tag,0,256-1);
+#define log(...) {\
+tag[0]=tag[1]=0;\
+snprintf(tag,256,"libt:%s",__FUNCTION__);\
+__android_log_print(ANDROID_LOG_DEBUG, tag , __VA_ARGS__);}
 #define logf(...) {FILE *f = fopen("/data/local/tmp/log", "a+");\
         if(f!=NULL){\
         fprintf(f,"%s: ",__FUNCTION__);\

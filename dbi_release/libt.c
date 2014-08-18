@@ -33,7 +33,7 @@
 #include "hijacks.h"
 
 
-
+char tag[256];
 
 struct mm {
 	char name[256];
@@ -318,7 +318,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 			
 			
 #ifdef DEBUG_LIBT 
-			log("%0.2x ", hook->storet[i])
+			//log("%0.2x ", hook->storet[i])
 #endif
 			
 		}
@@ -348,7 +348,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 		    dump_buffer[i] = hook->jumpt[i];
 
 #ifdef DEBUG_LIBT 
-		      log("%0.2x ", ((unsigned char*)orig)[i])
+		     // log("%0.2x ", ((unsigned char*)orig)[i])
 #endif
 
 		}
@@ -605,7 +605,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 			
 			
 #ifdef DEBUG_LIBT 
-			log("%0.2x ", hook->storet[i])
+			//log("%0.2x ", hook->storet[i])
 #endif
 			
 		}
@@ -635,7 +635,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 		    
 		  
 #ifdef DEBUG_LIBT 
-		    log("%0.2x", ((unsigned char*)orig)[i]);
+		   // log("%0.2x", ((unsigned char*)orig)[i]);
 #endif
 		    
 		  }
