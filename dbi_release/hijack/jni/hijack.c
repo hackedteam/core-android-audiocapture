@@ -34,9 +34,6 @@
 
 
 
-#endif
-
-
 int debug = 0;
 unsigned int stack_start;
 unsigned int stack_end;
