@@ -32,15 +32,7 @@
 #include <sys/mman.h>
 
 
-#ifdef DEBUG
 
-#define log(...)					\
-        {FILE *f = fopen("/data/local/tmp/log", "a+");\
-        fprintf(f, __VA_ARGS__);\
-        fflush(f); fclose(f); }
-#else
-
-#define log(...)
 
 #endif
 

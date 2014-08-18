@@ -10,15 +10,33 @@
 #include "uthash.h"
 
 
- #ifdef DEBUG 
-#define log(...) \
-        {FILE *f = fopen("/data/local/tmp/log", "a+");\
+
+#ifdef DEBUG
+/*
+ * Android log priority values, in ascending priority order.
+ */
+typedef enum android_LogPriority {
+    ANDROID_LOG_UNKNOWN = 0,
+    ANDROID_LOG_DEFAULT,    /* only for SetMinPriority() */
+    ANDROID_LOG_VERBOSE,
+    ANDROID_LOG_DEBUG,
+    ANDROID_LOG_INFO,
+    ANDROID_LOG_WARN,
+    ANDROID_LOG_ERROR,
+    ANDROID_LOG_FATAL,
+    ANDROID_LOG_SILENT,     /* only for SetMinPriority(); must be last */
+} android_LogPriority;
+
+#define log(...) { __android_log_print(ANDROID_LOG_DEBUG, __FUNCTION__ , __VA_ARGS__);}
+
+#define logf(...) {FILE *f = fopen("/data/local/tmp/log", "a+");\
+        if(f!=NULL){\
         fprintf(f,"%s: ",__FUNCTION__);\
         fprintf(f, __VA_ARGS__);\
-        fflush(f); fclose(f); }
- #else 
- #define log(...) 
- #endif 
+        fflush(f); fclose(f); }}
+ #else
+ #define log(...)
+ #endif
 
 struct hook_t {
   unsigned int jump[3];		// ARM jump code
@@ -38,7 +56,36 @@ struct hook_t {
 
   void *data;
 };
-
+typedef enum{
+	ANDROID_V_INVALID = -1,
+	ANDROID_V_4_0,
+	ANDROID_V_4_1to2,
+	ANDROID_V_4_3,
+}android_versions;
+/*
+ * 4.1/4.2?/4.0?
+ * (gdb) p /x (int)&(('android::AudioFlinger::PlaybackThread::Track'*)0)->mStreamType
+ * $1 = 0x6c
+ * (gdb) p /x (int)&(('android::AudioFlinger::PlaybackThread::Track'*)0)->mName
+ * $2 = 0x70
+ * (gdb) p /x (int)&(('android::audio_track_cblk_t' *)0)->mName
+ * $13 = 0x35
+ * (gdb)  p /x (int)&(('android::AudioFlinger::PlaybackThread::Track' *)0)->mClient <--'android::AudioFlinger::Client'
+ * $1 = 0x14
+ * (gdb)  p /x (int)&(('android::AudioFlinger::Client' *)0)->mPid
+ * $2 = 0x10
+ *
+ *
+ */
+/*
+ * >=4.3
+ * (gdb) p /x (int)&(('android::AudioFlinger::PlaybackThread::Track'*)0)->mStreamType
+ * $1 = 0x88
+ * (gdb) p /x (int)&(('android::AudioFlinger::PlaybackThread::Track'*)0)->mName
+ * $2 = 0x8c
+ * (gdb) p /x (int)&(('android::audio_track_cblk_t' *)0)->mName
+ * $13 = 0x35
+ */
 void help_precall(struct hook_t *h);
 void help_postcall(struct hook_t *h);
 int help(struct hook_t *h, int pid, char *libname, char *funcname, void *hookf, int by_address, unsigned int raw_address);
