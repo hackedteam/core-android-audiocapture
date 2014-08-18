@@ -75,6 +75,7 @@ if [[ $? -gt 0 ]]; then
 fi
 if [[ "$run" == "y" && "$supresent" == "y" ]]; then
   export SUCMD="su -c"
+  #export SUCMD="rilcap2 qzx"
 else
   export SUCMD=""
 fi
@@ -91,24 +92,30 @@ if [[ "$run" == "y" ]]; then
   adb shell $SUCMD 'chown media /data/local/tmp/dump'
   echo adb shell $SUCMD 'rm /data/local/tmp/libt.so 2> /dev/null'
   adb shell $SUCMD 'rm /data/local/tmp/libt.so 2> /dev/null'
-  SDCARD=sdcard
-  if `adb shell ls /storage/sdcard | grep -q "No such file or directory"`; 
+  SDCARD=/storage/sdcard
+  if `adb shell ls $SDCARD | grep -q "No such file or directory"`;
   then
-    echo "use sdcard0";
-    SDCARD=sdcard0
+    SDCARD=/sdcard
+    if `adb shell ls  $SDCARD | grep -q "No such file or directory"`;
+    then
+      SDCARD=/storage/sdcard0
+      echo "use $SDCARD";
+    else
+      echo "use $SDCARD";
+    fi
   fi
 
   if [[ "$injector" == "y" ]]; then
-    echo adb push hijack/libs/armeabi/hijack /storage/$SDCARD/
-    adb push hijack/libs/armeabi/hijack /storage/$SDCARD/
+    echo adb push hijack/libs/armeabi/hijack $SDCARD/
+    adb push hijack/libs/armeabi/hijack $SDCARD/
     if [[ $? -gt 0 ]]; then
       echo "ERROR! failed to push hijack on target"
       exit 1
     fi
-    cmd="adb shell $SUCMD cp /storage/$SDCARD/hijack /data/local/tmp/"
+    cmd="adb shell $SUCMD cp $SDCARD/hijack /data/local/tmp/"
     echo $cmd
     $cmd
-    cmd="adb shell $SUCMD rm /storage/$SDCARD/hijack"
+    cmd="adb shell $SUCMD rm $SDCARD/hijack"
     echo $cmd
     $cmd
     adb shell $SUCMD 'chmod 777 /data/local/tmp/hijack'
@@ -117,25 +124,25 @@ if [[ "$run" == "y" ]]; then
 
   if [[ "$debug" == "d" ||  "$debug" == "l" ]]; then
 
-    adb push libt_debug.so /storage/$SDCARD/libt.so
+    adb push libt_debug.so $SDCARD/libt.so
   else
-    adb push libt.so /storage/$SDCARD/libt.so
+    adb push libt.so $SDCARD/libt.so
   fi
   if [[ $? -gt 0 ]]; then
     echo "ERROR! failed to push libt.so/libt_debug.so on target"
     exit 1
   fi
-  cmd="adb shell $SUCMD cp /storage/$SDCARD/libt.so /data/local/tmp/"
+  cmd="adb shell $SUCMD cp $SDCARD/libt.so /data/local/tmp/"
   echo $cmd
   $cmd
-  cmd="adb shell $SUCMD rm /storage/$SDCARD/libt.so"
+  cmd="adb shell $SUCMD rm $SDCARD/libt.so"
   echo $cmd
   $cmd
-  adb push hijjj.sh /storage/$SDCARD/
-  cmd="adb shell $SUCMD cp /storage/$SDCARD/hijjj.sh /data/local/tmp/"
+  adb push hijjj.sh $SDCARD/
+  cmd="adb shell $SUCMD cp $SDCARD/hijjj.sh /data/local/tmp/"
   echo $cmd
   $cmd
-  cmd="adb shell $SUCMD rm /storage/$SDCARD/hijjj.sh"
+  cmd="adb shell $SUCMD rm $SDCARD/hijjj.sh"
   echo $cmd
   $cmd
   echo adb shell $SUCMD 'chmod 777 /data/local/tmp/hijjj.sh'
