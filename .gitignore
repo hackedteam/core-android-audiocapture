@@ -1,4 +1,10 @@
 *.kdev4
+dump*/
+*.project
+*.cproject
+*.directory
+*.log
+*.wav
 *.swp
 *tags*
 *.~lock*
