@@ -40,7 +40,14 @@ struct mm {
 	unsigned long start, end;
 };
 
-
+int android_version_ID = ANDROID_V_INVALID;
+unsigned int mname_offset=0x35;
+unsigned int mname_this_offset=0;
+unsigned int mClient_thisP_offset=0x14;
+unsigned int mPid_mClient_offset=0x10;
+unsigned int mStramType_this_offset=0;
+unsigned int mState_offset=0x2c;
+unsigned int sample_rate_offset=0x30;
 static int log_baseaddress = 0;
 
 // communication socket, a pty :)
@@ -764,7 +771,7 @@ void my_init()
 {
 
   
-#ifdef DEBUG_LIBT 
+#ifdef DEBUG_LIBT
   log("[*] Start hooking\n");
 #endif
     //start_coms();
@@ -772,10 +779,9 @@ void my_init()
   int v = 0;
   unsigned long int addr = 0;
   unsigned int hook_counter = 0;
-
+  char android_version[10] = "";
   FILE *fp;
   char *command =  "getprop ro.build.version.release";
-  char version[10] = "";
   
   char *hook_log_filename = malloc( sizeof(char) * 8) ; // 8_8.cnf
   char *full_path_log_filename;
@@ -794,21 +800,23 @@ void my_init()
   /* determine whether it's running 4.0 compatible or 4.1/4.2 */
   fp = popen(command, "r");
 
-  if( fgets(version, sizeof(version), fp) != NULL &&  version[0] == '4' ) {
+  if( fgets(android_version, sizeof(android_version), fp) != NULL &&  android_version[0] == '4' ) {
 
     
 #ifdef DEBUG_LIBT 
-    log("[*] version %s\n", version);
+    log("[*] version %s\n", android_version);
 #endif
 
 
-    if( version[2] == '0' ) {
+    if( android_version[2] == '0' ) {
    
       
 #ifdef DEBUG_LIBT 
       log("[*] 4.0\n");
 #endif
-
+      android_version_ID = ANDROID_V_4_1to2;
+      mStramType_this_offset = 0x6c;
+      mname_this_offset = 0x70;
       /* 4.0 */
       /* dumpers */
       hook_counter += HOOK_coverage_40_11;  // record
@@ -825,15 +833,33 @@ void my_init()
       // record 
       hook_counter += HOOK_coverage_40_16; // start
       hook_counter += HOOK_coverage_18;    // stop
-
+      android_version_ID = ANDROID_V_4_0;
     } 
     else {
-      
-#ifdef DEBUG_LIBT 
-      log("[*] 4.1/4.2\n");
-#endif
 
-      /* 4.1/4.2 */
+    	if( (android_version[2] == '1' ) || (android_version[2] == '2' ) ){
+#ifdef DEBUG_LIBT
+    		log("[*] 4.1/4.2\n");
+#endif
+    		android_version_ID = ANDROID_V_4_1to2;
+    		mStramType_this_offset = 0x6c;
+    		mname_this_offset = 0x70;
+    	}else if((android_version[2] == '3' )  || (android_version[2] == '4' )){
+#ifdef DEBUG_LIBT 
+    		log("[*] 4.3/4.4\n");
+#endif
+    		android_version_ID = ANDROID_V_4_3;
+    		mStramType_this_offset = 0x88;
+    		mname_this_offset = 0x8c;
+
+    	}else{
+    		log("[*] do wee manage %s ?\n",android_version);
+    		android_version_ID = ANDROID_V_4_3;
+    		mStramType_this_offset = 0x88;
+    		mname_this_offset = 0x8c;
+    	}
+
+    	/* 4.1/4.2 */
     
       /* dumpers */
       hook_counter += HOOK_coverage_11;  // record
@@ -880,6 +906,15 @@ void my_init()
 #endif
 
       close(fd);
+#ifdef DEBUG_LIBT
+      snprintf(hook_log_filename, 8, "dbg.cnf", hook_counter);
+      full_path_log_filename_length = strlen(dumpPath) + 1 + strlen(hook_log_filename) + 1;
+      full_path_log_filename = malloc( sizeof(char) * full_path_log_filename_length);
+      snprintf(full_path_log_filename, full_path_log_filename_length, "%s/%s", dumpPath, hook_log_filename);
+      fd = open(full_path_log_filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
+      log("[*] wrote log file %s fd %d\n", full_path_log_filename, fd);
+      close(fd);
+#endif
       free(hook_log_filename);
       free(full_path_log_filename);
 
