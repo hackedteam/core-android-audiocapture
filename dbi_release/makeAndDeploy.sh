@@ -125,6 +125,7 @@ if [[ "$run" == "y" ]]; then
   if [[ "$debug" == "d" ||  "$debug" == "l" ]]; then
 
     adb push libt_debug.so $SDCARD/libt.so
+    cp libt_debug.so libt.so
   else
     adb push libt.so $SDCARD/libt.so
   fi

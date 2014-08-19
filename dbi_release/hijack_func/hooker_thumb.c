@@ -545,7 +545,7 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
       //cblk_tmp->trackId = strdup(randString);
 
 #ifdef DEBUG_HOOKFNC
-      log("reusing trackId: %s\n", cblk_tmp->trackId);
+      //log("reusing trackId: %s\n", cblk_tmp->trackId);
 #endif
 
       // b] generate filename and open fd
@@ -618,7 +618,7 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
 
   HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
 
-  if( cblk_tmp != NULL && cblk_tmp->streamType == 0 ) {
+  if( cblk_tmp != NULL && cblk_tmp->streamType == STATUS_NEW ) {
 
 
     /* write fake final header */
@@ -714,7 +714,7 @@ void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f,
   cblk = *(unsigned long*) (a + 0x1c);
 
 #ifdef DEBUG_HOOKFNC
-  log("\tnew track cblk: %x\n", cblk);
+  log("\tcblk: %x\n", cblk);
 #endif
 
   h_ptr = (void *) playbackTrackStart_helper.orig;
@@ -761,6 +761,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   unsigned int frameSize = 0;
 
   char randString[11]; // rand %d 10 + null;
+
   char timestamp[11];  // epoch %ld 10 + null;
   char pidC[11];  // pid %d 10 + null;
   int filenameLength = 0;
@@ -808,7 +809,13 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 #endif
 
   /* [3] */
-  frameSize = *(unsigned char*) (cblk + 0x34 );
+
+  //android 4.3 (gdb) p/x (int)&(('android::AudioFlinger::PlaybackThread::Track'*)0)->mFrameSize
+  //$29 = 0x40
+  if (android_version_ID >= ANDROID_V_4_3)
+    frameSize = *(unsigned char *) (a + 0x40 );
+  else
+    frameSize = *(unsigned char *) (cblk + 0x34 );
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\tframeSize %x\n", frameSize);
 #endif
@@ -818,6 +825,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\tsampleRate %d\n", sampleRate);
 #endif
+
 
   /* [2] second field within AudioBufferProvider */
   framesCount = * (unsigned int*) (b + 4);
@@ -951,27 +959,39 @@ DESCRIPTION
 	  log("%s fd: %d continuing open%s\n", cblk_tmp->filename, cblk_tmp->fd,(cblk_tmp->fd>1)?"OK":"Failed");
 #endif
 
-	}
+        }else{
+#ifdef DEBUG_HOOKFNC
+          log("adding data track cblk %p, result=%d dataSize=%d streamType=%d pid=%d \n",
+              cblk,result,framesCount * frameSize,cblk_tmp->streamType,cblk_tmp->pid);
+#endif
+        }
 
-      }
+      }else {
       // otherwise remove the header, we don't need this block
-      else {
+      #ifdef DEBUG_HOOKFNC
+        log("skipping this buffer block cblk %p nothing has been written to fd %d framesCount=%d frameSize=%d \n",
+        						  cblk,cblk_tmp->fd,framesCount,frameSize);
+#endif
 	lseek(cblk_tmp->fd, headerStart, SEEK_SET);
       }
 
+    }else{
+#ifdef DEBUG_HOOKFNC
+      log("skipping track cblk %p, result=%d frameCount=%d streamType=%d pid=%d \n",
+          cblk,result,framesCount,cblk_tmp->streamType,cblk_tmp->pid);
+#endif
     }
+
 
     /* in both cases update cblk_tmp for the next run  */
     cblk_tmp->lastBufferRaw  = bufferRaw;
     cblk_tmp->lastFrameCount = framesCount;
     cblk_tmp->lastFrameSize  = frameSize;
-
-  }
+  }else {
 #ifdef DEBUG_HOOKFNC
-  else {
-    log("\t\tcblk not found %x\n", cblk);
-  }
+    log("cblk not found %x\n", cblk);
 #endif
+  }
 
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\t------- end playback3 -------------\n");
@@ -1054,7 +1074,10 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 #endif
 
   /* [3] */
-  frameSize = *(unsigned char*) (cblk + 0x34 );
+  if (android_version_ID >= ANDROID_V_4_3)
+    frameSize = *(unsigned char *) (a + 0x40 );
+  else
+    frameSize = *(unsigned char *) (cblk + 0x34 );
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\tframeSize %x\n", frameSize);
 #endif
@@ -1180,9 +1203,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
     log("\t\tgetNextBuffer added cblk\n");
 #endif
 
-  }
-
-  else {
+  }else {
 
 #ifdef DEBUG_HOOKFNC
 //    log("\t\tstreamType: %d\n", cblk_tmp->streamType);
