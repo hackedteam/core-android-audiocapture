@@ -112,7 +112,7 @@ if [[ "$run" == "y" ]]; then
       echo "ERROR! failed to push hijack on target"
       exit 1
     fi
-    cmd="adb shell $SUCMD cp $SDCARD/hijack /data/local/tmp/"
+    cmd="adb shell $SUCMD 'cat $SDCARD/hijack > /data/local/tmp/hijack'"
     echo $cmd
     $cmd
     cmd="adb shell $SUCMD rm $SDCARD/hijack"
@@ -133,14 +133,14 @@ if [[ "$run" == "y" ]]; then
     echo "ERROR! failed to push libt.so/libt_debug.so on target"
     exit 1
   fi
-  cmd="adb shell $SUCMD cp $SDCARD/libt.so /data/local/tmp/"
+  cmd="adb shell $SUCMD 'cat $SDCARD/libt.so > /data/local/tmp/libt.so'"
   echo $cmd
   $cmd
   cmd="adb shell $SUCMD rm $SDCARD/libt.so"
   echo $cmd
   $cmd
   adb push hijjj.sh $SDCARD/
-  cmd="adb shell $SUCMD cp $SDCARD/hijjj.sh /data/local/tmp/"
+  cmd="adb shell $SUCMD 'cat $SDCARD/hijjj.sh > /data/local/tmp/hijjj.sh'"
   echo $cmd
   $cmd
   cmd="adb shell $SUCMD rm $SDCARD/hijjj.sh"

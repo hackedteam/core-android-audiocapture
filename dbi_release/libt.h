@@ -9,7 +9,7 @@
  */
 #include "uthash.h"
 
-#define DEBUG
+
 
 #ifdef DEBUG
 /*
