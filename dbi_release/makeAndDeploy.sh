@@ -148,15 +148,15 @@ if [[ "$run" == "y" ]]; then
   $cmd
   echo adb shell $SUCMD 'chmod 777 /data/local/tmp/hijjj.sh'
   adb shell $SUCMD 'chmod 777 /data/local/tmp/hijjj.sh'
-  echo aadb shell $SUCMD 'rm /data/local/tmp/log'
+  echo adb shell $SUCMD 'rm /data/local/tmp/log'
   adb shell $SUCMD 'rm /data/local/tmp/log'
-  echo aadb shell $SUCMD 'touch /data/local/tmp/log'
+  echo adb shell $SUCMD 'touch /data/local/tmp/log'
   adb shell $SUCMD 'touch /data/local/tmp/log'
-  echo aadb shell $SUCMD 'chmod 666 /data/local/tmp/log'
+  echo adb shell $SUCMD 'chmod 666 /data/local/tmp/log'
   adb shell $SUCMD 'chmod 666 /data/local/tmp/log'
-  echo aadb shell $SUCMD 'chown media /data/local/tmp/log'
+  echo adb shell $SUCMD 'chown media /data/local/tmp/log'
   adb shell $SUCMD 'chown media /data/local/tmp/log'
-  echo aadb shell $SUCMD '/data/local/tmp/hijjj.sh'
+  echo adb shell $SUCMD '/data/local/tmp/hijjj.sh'
   adb shell $SUCMD '/data/local/tmp/hijjj.sh'
   fuser ./runoutput.log -s -k -9
   if [ -z "$SUCMD" ]; then
