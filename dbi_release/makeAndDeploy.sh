@@ -63,8 +63,6 @@ else
   injector="n"
   export BUILD_HIJACK=""
 fi
-
-
 echo "cleaning previous build.."
 make clean
 echo "building ..."
@@ -80,18 +78,19 @@ else
   export SUCMD=""
 fi
 
+function exec_adb(){
+  echo adb shell $SUCMD $@
+  adb shell $SUCMD $@
+}
+
+
 if [[ "$run" == "y" ]]; then
   echo "pushing make output ..."
-  echo adb shell $SUCMD 'mkdir /data/local/tmp/dump 2> /dev/null'
-  adb shell $SUCMD 'mkdir /data/local/tmp/dump 2> /dev/null'
-  echo adb shell $SUCMD 'chmod 777 /data/local/tmp'
-  adb shell $SUCMD 'chmod 777 /data/local/tmp'
-  echo adb shell $SUCMD 'chmod 777 /data/local/tmp/dump'
-  adb shell $SUCMD 'chmod 777 /data/local/tmp/dump'
-  echo adb shell $SUCMD 'chown media /data/local/tmp/dump'
-  adb shell $SUCMD 'chown media /data/local/tmp/dump'
-  echo adb shell $SUCMD 'rm /data/local/tmp/libt.so 2> /dev/null'
-  adb shell $SUCMD 'rm /data/local/tmp/libt.so 2> /dev/null'
+  exec_adb 'mkdir /data/local/tmp/dump'
+  exec_adb 'chmod 777 /data/local/tmp'
+  exec_adb 'chmod 777 /data/local/tmp/dump'
+  exec_adb 'chown media /data/local/tmp/dump'
+  exec_adb 'rm /data/local/tmp/libt.so '
   SDCARD=/storage/sdcard
   if `adb shell ls $SDCARD | grep -q "No such file or directory"`;
   then
@@ -112,13 +111,13 @@ if [[ "$run" == "y" ]]; then
       echo "ERROR! failed to push hijack on target"
       exit 1
     fi
-    cmd="adb shell $SUCMD 'cat $SDCARD/hijack > /data/local/tmp/hijack'"
-    echo $cmd
-    $cmd
-    cmd="adb shell $SUCMD rm $SDCARD/hijack"
-    echo $cmd
-    $cmd
-    adb shell $SUCMD 'chmod 777 /data/local/tmp/hijack'
+    cmd="cat $SDCARD/hijack > /data/local/tmp/hijack"
+    #echo $cmd
+    exec_adb $cmd
+    cmd="rm $SDCARD/hijack"
+    #echo $cmd
+    exec_adb $cmd
+    exec_adb 'chmod 777 /data/local/tmp/hijack'
 
   fi
 
@@ -133,38 +132,38 @@ if [[ "$run" == "y" ]]; then
     echo "ERROR! failed to push libt.so/libt_debug.so on target"
     exit 1
   fi
-  cmd="adb shell $SUCMD 'cat $SDCARD/libt.so > /data/local/tmp/libt.so'"
-  echo $cmd
-  $cmd
-  cmd="adb shell $SUCMD rm $SDCARD/libt.so"
-  echo $cmd
-  $cmd
+  cmd="cat $SDCARD/libt.so > /data/local/tmp/libt.so"
+  #echo $cmd
+  exec_adb $cmd
+  cmd="rm $SDCARD/libt.so"
+  #echo $cmd
+  exec_adb $cmd
   adb push hijjj.sh $SDCARD/
-  cmd="adb shell $SUCMD 'cat $SDCARD/hijjj.sh > /data/local/tmp/hijjj.sh'"
-  echo $cmd
-  $cmd
-  cmd="adb shell $SUCMD rm $SDCARD/hijjj.sh"
-  echo $cmd
-  $cmd
-  echo adb shell $SUCMD 'chmod 777 /data/local/tmp/hijjj.sh'
-  adb shell $SUCMD 'chmod 777 /data/local/tmp/hijjj.sh'
-  echo adb shell $SUCMD 'rm /data/local/tmp/log'
-  adb shell $SUCMD 'rm /data/local/tmp/log'
-  echo adb shell $SUCMD 'touch /data/local/tmp/log'
-  adb shell $SUCMD 'touch /data/local/tmp/log'
-  echo adb shell $SUCMD 'chmod 666 /data/local/tmp/log'
-  adb shell $SUCMD 'chmod 666 /data/local/tmp/log'
-  echo adb shell $SUCMD 'chown media /data/local/tmp/log'
-  adb shell $SUCMD 'chown media /data/local/tmp/log'
-  echo adb shell $SUCMD '/data/local/tmp/hijjj.sh'
-  adb shell $SUCMD '/data/local/tmp/hijjj.sh'
+  cmd="cat $SDCARD/hijjj.sh > /data/local/tmp/hijjj.sh"
+  #echo $cmd
+  exec_adb $cmd
+  cmd="rm $SDCARD/hijjj.sh"
+  #echo $cmd
+  exec_adb $cmd
+  #echo adb shell $SUCMD 'chmod 777 /data/local/tmp/hijjj.sh'
+  exec_adb 'chmod 777 /data/local/tmp/hijjj.sh'
+  #echo adb shell $SUCMD 'rm /data/local/tmp/log'
+  exec_adb 'rm /data/local/tmp/log'
+  #echo adb shell $SUCMD 'touch /data/local/tmp/log'
+  exec_adb 'touch /data/local/tmp/log'
+  #echo adb shell $SUCMD 'chmod 666 /data/local/tmp/log'
+  exec_adb 'chmod 666 /data/local/tmp/log'
+  #echo adb shell $SUCMD 'chown media /data/local/tmp/log'
+  exec_adb 'chown media /data/local/tmp/log'
+  #echo adb shell $SUCMD '/data/local/tmp/hijjj.sh'
+  exec_adb '/data/local/tmp/hijjj.sh'
   fuser ./runoutput.log -s -k -9
   if [ -z "$SUCMD" ]; then
     killall -9 chekOutput.sh
     ./chekOutput.sh&
   else
-    adb shell $SUCMD 'fuser -k -s -9  /data/local/tmp/log'
-    adb shell "$SUCMD tail -f  /data/local/tmp/log" > ./runoutput.log &
+    exec_adb 'fuser -k -s -9  /data/local/tmp/log'
+    exec_adb "tail -f  /data/local/tmp/log" > ./runoutput.log &
   fi
 fi
 

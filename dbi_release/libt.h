@@ -62,7 +62,8 @@ struct hook_t {
 typedef enum{
 	ANDROID_V_INVALID = -1,
 	ANDROID_V_4_0,
-	ANDROID_V_4_1to2,
+	ANDROID_V_4_1,
+	ANDROID_V_4_2,
 	ANDROID_V_4_3,
 }android_versions;
 /*

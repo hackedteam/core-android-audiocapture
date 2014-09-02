@@ -44,7 +44,7 @@ if __name__ == '__main__':
             continue
         epoch = fname[1]
         trackId = fname[2]
-        trackType = fname[3]
+        trackType = fname[-1]
 
         if not trackId in tracksFilename.keys():
             tracksFilename[trackId] = [f]
@@ -57,10 +57,15 @@ if __name__ == '__main__':
 
         for tf in sorted(tracksFilename[trackId]):
             fname = os.path.join(sys.argv[1], tf)
-            print '[*]\tReading dump: {}'.format(fname)
+            fnamet = os.path.basename(fname)
+            print '[*]\tReading dump: {}'.format(fnamet)
 
             dump = open(fname, 'rb').read()
-            trackType = fname.split('.')[0].split('-')[-1]
+            trackType = fnamet.split('.')[0].split('-')[-1]
+            # print '[*]\tReading {} fname0={}  :'.format(fnamet.split('.')[0], fnamet.split('.')[0].split('-')[0])
+            # print '[*]\tReading {} fname1={}  :'.format(fnamet.split('.')[0], fnamet.split('.')[0].split('-')[1])
+            # print '[*]\tReading {} fname2={}  :'.format(fnamet.split('.')[0], fnamet.split('.')[0].split('-')[2])
+            # print '[*]\tReading {} fname3={}  :'.format(fnamet.split('.')[0], fnamet.split('.')[0].split('-')[3])
 
             position = 0
             suff = 0
@@ -113,7 +118,7 @@ if __name__ == '__main__':
         print '[*] Dumping tracks'
 
         for t in tracks:
-            filename = 'dump_{}_{}.wav'.format(t, tracks[t].trackType)
+            filename = '{}_{}.wav'.format(t, tracks[t].trackType)
             print '\tWriting {} to disk'.format(filename)
             fh = open(filename, 'wb')
 

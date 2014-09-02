@@ -40,6 +40,7 @@ extern unsigned int mState_offset;
 extern unsigned int sample_rate_offset;
 extern unsigned int mClient_thisP_offset;
 extern unsigned int mPid_mClient_offset;
+extern unsigned int mCblk_this_offset;
 char *dumpPath =  ".................____________.......................";
 char * printTrackstate(track_state t){
   switch (t){
@@ -234,7 +235,7 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
 //  log("\t\t\t\tresult: %d\n", (int) result);
 #endif
 
-  cblk = *(unsigned long*) (a + 0x1c);
+  cblk = *(unsigned long*) (a + mCblk_this_offset);
 
 #ifdef DEBUG_HOOKFNC
 //  log("\tstop track cblk_id: %x\n", cblk);
@@ -331,7 +332,51 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
 
   return result;
 }
-
+//TODO: provare a hoockare al seguente000343a5 g     F .text  00000100 android::AudioFlinger::PlaybackThread::threadLoop_write() per 4.3
+/*
+void AudioFlinger::PlaybackThread::threadLoop_write()
+1647{
+1648    // FIXME rewrite to reduce number of system calls
+1649    mLastWriteTime = systemTime();
+1650    mInWrite = true;
+1651    int bytesWritten;
+1652
+1653    // If an NBAIO sink is present, use it to write the normal mixer's submix
+1654    if (mNormalSink != 0) {
+1655#define mBitShift 2 // FIXME
+1656        size_t count = mixBufferSize >> mBitShift;
+1657        ATRACE_BEGIN("write");
+1658        // update the setpoint when AudioFlinger::mScreenState changes
+1659        uint32_t screenState = AudioFlinger::mScreenState;
+1660        if (screenState != mScreenState) {
+1661            mScreenState = screenState;
+1662            MonoPipe *pipe = (MonoPipe *)mPipeSink.get();
+1663            if (pipe != NULL) {
+1664                pipe->setAvgFrames((mScreenState & 1) ?
+1665                        (pipe->maxFrames() * 7) / 8 : mNormalFrameCount * 2);
+1666            }
+1667        }
+1668        ssize_t framesWritten = mNormalSink->write(mMixBuffer, count);
+1669        ATRACE_END();
+1670        if (framesWritten > 0) {
+1671            bytesWritten = framesWritten << mBitShift;
+1672        } else {
+1673            bytesWritten = framesWritten;
+1674        }
+1675    // otherwise use the HAL / AudioStreamOut directly
+1676    } else {
+1677        // Direct output thread.
+1678        bytesWritten = (int)mOutput->stream->write(mOutput->stream, mMixBuffer, mixBufferSize);
+1679    }
+1680
+1681    if (bytesWritten > 0) {
+1682        mBytesWritten += mixBufferSize;
+1683    }
+1684    mNumWrites++;
+1685    mInWrite = false;
+1686}
+*/
+//void AudioFlinger::PlaybackThread::threadLoop_write()
 
 void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
 
@@ -375,7 +420,7 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
 
 
-  cblk = *(unsigned long*) (a + 0x1c);
+  cblk = *(unsigned long*) (a + mCblk_this_offset);
 
   /* rettifica il vero pid si trova in : questo per il >4.3 , ma se cosi fosse allora tutti i calcoli su b sono errati?? per il 4.3??
    * (gdb) p/x (int)&(('android::AudioFlinger::Client' *)0)->mPid ovver b->mPid
@@ -410,7 +455,10 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 #endif
 
   /* [3] */
-  frameSize = *(unsigned char*) (cblk + 0x34 );
+  if (android_version_ID >= ANDROID_V_4_3)
+    frameSize = *(unsigned char *) (a + 0x40 );
+  else
+    frameSize = *(unsigned char *) (cblk + 0x34 );
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\tframeSize %x\n", frameSize);
 #endif
@@ -543,7 +591,7 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
 //  log("\tevent: %x\n\ttriggerSession: %x\n\n", b, c);
 #endif
 
-  cblk = *(unsigned long*) (a + 0x1c);
+  cblk = *(unsigned long*) (a + mCblk_this_offset);
 
 
 
@@ -621,7 +669,7 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
 //  log("\t\t\t------- enter playbackTrackStop -------------\n");
 #endif
 
-  cblk = *(unsigned long*) (a + 0x1c);
+  cblk = *(unsigned long*) (a + mCblk_this_offset);
 
 #ifdef DEBUG_HOOKFNC
   log("\ttrack cblk: %x\n", cblk);
@@ -733,7 +781,7 @@ void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f,
  // log("\t\t\t------- enter playbackTrackPause -------------\n");
 #endif
 
-  cblk = *(unsigned long*) (a + 0x1c);
+  cblk = *(unsigned long*) (a + mCblk_this_offset);
 
 #ifdef DEBUG_HOOKFNC
   log("\tcblk: %x\n", cblk);
@@ -874,7 +922,7 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
 
 
   /* fetch the necessary fields */
-  cblk_ptr = (unsigned int*) (a + 0x1c) ;
+  cblk_ptr = (unsigned int*) (a + mCblk_this_offset) ;
   cblk = *cblk_ptr;
 
 #ifdef DEBUG_HOOKFNC
@@ -956,7 +1004,7 @@ DESCRIPTION
 #endif
       res = write(cblk_tmp->fd, bufferRaw, framesCount * frameSize  );
 #ifdef DEBUG_HOOKFNC
-    //  log("\t\t\t\twrote: %d - expected: %d\n", res, framesCount * frameSize );
+    log("wrote: %d - expected: %d frameCount=%d frameSize=%d \n", res, framesCount * frameSize ,framesCount , frameSize);
 #endif
       positionTmp = lseek(cblk_tmp->fd, 0, SEEK_CUR);
 
@@ -1149,7 +1197,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 
 
   /* fetch the necessary fields */
-  cblk_ptr = (unsigned int*) (a + 0x1c) ;
+  cblk_ptr = (unsigned int*) (a + mCblk_this_offset) ;
   cblk = *cblk_ptr;
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\tcblk %p\n", cblk);
@@ -1200,7 +1248,7 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
      }else{
    	  pid=0;
      }
-
+if( pid>PRG_MEDIASERVER_ID ) {
   // add the cblk to the tracks list, if
   // we don't find it, it might be because
   // the injection took place after the track
@@ -1429,6 +1477,11 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
     cblk_tmp->lastFrameSize  = frameSize;
 
   }
+}else{
+#ifdef DEBUG_HOOKFNC
+    log("pid unknown %d\n",pid);
+#endif
+}
 
 #ifdef DEBUG_HOOKFNC
  // log("\t\t\t------- end record3 -------------\n");
