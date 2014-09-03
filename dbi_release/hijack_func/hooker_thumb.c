@@ -332,51 +332,8 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
 
   return result;
 }
-//TODO: provare a hoockare al seguente000343a5 g     F .text  00000100 android::AudioFlinger::PlaybackThread::threadLoop_write() per 4.3
-/*
-void AudioFlinger::PlaybackThread::threadLoop_write()
-1647{
-1648    // FIXME rewrite to reduce number of system calls
-1649    mLastWriteTime = systemTime();
-1650    mInWrite = true;
-1651    int bytesWritten;
-1652
-1653    // If an NBAIO sink is present, use it to write the normal mixer's submix
-1654    if (mNormalSink != 0) {
-1655#define mBitShift 2 // FIXME
-1656        size_t count = mixBufferSize >> mBitShift;
-1657        ATRACE_BEGIN("write");
-1658        // update the setpoint when AudioFlinger::mScreenState changes
-1659        uint32_t screenState = AudioFlinger::mScreenState;
-1660        if (screenState != mScreenState) {
-1661            mScreenState = screenState;
-1662            MonoPipe *pipe = (MonoPipe *)mPipeSink.get();
-1663            if (pipe != NULL) {
-1664                pipe->setAvgFrames((mScreenState & 1) ?
-1665                        (pipe->maxFrames() * 7) / 8 : mNormalFrameCount * 2);
-1666            }
-1667        }
-1668        ssize_t framesWritten = mNormalSink->write(mMixBuffer, count);
-1669        ATRACE_END();
-1670        if (framesWritten > 0) {
-1671            bytesWritten = framesWritten << mBitShift;
-1672        } else {
-1673            bytesWritten = framesWritten;
-1674        }
-1675    // otherwise use the HAL / AudioStreamOut directly
-1676    } else {
-1677        // Direct output thread.
-1678        bytesWritten = (int)mOutput->stream->write(mOutput->stream, mMixBuffer, mixBufferSize);
-1679    }
-1680
-1681    if (bytesWritten > 0) {
-1682        mBytesWritten += mixBufferSize;
-1683    }
-1684    mNumWrites++;
-1685    mInWrite = false;
-1686}
-*/
-//void AudioFlinger::PlaybackThread::threadLoop_write()
+
+
 
 void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
 
@@ -464,7 +421,12 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 #endif
 
   // not really useful, info only
-  sampleRate = *(unsigned int*) (cblk + 0x30);
+  if (android_version_ID >= ANDROID_V_4_3){
+    sampleRate = (unsigned int) e;
+  }else{
+    sampleRate = *(unsigned int*) (cblk + 0x30);
+  }
+
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\tsampleRate %d\n", sampleRate);
 #endif
@@ -526,11 +488,10 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
 
         cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
 #ifdef DEBUG_HOOKFNC
-        log("filename: %s open %s ", cblk_tmp->filename,(cblk_tmp->fd>1)?"OK":"FAILED");
+        log("filename: %s open %s sampleRate %d", cblk_tmp->filename,(cblk_tmp->fd>1)?"OK":"FAILED",sampleRate);
 #endif
       }
 
-      cblk_tmp->startOfCircularBuffer = *(unsigned int*) (cblk + 0x18);
       cblk_tmp->frameCount = *(unsigned int*) (cblk + 0x1c);
 
       cblk_tmp->lastBufferRaw  = bufferRaw;
@@ -858,7 +819,320 @@ void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f,
 
 
 
+//TODO: provare a hoockare al seguente000343a5 g     F .text  00000100 android::AudioFlinger::PlaybackThread::threadLoop_write() per 4.3
+// 000343a5 g     F .text 00000100 _ZN7android12AudioFlinger14PlaybackThread16threadLoop_writeEv
+/*
+void AudioFlinger::PlaybackThread::threadLoop_write()
+1647{
+1648    // FIXME rewrite to reduce number of system calls
+1649    mLastWriteTime = systemTime();
+1650    mInWrite = true;
+1651    int bytesWritten;
+1652
+1653    // If an NBAIO sink is present, use it to write the normal mixer's submix
+1654    if (mNormalSink != 0) {
+1655#define mBitShift 2 // FIXME
+1656        size_t count = mixBufferSize >> mBitShift;
+1657        ATRACE_BEGIN("write");
+1658        // update the setpoint when AudioFlinger::mScreenState changes
+1659        uint32_t screenState = AudioFlinger::mScreenState;
+1660        if (screenState != mScreenState) {
+1661            mScreenState = screenState;
+1662            MonoPipe *pipe = (MonoPipe *)mPipeSink.get();
+1663            if (pipe != NULL) {
+1664                pipe->setAvgFrames((mScreenState & 1) ?
+1665                        (pipe->maxFrames() * 7) / 8 : mNormalFrameCount * 2);
+1666            }
+1667        }
+1668        ssize_t framesWritten = mNormalSink->write(mMixBuffer, count);
+1669        ATRACE_END();
+1670        if (framesWritten > 0) {
+1671            bytesWritten = framesWritten << mBitShift;
+1672        } else {
+1673            bytesWritten = framesWritten;
+1674        }
+1675    // otherwise use the HAL / AudioStreamOut directly
+1676    } else {
+1677        // Direct output thread.
+1678        bytesWritten = (int)mOutput->stream->write(mOutput->stream, mMixBuffer, mixBufferSize);
+1679    }
+1680
+1681    if (bytesWritten > 0) {
+1682        mBytesWritten += mixBufferSize;
+1683    }
+1684    mNumWrites++;
+1685    mInWrite = false;
+1686}
 
+ offsets-of 'android::AudioFlinger::MixerThread'
+     android::AudioFlinger::PlaybackThread => 0
+     android::Thread => 0
+    mLock => 36
+    mType => 40
+    mWaitWorkCV => 44
+    mAudioFlinger => 48
+    mSampleRate => 52
+    mFrameCount => 56 == 0x38
+    mNormalFrameCount => 60
+    mChannelMask => 64
+    mChannelCount => 68
+    mFrameSize => 72 == 0x48
+    mFormat => 76
+    mParamCond => 80
+    mNewParameters => 84
+    mParamStatus => 104
+    mConfigEvents => 108
+    mStandby => 128
+    mOutDevice => 132
+    mInDevice => 136
+    mAudioSource => 140
+    mId => 144
+    mEffectChains => 148
+
+    mMixBuffer => 220 == 0xdc
+    mSuspended => 224
+    mBytesWritten => 228
+    mMasterMute => 232
+    mActiveTracks => 236 == 0xef
+    mTracks => 256
+    mStreamTypes => 276
+    mOutput => 364
+    mMasterVolume => 368
+    mLastWriteTime => 376
+    mNumWrites => 384
+    mNumDelayedWrites => 388
+    mInWrite => 392
+    standbyTime => 400
+    mixBufferSize => 408
+    activeSleepTime => 412
+    idleSleepTime => 416
+    sleepTime => 420
+    mMixerStatus => 424
+    mMixerStatusIgnoringFastTracks => 428
+    sleepTimeShift => 432
+    standbyDelay => 440
+    maxPeriod => 448
+    writeFrames => 456
+    mOutputSink => 460
+    mPipeSink => 464
+    mNormalSink => 468 == 0x1d4
+    mScreenState => 472
+
+    mAudioMixer => 484
+    mFastMixer => 488
+    mAudioWatchdog => 492
+    mFastMixerDumpState => 496
+    mStateQueueObserverDump => 262760
+    mStateQueueMutatorDump => 262764
+    mAudioWatchdogDump => 262776
+    mFastMixerFutex => 262788
+
+    b 'android::AudioFlinger::PlaybackThread::threadLoop_write'
+    p *this->mNormalSink.m_ptr
+    p *this->mAudioMixer
+    p *this->mAudioMixer->bufferProvider
+
+*/
+void* playbackTrack_threadLoop_write(void* this, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
+  void* (*h_ptr)(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w);
+
+   void* result;
+   unsigned int* cblk_ptr;
+   unsigned int cblk;
+   unsigned long framesAvail;
+   unsigned long bufferSize;
+   unsigned long bufferStart;
+   unsigned long thisStart;
+   unsigned long bufferEndAddress;
+   unsigned int sampleRate;
+   struct timeval tv;
+   ssize_t res;
+   /* int ii, cblkIndex; */
+   unsigned int uintTmp;
+   struct cblk_t *cblk_tmp= NULL;
+   off_t headerStart = 0, positionTmp = 0;
+   time_t now;
+   int tt = 0xf;
+
+   unsigned int bufferRaw = 0;
+   unsigned int framesCount = 0;
+   unsigned int frameSize = 0;
+
+   char randString[11]; // rand %d 10 + null;
+
+   char timestamp[11];  // epoch %ld 10 + null;
+   char pidC[11];  // pid %d 10 + null;
+   int filenameLength = 0;
+   char *filename;
+   char* tmp;
+
+   int written;
+
+
+
+
+
+
+   /* call the original function */
+   h_ptr = (void *) playbackTrack_threadLoop_write_helper.orig;
+   helper_precall(&playbackTrack_threadLoop_write_helper);
+   result = h_ptr( this,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
+   helper_postcall(&playbackTrack_threadLoop_write_helper);
+   unsigned int  mMixBuffer = * (unsigned int*) (this + 0xdc);
+#ifdef DEBUG_HOOKFNC
+    log("playbackTrack_threadLoop_write:HOOKED \n");
+#endif
+   return result;
+   framesCount = * (unsigned int*) (b + 4);
+   /* fetch the necessary fields */
+   cblk_ptr = (unsigned int*) (this + mCblk_this_offset) ;
+   cblk = *cblk_ptr;
+
+     frameSize = *(unsigned char *) (this + 0x40 );
+
+
+
+
+   /* [2] second field within AudioBufferProvider */
+   framesCount = * (unsigned int*) (b + 4);
+
+
+   /* [1] first field (ptr) within mMixBuffer */
+   bufferRaw = *(unsigned int*) (b);
+
+
+   // add the cblk to the tracks list, if
+   // we don't find it, it might be because
+   // the injection took place after the track
+   // was created
+   //log("start hash find\n");
+   HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
+
+
+   if( cblk_tmp != NULL ) {
+
+     if( result == 0 && framesCount != 0 && cblk_tmp->streamType == 0 ) {
+
+       headerStart = lseek(cblk_tmp->fd, 0, SEEK_CUR);
+
+       uintTmp = 0xb00bb00b;
+       write(cblk_tmp->fd, &uintTmp, 4); // 1] epoch start
+       //write(cblk_tmp->fd, &uintTmp, 4); // 2] epoch end
+       write(cblk_tmp->fd, &uintTmp, 4); // 3] streamType
+       write(cblk_tmp->fd, &uintTmp, 4); // 4] sampleRate
+       write(cblk_tmp->fd, &uintTmp, 4); // 5] size of block
+
+
+       res = write(cblk_tmp->fd, bufferRaw, framesCount * frameSize  );
+ #ifdef DEBUG_HOOKFNC
+     log("wrote: %d - expected: %d frameCount=%d frameSize=%d \n", res, framesCount * frameSize ,framesCount , frameSize);
+ #endif
+       positionTmp = lseek(cblk_tmp->fd, 0, SEEK_CUR);
+
+
+       // if something is written fix the header
+       if( res > 0 ) {
+   // go back to start of header
+   lseek(cblk_tmp->fd, headerStart, SEEK_SET);
+
+   // write the header
+   now = time(NULL);
+   //tt = gettimeofday(&tv,NULL);
+   written = write(cblk_tmp->fd, &now , 4); // 1] timestamp start
+   //written = write(cblk_tmp->fd, &now , 4); // 2] timestamp end - fake value
+   written = write(cblk_tmp->fd, &cblk_tmp->streamType , 4); // 3] streamType
+   written = write(cblk_tmp->fd, &cblk_tmp->sampleRate , 4); // 4] sampleRate
+   written = write(cblk_tmp->fd, &res , 4); // 5] res
+   if(res!=(framesCount * frameSize)){
+ #ifdef DEBUG_HOOKFNC
+     log("write less then expexted %d write %d \n", (framesCount * frameSize),res);
+     //log("rename %d\n", rename(cblk_tmp->filename, filename) );
+ #endif
+     if(frameSize)
+       framesCount = res/frameSize;
+   }
+
+   // reposition the fd
+   lseek(cblk_tmp->fd, positionTmp, SEEK_SET);
+
+   /* dump when fd is at position >= 1048576 - 1Mb */
+   if(lseek(cblk_tmp->fd, 0, SEEK_CUR) >= FILESIZE) {
+
+     /* rename file *.bin to *.tmp */
+     filename = strdup(cblk_tmp->filename); // check return value
+     *(filename+strlen(filename)-1) = 'p';
+     *(filename+strlen(filename)-2) = 'm';
+     *(filename+strlen(filename)-3) = 't';
+
+ #ifdef DEBUG_HOOKFNC
+     log("DUMPING fname %s\n", filename);
+     //log("rename %d\n", rename(cblk_tmp->filename, filename) );
+ #endif
+     rename(cblk_tmp->filename, filename);
+
+     if( filename != NULL)  {
+       free(filename);
+     }
+
+     close(cblk_tmp->fd);
+
+     /* generate a new filename for the track */
+     snprintf(timestamp,  11, "%d", time(NULL));
+     snprintf(pidC,  11, "%d", cblk_tmp->pid);
+     filenameLength = strlen(dumpPath) + 1 + 2 + strlen(timestamp) + strlen(cblk_tmp->trackId) + 1 + 4 + 1 + 3 +1 + strlen(pidC);
+
+     cblk_tmp->filename = malloc( sizeof(char) *  filenameLength  );
+     snprintf(cblk_tmp->filename, filenameLength, "%s/Qi-%s-%s-%s-r.bin", dumpPath, timestamp, cblk_tmp->trackId,pidC );
+
+
+     cblk_tmp->fd = open(cblk_tmp->filename, O_RDWR | O_CREAT , S_IRUSR | S_IRGRP | S_IROTH);
+
+ #ifdef DEBUG_HOOKFNC
+     log("%s fd: %d continuing open%s\n", cblk_tmp->filename, cblk_tmp->fd,(cblk_tmp->fd>1)?"OK":"Failed");
+ #endif
+
+         }else{
+ #ifdef DEBUG_HOOKFNC
+           log("adding data track cblk %p, result=%d dataSize=%d streamType=%d pid=%d \n",
+               cblk,result,framesCount * frameSize,cblk_tmp->streamType,cblk_tmp->pid);
+ #endif
+         }
+
+       }else {
+       // otherwise remove the header, we don't need this block
+   lseek(cblk_tmp->fd, headerStart, SEEK_SET);
+       #ifdef DEBUG_HOOKFNC
+         log("skipping this buffer block cblk %p nothing has been written to fd %d framesCount=%d frameSize=%d \n",
+                       cblk,cblk_tmp->fd,framesCount,frameSize);
+ #endif
+
+       }
+
+     }else{
+ #ifdef DEBUG_HOOKFNC
+       log("skipping track cblk %p, result=%d frameCount=%d streamType=%d pid=%d \n",
+           cblk,result,framesCount,cblk_tmp->streamType,cblk_tmp->pid);
+ #endif
+     }
+
+
+     /* in both cases update cblk_tmp for the next run  */
+     cblk_tmp->lastBufferRaw  = bufferRaw;
+     cblk_tmp->lastFrameCount = framesCount;
+     cblk_tmp->lastFrameSize  = frameSize;
+   }else {
+ #ifdef DEBUG_HOOKFNC
+     log("cblk not found %x\n", cblk);
+ #endif
+   }
+
+ #ifdef DEBUG_HOOKFNC
+ //  log("\t\t\t------- end playback3 -------------\n");
+ #endif
+
+   return result;
+
+}
 void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
 
   void* (*h_ptr)(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w);
@@ -915,7 +1189,8 @@ void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e
   helper_precall(&playbackTrack_getNextBuffer_helper);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&playbackTrack_getNextBuffer_helper);
-
+  if(result!=NULL)
+    return result;
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\t\tresult: %d\n", (int) result);
 #endif
@@ -1190,7 +1465,8 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
   helper_precall(&recordTrack_getNextBuffer_helper);
   result = h_ptr( a,  b,  c,  d,  e,  f,  g,  h,  i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  w);
   helper_postcall(&recordTrack_getNextBuffer_helper);
-
+  if(result!=NULL)
+      return result;
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\t\tresult: %d\n", (int) result);
 #endif
@@ -1217,7 +1493,11 @@ void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, 
 #endif
 
   // not really useful, info only
-  sampleRate = *(unsigned int*) (cblk + 0x30);
+  if (android_version_ID >= ANDROID_V_4_3){
+    sampleRate = *(unsigned int*) (a + 0x30);
+  }else{
+    sampleRate = *(unsigned int*) (cblk + 0x30);
+  }
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\tsampleRate %x\n", sampleRate);
 #endif
@@ -1305,11 +1585,11 @@ if( pid>PRG_MEDIASERVER_ID ) {
 #endif
 
 
-    cblk_tmp->startOfCircularBuffer = *(unsigned int*) (cblk + 0x18);
+
     cblk_tmp->frameCount = *(unsigned int*) (cblk + 0x1c);
 
 #ifdef DEBUG_HOOKFNC
-//    log("cblk start of circular buffer: %x\nframe count: %x\nframe size %d\nbuffer end: %x\n", cblk_tmp->startOfCircularBuffer, cblk_tmp->frameCount, frameSize, cblk_tmp->startOfCircularBuffer + (cblk_tmp->frameCount * frameSize));
+//    log("frame count: %x\nframe size %d\nbuffer end: %x\n", cblk_tmp->frameCount, frameSize,  (cblk_tmp->frameCount * frameSize));
 #endif
 
     cblk_tmp->lastBufferRaw  = bufferRaw;
