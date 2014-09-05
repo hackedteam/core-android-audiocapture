@@ -97,7 +97,7 @@ void* no_proto(void* a, void* b, void* c, void* d, void* e, void* f, void* g, vo
 
 void* recordTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
 void* playbackTrack_getNextBuffer3_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
-
+void* playbackTrack_threadLoop_write(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w);
 
 void* recordThread_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
 void* playbackTimedTrack_getNextBuffer_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) ;
@@ -123,6 +123,7 @@ struct hook_t getBuffer_helper;
 
 struct hook_t recordTrack_getNextBuffer_helper;
 struct hook_t playbackTrack_getNextBuffer_helper;
+struct hook_t playbackTrack_threadLoop_write_helper;
 
 struct hook_t recordThread_getNextBuffer_helper;
 struct hook_t playbackTimedTrack_getNextBuffer_helper;
@@ -164,7 +165,9 @@ unsigned long lastBufferStartAddress;
 #define HOOK_coverage_11 help_no_hash(&recordTrack_getNextBuffer_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger12RecordThread11RecordTrack13getNextBufferEPNS_19AudioBufferProvider6BufferEx", recordTrack_getNextBuffer3_h, 1,  0);//0x35275);
 //android::AudioFlinger::PlaybackThread::Track::getNextBuffer(android::AudioBufferProvider::Buffer*, long long)
 #define HOOK_coverage_12 help_no_hash(&playbackTrack_getNextBuffer_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread5Track13getNextBufferEPNS_19AudioBufferProvider6BufferEx", playbackTrack_getNextBuffer3_h, 1, 0);// 0x352d1);
-
+//android::AudioFlinger::PlaybackThread::threadLoop_write()
+/* Hooks for Android 4.3 */
+#define HOOK_coverage_43_12 help_no_hash(&playbackTrack_threadLoop_write_helper, pid, "libaudioflinger", "_ZN7android12AudioFlinger14PlaybackThread16threadLoop_writeEv", playbackTrack_threadLoop_write, 1,  0);
 /* signaling hooks */
 
 // PlaybackThread::Track

@@ -875,8 +875,11 @@ void my_init()
     
       /* dumpers */
       hook_counter += HOOK_coverage_11;  // record
-      hook_counter += HOOK_coverage_12;  // play
-
+      //if((android_version[2] == '3' )  || (android_version[2] == '4' )){
+      //  hook_counter += HOOK_coverage_43_12;  // playbackTrack_threadLoop_write
+      //}else{
+        hook_counter += HOOK_coverage_12;  // getNextBuffer
+      //}
       /* signaling */
 
       // playback
