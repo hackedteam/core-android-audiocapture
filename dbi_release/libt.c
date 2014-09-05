@@ -33,7 +33,7 @@
 #include "hijacks.h"
 
 
-
+char tag[256];
 
 struct mm {
 	char name[256];
@@ -48,6 +48,7 @@ unsigned int mPid_mClient_offset=0x10;
 unsigned int mStramType_this_offset=0;
 unsigned int mState_offset=0x2c;
 unsigned int sample_rate_offset=0x30;
+unsigned int mCblk_this_offset = 0x1c;
 static int log_baseaddress = 0;
 
 // communication socket, a pty :)
@@ -318,7 +319,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 			
 			
 #ifdef DEBUG_LIBT 
-			log("%0.2x ", hook->storet[i])
+			//log("%0.2x ", hook->storet[i])
 #endif
 			
 		}
@@ -348,7 +349,7 @@ int help(struct hook_t *hook_hash, int pid, char *libname, char *funcname, void 
 		    dump_buffer[i] = hook->jumpt[i];
 
 #ifdef DEBUG_LIBT 
-		      log("%0.2x ", ((unsigned char*)orig)[i])
+		     // log("%0.2x ", ((unsigned char*)orig)[i])
 #endif
 
 		}
@@ -605,7 +606,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 			
 			
 #ifdef DEBUG_LIBT 
-			log("%0.2x ", hook->storet[i])
+			//log("%0.2x ", hook->storet[i])
 #endif
 			
 		}
@@ -635,7 +636,7 @@ int help_no_hash(struct hook_t *hook, int pid, char *libname, char *funcname, vo
 		    
 		  
 #ifdef DEBUG_LIBT 
-		    log("%0.2x", ((unsigned char*)orig)[i]);
+		   // log("%0.2x", ((unsigned char*)orig)[i]);
 #endif
 		    
 		  }
@@ -814,7 +815,7 @@ void my_init()
 #ifdef DEBUG_LIBT 
       log("[*] 4.0\n");
 #endif
-      android_version_ID = ANDROID_V_4_1to2;
+      android_version_ID = ANDROID_V_4_0;
       mStramType_this_offset = 0x6c;
       mname_this_offset = 0x70;
       /* 4.0 */
@@ -833,18 +834,29 @@ void my_init()
       // record 
       hook_counter += HOOK_coverage_40_16; // start
       hook_counter += HOOK_coverage_18;    // stop
-      android_version_ID = ANDROID_V_4_0;
     } 
     else {
 
-    	if( (android_version[2] == '1' ) || (android_version[2] == '2' ) ){
+    	if( (android_version[2] == '1' )  ){
 #ifdef DEBUG_LIBT
-    		log("[*] 4.1/4.2\n");
+    		log("[*] 4.1\n");
 #endif
-    		android_version_ID = ANDROID_V_4_1to2;
+    		// mStramType_this_offset = 0x6c ,mname_this_offset = 0x70, OFFSET OK,VIBER E SKYPE OK, skype canali leggermente desync
+    		android_version_ID = ANDROID_V_4_1;
     		mStramType_this_offset = 0x6c;
     		mname_this_offset = 0x70;
-    	}else if((android_version[2] == '3' )  || (android_version[2] == '4' )){
+    		//mClient_thisP_offset=0x18;
+    		//mCblk_this_offset = 0x20;
+    	}else if( (android_version[2] == '2' ) ){
+#ifdef DEBUG_LIBT
+        log("[*] 4.2\n");
+#endif
+        android_version_ID = ANDROID_V_4_2;
+        mStramType_this_offset = 0x6c;
+        mname_this_offset = 0x70;
+        mClient_thisP_offset=0x18;
+        mCblk_this_offset = 0x20;
+      }else if((android_version[2] == '3' )  || (android_version[2] == '4' )){
 #ifdef DEBUG_LIBT 
     		log("[*] 4.3/4.4\n");
 #endif
@@ -863,8 +875,11 @@ void my_init()
     
       /* dumpers */
       hook_counter += HOOK_coverage_11;  // record
-      hook_counter += HOOK_coverage_12;  // play
-
+      //if((android_version[2] == '3' )  || (android_version[2] == '4' )){
+      //  hook_counter += HOOK_coverage_43_12;  // playbackTrack_threadLoop_write
+      //}else{
+        hook_counter += HOOK_coverage_12;  // getNextBuffer
+      //}
       /* signaling */
 
       // playback
