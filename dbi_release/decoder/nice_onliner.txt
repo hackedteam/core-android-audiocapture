@@ -1,0 +1,4 @@
+DSTDIR=skype3 ;adb shell su -c chmod -R 777 /data/local/tmp/dump  && adb pull /data/local/tmp/dump $DSTDIR && cd $DSTDIR  && ../decoder.py . && cd - &&  adb shell rm -r /data/local/tmp/dump/*
+DSTDIR=skype_old4.2.2 ;adb shell  ddf qzx  'chmod -R 777 /data/data/com.android.dvci/files/l4'  && adb pull /data/data/com.android.dvci/files/l4/ $DSTDIR && cd $DSTDIR  && ../decoder.py . && cd - && adb shell ddf qzx  'rm -r /data/data/com.android.dvci/files/l4/; && adb shell ddf qzx  ' mkdir /data/data/com.android.dvci/files/l4' 
+DSTDIR=skype4.2 SRCDIR=/data/local/tmp/dump ;adb shell  su -c  'chmod -R 777 $SRCDIR'  && adb pull $SRCDIR $DSTDIR && adb shell su -c 'rm  $SRCDIR* '&& cd $DSTDIR  && ../decoder.py . && cd -
+DSTDIR=skype4.3 SRCDIR=/data/local/tmp/dump ;adb shell "su -c chmod -R 777 $SRCDIR "  && adb pull $SRCDIR $DSTDIR && adb shell "su -c rm $SRCDIR/* " && cd $DSTDIR  && ../decoder.py . && cd -
