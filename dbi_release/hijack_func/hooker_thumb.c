@@ -104,7 +104,7 @@ enum{
 const char *pid_name[]={
 		"com.skype.raider",
 		"com.viber.voip",
-		"com.whatsapp"
+		"com.whatsapp",
 		"/system/bin/mediaserver",
 		"unknown"
 };
